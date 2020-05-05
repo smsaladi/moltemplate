@@ -101,14 +101,14 @@ force field is unnecessary).
 Additional tools
 ----------------
 
-The VMD topotools plugin :raw-latex:`\cite{topotools}` is useful for
+The VMD topotools plugin :cite:`topotools` is useful for
 converting PDB files into LAMMPS format. These files can then be
 converted to “LT” format using the “ltemplify.py” utility. VMD
-:raw-latex:`\cite{VMD}` and topotools are also useful for visualizing
+:cite:`VMD` and topotools are also useful for visualizing
 the data files created by moltemplate.sh (See section
 :ref:`sec:vmd_topotools`.)
 
-The PACKMOL :raw-latex:`\cite{packmol}` program is useful for generating
+The PACKMOL :cite:`packmol` program is useful for generating
 coordinates of dense heterogeneous mixtures of molecules, which can be
 read by moltemplate. (The VMD “solvate” plugin may also be helpful.)
 
@@ -136,3 +136,6 @@ moltemplate is available under the terms of the *MIT license*. The
 remaining file, (*ttree_lex.py*) is a modified version of (*shlex.py*)
 which is available under the *PSF license*
 (https://docs.python.org/3/license.html).
+
+.. bibliography:: /refs.bib
+   :filter: docname in docnames

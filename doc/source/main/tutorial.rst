@@ -40,7 +40,7 @@ Simulating a box of water using moltemplate and LAMMPS
 
 Here we show an example of a lammps-template file for water. (The
 settings shown here are borrowed from the simple-point-charge
-:raw-latex:`\cite{Berendsen++StraatsmaJPhysChem1987}` SPC/E model.) In
+:cite:`BerendsenStraatsmaJPhysChem1987` SPC/E model.) In
 addition to coordinates, topology and force-field settings, “LT” files
 can optionally include any other kind of LAMMPS settings including SHAKE
 constraints, k-space settings, and even group definitions.
@@ -435,7 +435,7 @@ Visualizing Trajectories
 After you have run a simulation in LAMMPS, there are several programs
 which can visualize the system. If you have saved your trajectory in
 LAMMPS “dump” format, later you can view it in VMD
-:raw-latex:`\cite{VMD}`. For the purpose of viewing trajectories in
+:cite:`VMD`. For the purpose of viewing trajectories in
 LAMMPS, I recommend using the following style of “dump” commands in the
 LAMMPS input-script that you use when you run LAMMPS:
 
@@ -468,3 +468,6 @@ appendix :ref:`sec:vmd_advanced`.
 not preserve the number of atoms and bonds over time, such as those run
 using*\ **fix bond/create**\ *,*\ **fix bond/break**\ *, or*\ **fix
 gcmc**\ *.)*
+
+.. bibliography:: /refs.bib
+   :filter: docname in docnames

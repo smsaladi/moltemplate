@@ -35,8 +35,14 @@ highly recommended. (See section :ref:`sec:installation`.)
 
 
 Indices and tables
-==================
+------------------
 
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
+
+
+References
+----------
+
+.. bibliography:: /refs.bib

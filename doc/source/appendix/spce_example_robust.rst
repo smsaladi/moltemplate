@@ -242,7 +242,7 @@ Unlike the SPCE example, we don’t have to specify all of the
 interactions between these atoms because the atom and bond types (CH2,
 CC). match the type-names defined in the “trappe1998.lt” file. This file
 contains a collection of atom types and force-field parameters for
-coarse-grained hydrocarbon chains. (See :raw-latex:`\cite{TraPPE}` for
+coarse-grained hydrocarbon chains. (See :cite:`TraPPE` for
 details.) This way, the “CH2” atoms in cyclopentane will interact with,
 and behave identically to any “CH2” atom from any other molecule which
 uses the TraPPE force field. (The same is true for other atom types, and
@@ -588,3 +588,6 @@ inheritance. For example:
      b = new B
      c = new C
    }
+
+.. bibliography:: /refs.bib
+   :filter: docname in docnames
