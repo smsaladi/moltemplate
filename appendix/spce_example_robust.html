@@ -1,0 +1,646 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>9. Portability: Using LT files for force-field storage &#8212; moltemplate 2.1 documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="10. Known bugs and limitations" href="../main/limitations.html" />
+    <link rel="prev" title="8. Customizing molecule position and topology" href="../main/custom_xform.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="portability-using-lt-files-for-force-field-storage">
+<span id="sec-spce-example-robust"></span><h1><span class="section-number">9. </span>Portability: Using <em>LT files</em> for force-field storage<a class="headerlink" href="#portability-using-lt-files-for-force-field-storage" title="Permalink to this headline">¶</a></h1>
+<p>The “.LT” format is a flexible file format for storing force field
+parameters in LAMMPS. If you want to share your “.LT” file with others,
+it’s not safe to assume that all interactions use the same standard
+formula.</p>
+<div class="section" id="mixing-molecule-types">
+<h2><span class="section-number">9.1. </span>Mixing molecule types<a class="headerlink" href="#mixing-molecule-types" title="Permalink to this headline">¶</a></h2>
+<p>LAMMPS has the ability to combine molecules using multiple different
+force-field styles together using. In section
+<a class="reference internal" href="../main/tutorial.html#sec-spce-example"><span class="std std-ref">Simulating a box of water using moltemplate and LAMMPS</span></a>, we provided an example of an SPCE water
+molecule model. This example was simple to understand. However, as
+written, it would be impossible to combine this definition of water with
+other molecules which don’t share the same simple bond or angle styles.
+For example, we used harmonic restoring forces to preserve the water
+angle at <span class="math notranslate nohighlight">\(109.47^\circ\)</span>, but other users may want to mix this SPCE
+water with a small number of molecules which use a more complicated
+angular potential formula, or tabular angle potentials. Using the
+“hybrid” keyword, you can avoid this limitation. A more robust example
+is included below.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span># file &quot;spce.lt&quot;
+#
+#    H1     H2
+#      \   /
+#        O
+
+SPCE {
+
+  write_once(&quot;In Init&quot;) {
+    # -- Default styles (for solo &quot;SPCE&quot; water) --
+    units        real
+    atom_style   full
+    pair_style   hybrid lj/charmm/coul/long 9.0 10.0 10.0
+    bond_style   hybrid harmonic
+    angle_style  hybrid harmonic
+    kspace_style pppm 0.0001
+    pair_modify  mix arithmetic
+  }
+
+  # AtomID  MolID(&quot;.&quot;=this)  AtomType  charge  coordX   coordY   coordZ
+  write(&quot;Data Atoms&quot;) {
+    $atom:O  $mol:. @atom:O -0.8476  0.0000000 0.00000 0.000000
+    $atom:H1 $mol:. @atom:H  0.4238  0.8164904 0.00000  0.5773590
+    $atom:H2 $mol:. @atom:H  0.4238  -0.8164904 0.00000 0.5773590
+  }
+
+  # atom-type  Mass
+  write_once(&quot;Data Masses&quot;) {
+    @atom:O    15.9994
+    @atom:H     1.008
+  }
+
+  # -- Forces between atoms (non-bonded) --
+
+  #           atomTypeI atomTypeJ    pair-style-name    parameter-list
+  write(&quot;In Settings&quot;) {
+    pair_coeff   @atom:O @atom:O  lj/charmm/coul/long   0.1553  3.166
+    pair_coeff   @atom:H @atom:H  lj/charmm/coul/long   0.0     2.058
+  }
+
+  # -- Forces between atoms (bonded) --
+
+  #  bond-id   bond-type  atom-id1 atom-id2
+  write(&quot;Data Bonds&quot;) {
+    $bond:oh1  @bond:OH   $atom:O  $atom:H1
+    $bond:oh2  @bond:OH   $atom:O  $atom:H2
+  }
+
+  #             bond-type   bond-style-name  parameter-list
+  write(&quot;In Settings&quot;) {
+    bond_coeff   @bond:OH      harmonic      200.0   1.0
+  }
+
+  # angle-id   angle-type  atom-id1 atom-id2 atom-id3
+  write(&quot;Data Angles&quot;) {
+    $angle:hoh @angle:HOH  $atom:H1 $atom:O $atom:H2
+  }
+
+  #              angle-type  angle-style-name  parameter-list
+  write(&quot;In Settings) {
+    angle_coeff  @angle:HOH    harmonic        200.0   109.47
+  }
+
+  # miscellaneous
+  write_once(&quot;In Settings&quot;) {
+    group spce type  @atom:O  @atom:H
+    fix fSHAKE spce shake 0.0001 10 100 b @bond:OH a @angle:HOH
+    # (Remember to &quot;unfix&quot; fSHAKE during minimization.)
+  }
+
+} # SPCE
+</pre></div>
+</div>
+<p>There are two differences between this molecule definition and the
+“spce_simple.lt” example from section <a class="reference internal" href="../main/tutorial.html#sec-spce-example"><span class="std std-ref">Simulating a box of water using moltemplate and LAMMPS</span></a>:</p>
+<div class="section" id="hybrid-force-field-styles">
+<h3><span class="section-number">9.1.1. </span>Hybrid force field styles<a class="headerlink" href="#hybrid-force-field-styles" title="Permalink to this headline">¶</a></h3>
+<p>To experienced LAMMPS users, it may seem strange that in this example
+that we have chosen “hybrid” styles followed by only one force-field
+style (“harmonic”). However this will make your molecule easier to share
+with others. When other people use your LT file, they can override these
+styles as explained in section <a class="reference external" href="#sec:overriding_styles">9.2</a>.</p>
+</div>
+</div>
+<div class="section" id="combining-molecules-with-different-force-field-styles">
+<span id="sec-overriding-styles"></span><h2><span class="section-number">9.2. </span>Combining molecules with different force field styles<a class="headerlink" href="#combining-molecules-with-different-force-field-styles" title="Permalink to this headline">¶</a></h2>
+<p><em>Later on</em>, if a user wants to combine the SPCE water molecule with
+another molecule which uses a tabular pair_style (for example), they
+would have to specify the complete hybrid pair_style in the “Init”
+section of their LT file. For example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="s2">&quot;spce.lt&quot;</span>
+<span class="kn">import</span> <span class="s2">&quot;other_molecule.lt&quot;</span>
+
+<span class="n">write_once</span><span class="p">(</span><span class="s2">&quot;In Init&quot;</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">pair_style</span> <span class="n">hybrid</span> <span class="n">lj</span><span class="o">/</span><span class="n">charmm</span><span class="o">/</span><span class="n">coul</span><span class="o">/</span><span class="n">long</span> <span class="mi">9</span> <span class="mi">10</span> <span class="mi">10</span> <span class="n">table</span> <span class="n">spline</span> <span class="mi">1000</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Note: By placing the “write_once(“In Init”){ }” statement <em>after</em>
+“import “spce.lt””, this insures that the pair_style commands issued
+here will override the pair_style commands issued earlier “spce.lt”.
+This allows moltemplate users users to combine their molecules “spce.lt”
+file shown here with other template files without modification (assuming
+the atom styles match).</p>
+<div class="section" id="warning-force-field-parameters-belong-in-in-settings-not-data">
+<h3><span class="section-number">9.2.1. </span>Warning: Force-field parameters belong in “In Settings”, not “Data”<a class="headerlink" href="#warning-force-field-parameters-belong-in-in-settings-not-data" title="Permalink to this headline">¶</a></h3>
+<p>LAMMPS allows users to store force-field parameters (“Coeffs”) in two
+places: a DATA file, <em>or</em> an INPUT script. Similarly, moltemplate
+technicaly allows you to store these parameters in in the “Data”
+sections of your .LT file:</p>
+<p>write_once(“Data Pair Coeffs”)</p>
+<p>write_once(“Data Bond Coeffs”)</p>
+<p>write_once(“Data Angle Coeffs”)</p>
+<p>write_once(“Data Dihedral Coeffs”)</p>
+<p>write_once(“Data Improper Coeffs”)</p>
+<p><em>However, for portability reasons, this is discouraged.</em> Instead,
+declare your force field parameters as we do in this manual, using the
+corresponding input script commands. (For example, “pair_coeff”,
+“bond_coeff”, “angle_coeff”, “dihedral_coeff”, and “improper_coeff”. As
+in the examples, all of these commands belong in the “write_once(“In
+Settings”)” sections of your .LT files.)</p>
+</div>
+</div>
+<div class="section" id="nesting">
+<span id="sec-nesting"></span><h2><span class="section-number">9.3. </span>Nesting<a class="headerlink" href="#nesting" title="Permalink to this headline">¶</a></h2>
+<p>Molecule names such as “Solvent” (or even “Water”) are short and easy to
+type, but are vague and are not portable. If you use common, generic
+molecule names, you will not be able to combine your molecule templates
+with templates written by others (without carefully checking for naming
+conflicts). LT files were meant to be used for storing and exchanging
+libraries of different molecule types.</p>
+<p>Suppose, for example, that you want to run a simulation consisting of
+different molecule types, each of which belong to different LT files.
+Suppose two of the LT files both happen to contain definitions for
+“Water”. Moltemplate does not detect these name clashes automatically
+and instead attempts to merge the two versions of “Water” together,
+(most likely creating a molecule with 6 atoms instead of 3). This is
+presumably not what you want.</p>
+<p>As the number of molecule types grows, the possibility of naming clashes
+increases. As the behavior of the same molecule can be approximated
+using many different force fields, one has to be careful to avoid
+clashing molecule names.</p>
+<p>To alleviate the problem, you can “nest” your molecules inside the
+definition of other molecules or namespace objects. This reduces the
+scope in which your molecule is defined. See section
+<a class="reference internal" href="#sec-butane"><span class="std std-ref">Nested molecules</span></a> for an example.</p>
+</div>
+<div class="section" id="a-simple-force-field-example">
+<span id="sec-force-field-example-trappe"></span><h2><span class="section-number">9.4. </span>A simple force-field example<a class="headerlink" href="#a-simple-force-field-example" title="Permalink to this headline">¶</a></h2>
+<p>Force-field parameters can be shared by groups of related molecules. In
+the example below, we create an object named “TraPPE”. Later we use it
+to define a new molecule named “Cyclopentane”.</p>
+<p>The following example defines a coarse-grained (united-atom) version of
+a “cyclopentane” molecule. (Hydrogen atoms have been omitted.) In this
+example, only the atom types (and positions) and the bonds connecting
+them need to be specified. The interactions between them are determined
+automatically by the settings in the force-field file “trappe1998.lt”.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>import &quot;trappe1998.lt&quot;
+
+cyclopentane {
+
+  # AtomID  MolID(&#39;.&#39;=this) AtomType  charge coordX  coordY   coordZ
+  write(&quot;Data Atoms&quot;) {
+    $atom:c1 $mol:. @atom:TraPPE/CH2 0.0 0.0000 0.000000000 1.0000000
+    $atom:c2 $mol:. @atom:TraPPE/CH2 0.0 0.0000 0.951056516 0.3090170
+    $atom:c3 $mol:. @atom:TraPPE/CH2 0.0 0.0000 0.587785252 -0.809017
+    $atom:c4 $mol:. @atom:TraPPE/CH2 0.0 0.0000 -0.587785252 -0.809017
+    $atom:c5 $mol:. @atom:TraPPE/CH2 0.0 0.0000 -0.951056516 0.3090170
+  }
+
+  write(&quot;Data Bonds&quot;) {
+    $bond:bond1 @bond:TraPPE/CC $atom:c1 $atom:c2
+    $bond:bond2 @bond:TraPPE/CC $atom:c2 $atom:c3
+    $bond:bond3 @bond:TraPPE/CC $atom:c3 $atom:c4
+    $bond:bond4 @bond:TraPPE/CC $atom:c4 $atom:c5
+    $bond:bond5 @bond:TraPPE/CC $atom:c5 $atom:c1
+  }
+}
+</pre></div>
+</div>
+<p>(The “TraPPE/” is explained below.) We can create copies of this
+molecule in the same way we did with SPCE:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># A cubic lattice of 125 cyclopentane molecules (12-angstrom spacing)</span>
+<span class="n">mols</span> <span class="o">=</span> <span class="n">new</span> <span class="n">Cyclopentane</span> <span class="p">[</span><span class="mi">5</span><span class="p">]</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">12</span><span class="p">)</span> <span class="p">[</span><span class="mi">5</span><span class="p">]</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">12</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span> <span class="p">[</span><span class="mi">5</span><span class="p">]</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Unlike the SPCE example, we don’t have to specify all of the
+interactions between these atoms because the atom and bond types (CH2,
+CC). match the type-names defined in the “trappe1998.lt” file. This file
+contains a collection of atom types and force-field parameters for
+coarse-grained hydrocarbon chains. (See <a class="bibtex reference internal" href="../index.html#trappe" id="id1">[MS98]</a> for
+details.) This way, the “CH2” atoms in cyclopentane will interact with,
+and behave identically to any “CH2” atom from any other molecule which
+uses the TraPPE force field. (The same is true for other atom types, and
+interaction-types which are specific to “TraPPE”, such as
+“&#64;atom:TraPPE/CH3”, “&#64;bond:TraPPE/CC”, etc… Another molecule which
+uses the TraPPE force field is discussed later in section
+<a class="reference internal" href="#sec-butane"><span class="std std-ref">Nested molecules</span></a>.) The important parts of the “trappe1998.lt” file
+are shown below:</p>
+<div class="section" id="namespace-example">
+<span id="sec-trappe"></span><h3><span class="section-number">9.4.1. </span>Namespace example<a class="headerlink" href="#namespace-example" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># -- file &quot;trappe1998.lt&quot; --</span>
+
+<span class="n">TraPPE</span> <span class="p">{</span>
+  <span class="n">write_once</span><span class="p">(</span><span class="s2">&quot;Data Masses&quot;</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nd">@atom</span><span class="p">:</span><span class="n">CH2</span> <span class="mf">14.1707</span>
+    <span class="nd">@atom</span><span class="p">:</span><span class="n">CH3</span> <span class="mf">15.2507</span>
+  <span class="p">}</span>
+  <span class="n">write_once</span><span class="p">(</span><span class="s2">&quot;In Settings&quot;</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">bond_coeff</span>     <span class="nd">@bond</span><span class="p">:</span><span class="n">CC</span>      <span class="n">harmonic</span>   <span class="mf">120.0</span>   <span class="mf">1.54</span>
+    <span class="n">angle_coeff</span>    <span class="nd">@angle</span><span class="p">:</span><span class="n">CCC</span>    <span class="n">harmonic</span>   <span class="mf">62.0022</span> <span class="mi">114</span>
+    <span class="n">dihedral_coeff</span> <span class="nd">@dihedral</span><span class="p">:</span><span class="n">CCCC</span> <span class="n">opls</span> <span class="mf">1.411036</span> <span class="o">-</span><span class="mf">0.271016</span> <span class="mf">3.145034</span> <span class="mf">0.0</span>
+    <span class="n">pair_coeff</span> <span class="nd">@atom</span><span class="p">:</span><span class="n">CH2</span> <span class="nd">@atom</span><span class="p">:</span><span class="n">CH2</span> <span class="n">lj</span><span class="o">/</span><span class="n">charmm</span><span class="o">/</span><span class="n">coul</span><span class="o">/</span><span class="n">charmm</span> <span class="mf">0.091411522</span> <span class="mf">3.95</span>
+    <span class="n">pair_coeff</span> <span class="nd">@atom</span><span class="p">:</span><span class="n">CH3</span> <span class="nd">@atom</span><span class="p">:</span><span class="n">CH3</span> <span class="n">lj</span><span class="o">/</span><span class="n">charmm</span><span class="o">/</span><span class="n">coul</span><span class="o">/</span><span class="n">charmm</span> <span class="mf">0.194746286</span> <span class="mf">3.75</span>
+    <span class="c1"># (Interactions between different atom types use mixing rules.)</span>
+    <span class="c1"># (Hybrid styles were used for portability.)</span>
+  <span class="p">}</span>
+  <span class="n">write_once</span><span class="p">(</span><span class="s2">&quot;Data Angles By Type&quot;</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nd">@angle</span><span class="p">:</span><span class="n">CCC</span> <span class="nd">@atom</span><span class="p">:</span><span class="n">C</span><span class="o">*</span> <span class="nd">@atom</span><span class="p">:</span><span class="n">C</span><span class="o">*</span> <span class="nd">@atom</span><span class="p">:</span><span class="n">C</span><span class="o">*</span> <span class="nd">@bond</span><span class="p">:</span><span class="n">CC</span> <span class="nd">@bond</span><span class="p">:</span><span class="n">CC</span>
+  <span class="p">}</span>
+  <span class="n">write_once</span><span class="p">(</span><span class="s2">&quot;Data Dihedrals By Type&quot;</span><span class="p">)</span> <span class="p">{</span>
+   <span class="nd">@dihedral</span><span class="p">:</span><span class="n">CCCC</span> <span class="nd">@atom</span><span class="p">:</span><span class="n">C</span><span class="o">*</span> <span class="nd">@atom</span><span class="p">:</span><span class="n">C</span><span class="o">*</span> <span class="nd">@atom</span><span class="p">:</span><span class="n">C</span><span class="o">*</span> <span class="nd">@atom</span><span class="p">:</span><span class="n">C</span><span class="o">*</span> <span class="nd">@bond</span><span class="p">:</span><span class="n">CC</span> <span class="nd">@bond</span><span class="p">:</span><span class="n">CC</span> <span class="nd">@bond</span><span class="p">:</span><span class="n">CC</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>In addition to the atom-type names and masses, this file stores the
+force-field parameters (coeffs) for the interactions between them.</p>
+</div>
+<div class="section" id="bonded-interactions-by-type">
+<h3><span class="section-number">9.4.2. </span>Bonded interactions <em>by type</em><a class="headerlink" href="#bonded-interactions-by-type" title="Permalink to this headline">¶</a></h3>
+<p>Again, the “Data Angles By Type” and “Data Dihedrals By Type” sections
+tell moltemplate.sh that bonded 3-body and 4-body interactions exist
+between any 3 or 4 consecutively bonded carbon atoms (of type CH2, CH3,
+or CH4) assuming they are bonded using “CC” (saturated) bonds. The “*”
+character is a wild-card. “C*” matches “CH2”, “CH3”, and “CH4”.
+(Bond-types can be omitted or replaced with wild-cards “&#64;bond:*”.)</p>
+</div>
+<div class="section" id="namespaces-and-nesting">
+<h3><span class="section-number">9.4.3. </span>Namespaces and nesting:<a class="headerlink" href="#namespaces-and-nesting" title="Permalink to this headline">¶</a></h3>
+<p>Names like “CH2” and “CC” are extremely common. To avoid confusing them
+with similarly named atoms and bonds in other molecules, we enclose them
+(“nest” them) within a <em>namespace</em> (“TraPPE”, in this example). Unlike
+“SPCE” and “Cyclopentane”, “TraPPE” is not a molecule. It is just a
+container of atom types, bond-types and force-field parameters shared by
+other molecules. We do this to distinguish them from other atoms and
+bonds which have the same name, but mean something else. Elsewhere we
+can refer to these atom/bond types as “&#64;atom:TraPPE/CH2” and
+“&#64;bond:TraPPE/CC”. (You can also avoid repeating the cumbersome
+“TraPPE/” prefix for molecules defined within the TraPPE namespace. For
+example, see section <a class="reference internal" href="#sec-butane"><span class="std std-ref">Nested molecules</span></a>.)</p>
+</div>
+</div>
+<div class="section" id="nested-molecules">
+<span id="sec-butane"></span><h2><span class="section-number">9.5. </span>Nested molecules<a class="headerlink" href="#nested-molecules" title="Permalink to this headline">¶</a></h2>
+<p>Earlier in section <a class="reference internal" href="#sec-trappe"><span class="std std-ref">Namespace example</span></a>, we created an object named
+“TraPPE” and used it to create a molecule named “Cyclopentane”. Here we
+use it to demonstrate nesting. Suppose we define a new molecule “Butane”
+consisting of 4 coarse-grained (united-atom) carbon-like beads, whose
+types are named “CH2” and “CH3”.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span># -- file &quot;trappe_butane.lt&quot; --
+
+import &quot;trappe1998.lt&quot;
+
+Butane {
+  write(&quot;Data Atoms&quot;){
+    $atom:c1 $mol:. @atom:TraPPE/CH3 0.0  0.419372  0.000 -1.937329
+    $atom:c2 $mol:. @atom:TraPPE/CH2 0.0  -0.419372  0.000 -0.645776
+    $atom:c3 $mol:. @atom:TraPPE/CH2 0.0  0.419372  0.000  0.645776
+    $atom:c4 $mol:. @atom:TraPPE/CH3 0.0  -0.419372  0.0000 1.937329
+  }
+  write(&quot;Data Bonds&quot;){
+    $bond:b1 @bond:TraPPE/CC $atom:c1 $atom:c2
+    $bond:b2 @bond:TraPPE/CC $atom:c2 $atom:c3
+    $bond:b3 @bond:TraPPE/CC $atom:c3 $atom:c4
+  }
+}
+</pre></div>
+</div>
+<p>Alternately, as mentioned above, it may be simpler to nest our “Butane”
+within “TraPPE”, so that so that it does not get confused with other
+(perhaps all-atom) representations of butane. In that case, we would
+use:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span># -- file &quot;trappe_butane.lt&quot; --
+
+import &quot;trappe1998.lt&quot;
+
+TraPPE {
+  Butane {
+    write(&quot;Data Atoms&quot;){
+      $atom:c1 $mol:. @atom:../CH3 0.0  0.419372  0.000 -1.937329
+      $atom:c2 $mol:. @atom:../CH2 0.0  -0.419372  0.000 -0.645776
+      $atom:c3 $mol:. @atom:../CH2 0.0  0.419372  0.000  0.645776
+      $atom:c4 $mol:. @atom:../CH3 0.0  -0.419372  0.0000 1.937329
+    }
+    write(&quot;Data Bonds&quot;){
+      $bond:b1 @bond:../CC $atom:c1 $atom:c2
+      $bond:b2 @bond:../CC $atom:c2 $atom:c3
+      $bond:b3 @bond:../CC $atom:c3 $atom:c4
+    }
+  }
+}
+</pre></div>
+</div>
+<p>Note: Wrapping Butane within “TraPPE{ }” clause merely appends
+additional content to be added to the “TraPPE” object defined in the
+“trappe1998.lt” file (which was included earlier). It does not overwrite
+it. Again “../” tells moltemplate use the “CH2” atom defined in the
+context of the TraPPE environment (IE. one level up). This insures that
+moltemplate does not create a new “CH2” atom type which is local to the
+Butane molecule. (Again, by default all atom types and other variables
+are local. See section <a class="reference external" href="#sec:variable_scope">5.2.5</a>.)</p>
+<p>To use this butane molecule in a simulation, you would import the file
+containing the butane definition, and use a “new” command to create one
+or more butane molecules.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="s2">&quot;trappe_butane.lt&quot;</span>
+<span class="n">new</span> <span class="n">butane</span> <span class="o">=</span> <span class="n">TraPPE</span><span class="o">/</span><span class="n">Butane</span>
+</pre></div>
+</div>
+<p>(You don’t need to import “trappe1998.lt” in this example because it was
+imported within “trappe_butane.lt”.) The “TraPPE/” prefix before
+“Butane” lets moltemplate/ttree know that butane was defined <em>locally</em>
+within TraPPE.</p>
+<p><em>Note: An alternative procedure using</em><strong>inheritance</strong><em>exists which
+may be a cleaner way to handle these kinds of relationships. See
+sections</em><a class="reference internal" href="#sec-inheritance"><span class="std std-ref">Inheritance</span></a><em>and</em><a class="reference internal" href="#sec-multiple-inheritance"><span class="std std-ref">Multiple inheritance:</span></a><em>.</em></p>
+</div>
+<div class="section" id="path-syntax-and-mol">
+<span id="sec-paths"></span><h2><span class="section-number">9.6. </span>Path syntax: “../”, “…/”, and “$mol:.”<a class="headerlink" href="#path-syntax-and-mol" title="Permalink to this headline">¶</a></h2>
+<p>Generally, multiple slashes (“/”) as well as (“../”) can be used build a
+path that indicates the (relative) location of any other molecule in the
+object hierarchy. (The “.”, “/” and “..” symbols are used here in the
+same way they are used to specify a path in a unix-like file-system. For
+example, the “.” in “$mol:.” refers to the current molecule (instance),
+in the same way that “./” refers to the current directory. (Note: is
+shorthand for )</p>
+<p>A slash by itself, “/”, refers to the <em>global environment</em>. This is the
+outermost environment in which all molecules are defined/created.</p>
+<div class="section" id="advanced-ellipsis-notation">
+<span id="sec-ellipsis-type"></span><h3><span class="section-number">9.6.1. </span><em>(Advanced)</em> Ellipsis notation “…/”<a class="headerlink" href="#advanced-ellipsis-notation" title="Permalink to this headline">¶</a></h3>
+<p>If you are using multiple levels of nesting, and if you don’t know (or
+if you don’t want to specify) where a particular molecule type or atom
+type (such as “CH2”) was defined, you can refer to it using “…/CH2”
+instead of “../CH2”. The “…” ellipsis syntax searches up the tree of
+nested molecules to find the target (the text following the “/” slash).</p>
+</div>
+<div class="section" id="advanced-mol-notation">
+<span id="sec-ellipsis-mol"></span><h3><span class="section-number">9.6.2. </span><em>(Advanced)</em> $mol:… notation<a class="headerlink" href="#advanced-mol-notation" title="Permalink to this headline">¶</a></h3>
+<p>Recall that LAMMPS allows users the option to assign <em>molecule-IDs</em> to
+each atom. (In the water example (section <a class="reference internal" href="../main/tutorial.html#sec-spce-example"><span class="std std-ref">Simulating a box of water using moltemplate and LAMMPS</span></a>),
+atoms in each water molecule is assigned to a molecule-ID, denoted
+“$mol:.”. In that example, the “.” was the name of that molecule’s ID.)</p>
+<p>If you want to build large molecules using smaller pieces as
+building-blocks moltemplate has a way to allow all the the atoms to
+share the same molecule-ID. To refer to the ID of the molecule to which
+you belong, use “$mol:…”. (If none of the molecule-objects which
+instantiate the current molecule-object define a variable in the $mol
+category, then a new local $mol variable will be created automatically.)
+This means that the second column of each line of the “Data Atoms”
+section should contain “$mol:…” (assuming “atom_style full” or
+“molecular” is used).</p>
+<p>The “…” syntax is explained more formally in appendix
+<a class="reference external" href="#sec:adv_variable_syntax">17</a>.)</p>
+</div>
+</div>
+<div class="section" id="using-namespace-syntax">
+<span id="sec-using-namespaces"></span><h2><span class="section-number">9.7. </span><em>using namespace</em> syntax<a class="headerlink" href="#using-namespace-syntax" title="Permalink to this headline">¶</a></h2>
+<p>Because the <em>Butane</em> molecule was defined within the <em>TraPPE</em>
+environment, you normally have to indicate this when you refer to it
+later. For example, to create a copy of a <em>Butane</em> molecule, you would
+normally use:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="s2">&quot;trappe_butane.lt&quot;</span>
+
+<span class="n">butane</span> <span class="o">=</span> <span class="n">new</span> <span class="n">TraPPE</span><span class="o">/</span><span class="n">Butane</span>
+</pre></div>
+</div>
+<p>However for convenience, you can use the declaration so that, in the
+future, you can quickly refer to any of the molecule types defined
+within <em>TraPPE</em> directly, without having to specify their path.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="s2">&quot;trappe_butane.lt&quot;</span>
+
+<span class="n">using</span> <span class="n">namespace</span> <span class="n">TraPPE</span>
+
+<span class="n">butane</span> <span class="o">=</span> <span class="n">new</span> <span class="n">Butane</span>
+</pre></div>
+</div>
+<div class="section" id="this-only-works-for-molecule-types-not-atom-types">
+<h3><span class="section-number">9.7.1. </span>This only works for molecule types, not atom types<a class="headerlink" href="#this-only-works-for-molecule-types-not-atom-types" title="Permalink to this headline">¶</a></h3>
+<p>Unfortunately, you still <em>must</em> always <strong>refer to</strong> atom types, bond
+types, and any other <strong>primitive types explicitly</strong> (by their full
+path). For example, the second line in the <em>“Data Atoms”</em> in the example
+below does not refer to the <em>CH2</em> atom type defined in <em>TraPPE</em>.
+(Instead it creates a <em>new</em> atom type, which is probably not what you
+want.)</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>import &quot;trappe_butane.lt&quot;
+using namespace TraPPE
+butane = new Butane
+write(&quot;Data Atoms&quot;) {
+  $atom:c1 $mol @atom:TraPPE/CH2 0.0   0.41937 0.00 1.9373  # &lt;-- yes
+  $atom:c2 $mol @atom:CH2        0.0  -0.41937 0.00 -0.6457 # new atom type?
+}
+</pre></div>
+</div>
+<p>If, for example, you want to leave out the “TraPPE/” prefix when
+accessing the atom, bond, and angle types defined in TraPPE, then
+instead you can define a new molecule which <em>inherits</em> from TraPPE. (See
+section <a class="reference internal" href="#sec-inheritance"><span class="std std-ref">Inheritance</span></a>.)</p>
+</div>
+</div>
+<div class="section" id="inheritance">
+<span id="sec-inheritance"></span><h2><span class="section-number">9.8. </span>Inheritance<a class="headerlink" href="#inheritance" title="Permalink to this headline">¶</a></h2>
+<p>We could have defined <em>Butane</em> this way:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>import &quot;trappe1998.lt&quot;
+
+Butane inherits TraPPE {
+  write(&quot;Data Atoms&quot;){
+    $atom:c1 $mol:. @atom:CH3 0.0  0.419372  0.000 -1.937329
+    $atom:c2 $mol:. @atom:CH2 0.0  -0.419372  0.000 -0.645776
+    $atom:c3 $mol:. @atom:CH2 0.0  0.419372  0.000  0.645776
+    $atom:c4 $mol:. @atom:CH3 0.0  -0.419372  0.0000 1.937329
+  }
+  write(&quot;Data Bonds&quot;){
+    $bond:b1 @bond:CC $atom:c1 $atom:c2
+    $bond:b2 @bond:CC $atom:c2 $atom:c3
+    $bond:b3 @bond:CC $atom:c3 $atom:c4
+  }
+}
+</pre></div>
+</div>
+<p>A molecule which <em>inherits</em> from another molecule (or namespace) <em>is</em> a
+particular type of that molecule (or namespace). Defining <em>Butane</em> this
+way allows it to access all of molecule types, atom types, and bond
+types, etc… defined within <em>TraPPE</em> as if they were defined locally.
+(I did not have to refer to the CH3 atom types as “&#64;atom:TraPPE/CH3”,
+for example.)</p>
+<div class="section" id="multiple-inheritance">
+<span id="sec-multiple-inheritance"></span><h3><span class="section-number">9.8.1. </span>Multiple inheritance:<a class="headerlink" href="#multiple-inheritance" title="Permalink to this headline">¶</a></h3>
+<p>A molecule can inherit from multiple parents. This is one way you can
+allow the <em>Butane</em> molecule to borrow atom, bond, angle, dihedral, and
+improper types from <em>multiple</em> different force-field parents:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="s2">&quot;trappe1998.lt&quot;</span>
+<span class="kn">import</span> <span class="s2">&quot;oplsaa.lt&quot;</span>
+
+<span class="n">Butane</span> <span class="n">inherits</span> <span class="n">TraPPE</span> <span class="n">OPLSAA</span> <span class="p">{</span>
+  <span class="o">...</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><em>Details:Moltemplate attempts to resolve duplicate atom types or
+molecule types if they are found in both parents, giving priority to the
+first parent in the list of parents following the “inherits” keyword.
+(“TraPPE” in this example.)</em></p>
+</div>
+<div class="section" id="inheritance-vs-nesting">
+<span id="sec-inheritance-vs-nesting"></span><h3><span class="section-number">9.8.2. </span>Inheritance <em>vs.</em> Nesting<a class="headerlink" href="#inheritance-vs-nesting" title="Permalink to this headline">¶</a></h3>
+<p>If two molecules are related to each other this way: , then consider
+using inheritance instead of nesting (or object composition). In this
+example (with <em>Butane</em> and <em>TraPPE</em>) either nesting or inheritance would
+work.</p>
+<p>Again, one very minor advantage to nesting <em>Butane</em> inside <em>TraPPE</em>, is
+that it prevents the name <em>Butane</em> from being confused with or
+conflicting with any other versions of the <em>Butane</em> molecule defined
+elsewhere. (Usually this is not a consideration.)</p>
+</div>
+<div class="section" id="inheritance-vs-object-composition">
+<span id="sec-inheritance-vs-object-composition"></span><h3><span class="section-number">9.8.3. </span>Inheritance <em>vs.</em> Object Composition<a class="headerlink" href="#inheritance-vs-object-composition" title="Permalink to this headline">¶</a></h3>
+<p>On the other hand, if two molecules are related to each other this way:
+, then you might consider using object composition instead of
+inheritance. For example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="s2">&quot;B.lt&quot;</span>  <span class="c1"># &lt;-- defines the molecule type &quot;B&quot;</span>
+
+<span class="kn">import</span> <span class="s2">&quot;C.lt&quot;</span>  <span class="c1"># &lt;-- defines the molecule type &quot;C&quot;</span>
+
+<span class="n">A</span> <span class="p">{</span>
+  <span class="n">b</span> <span class="o">=</span> <span class="n">new</span> <span class="n">B</span>
+  <span class="n">c</span> <span class="o">=</span> <span class="n">new</span> <span class="n">C</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p id="bibtex-bibliography-appendix/spce_example_robust-0"><dl class="citation">
+<dt class="bibtex label" id="trappe"><span class="brackets"><a class="fn-backref" href="#id1">MS98</a></span></dt>
+<dd><p>Marcus G. Martin and J. Ilja Siepmann. Transferable potentials for phase equilibria. 1. united-atom description of n-alkanes. <em>J. Phys. Chem. B</em>, 102(14):2569–2577, 1998.</p>
+</dd>
+</dl>
+</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">moltemplate</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html">1. Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main/installation.html">2. Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main/quick_reference.html">3. Quick reference <em>(skip on first reading)</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main/tutorial.html">4. Introductory tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main/overview.html">5. Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main/coordinates.html">6. Object composition and coordinate generation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main/arrays.html">7. Arrays, slices, and coordinate transformations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main/custom_xform.html">8. Customizing molecule position and topology</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">9. Portability: Using <em>LT files</em> for force-field storage</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#mixing-molecule-types">9.1. Mixing molecule types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#combining-molecules-with-different-force-field-styles">9.2. Combining molecules with different force field styles</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#nesting">9.3. Nesting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#a-simple-force-field-example">9.4. A simple force-field example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#nested-molecules">9.5. Nested molecules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#path-syntax-and-mol">9.6. Path syntax: “../”, “…/”, and “$mol:.”</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#using-namespace-syntax">9.7. <em>using namespace</em> syntax</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#inheritance">9.8. Inheritance</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../main/limitations.html">10. Known bugs and limitations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="nbody_by_type.html">11. Bonded interactions “By Type”</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ltemplify.html">12. Using ltemplify.py to create an <em>LT file</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="vmd_advanced.html">13. Visualization in VMD</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ttree_man_page.html">14. Advanced moltemplate.sh Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ttree.html">15. Using <em>lttree.py</em> or <em>ttree.py</em> directly</a></li>
+<li class="toctree-l1"><a class="reference internal" href="nbody_by_type_utility.html">16. Using the <em>nbody_by_type.py</em> utility</a></li>
+<li class="toctree-l1"><a class="reference internal" href="adv_variable_syntax.html">17. Variable syntax details</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utils/dump2data.html">18. dump2data.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utils/extract_lammps_data.html">19. extract_lammps_data.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utils/genpoly_lt.html">20. genpoly_lt.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utils/interpolate_curve.html">21. interpolate_curve.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utils/ltemplify.html">22. ltemplify.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utils/raw2data.html">23. raw2data.py</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="../main/custom_xform.html" title="previous chapter"><span class="section-number">8. </span>Customizing molecule position and topology</a></li>
+      <li>Next: <a href="../main/limitations.html" title="next chapter"><span class="section-number">10. </span>Known bugs and limitations</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Andrew Jewett.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/appendix/spce_example_robust.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

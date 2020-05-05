@@ -1,0 +1,571 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>20. genpoly_lt.py &#8212; moltemplate 2.1 documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="21. interpolate_curve.py" href="interpolate_curve.html" />
+    <link rel="prev" title="19. extract_lammps_data.py" href="extract_lammps_data.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="genpoly-lt-py">
+<h1><span class="section-number">20. </span>genpoly_lt.py<a class="headerlink" href="#genpoly-lt-py" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="description">
+<h2><span class="section-number">20.1. </span>Description<a class="headerlink" href="#description" title="Permalink to this headline">¶</a></h2>
+<p>Generate a moltemplate file containing a definition of a Polymer
+molecule containing monomers located at the positions specified in
+“coords.raw” (a 3-column text file). Monomers will be rotated so that
+they point along the polymer axis direction (see “-dir-indices”) with an
+optional helical twist added (see “-helix”). Users can specify one or
+more bonds connecting each monomer to the next monomer (see “-bond”).
+Similarly, 3-body and 4-body angular interactions between atoms in
+different monomers can either be generated automatically (using the
+standard moltemplate “Angle By Type” rules) OR generated manually (using
+“-angle”, “-dihedral”, “-improper” arguments).</p>
+<p>Note: This program is both a stand-alone executable program (that can be
+run from the terminal) and a python library. The former is documented
+below. <em>(The</em><a class="reference external" href="#Python-API">python API is explained later</a><em>.)</em></p>
+</div>
+<div class="section" id="usage">
+<h2><span class="section-number">20.2. </span>Usage:<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">genpoly_lt</span><span class="o">.</span><span class="n">py</span>  \
+   <span class="p">[</span><span class="o">-</span><span class="n">polymer</span><span class="o">-</span><span class="n">name</span> <span class="n">pname</span><span class="p">]</span> \
+   <span class="p">[</span><span class="o">-</span><span class="n">monomer</span><span class="o">-</span><span class="n">name</span> <span class="n">mname</span><span class="p">]</span> \
+   <span class="p">[</span><span class="o">-</span><span class="n">sequence</span> <span class="n">sequence</span><span class="o">.</span><span class="n">txt</span><span class="p">]</span> \
+   <span class="p">[</span><span class="o">-</span><span class="n">bond</span> <span class="n">btype</span> <span class="n">a1</span> <span class="n">a2</span><span class="p">]</span> \
+   <span class="p">[</span><span class="o">-</span><span class="n">angle</span>    <span class="n">atype</span> <span class="n">a1</span> <span class="n">a2</span> <span class="n">a3</span> <span class="n">i1</span> <span class="n">i2</span> <span class="n">i3</span><span class="p">]</span> \
+   <span class="p">[</span><span class="o">-</span><span class="n">dihedral</span> <span class="n">dtype</span> <span class="n">a1</span> <span class="n">a2</span> <span class="n">a3</span> <span class="n">a4</span> <span class="n">i1</span> <span class="n">i2</span> <span class="n">i3</span> <span class="n">i4</span><span class="p">]</span> \
+   <span class="p">[</span><span class="o">-</span><span class="n">improper</span> <span class="n">itype</span> <span class="n">a1</span> <span class="n">a2</span> <span class="n">a3</span> <span class="n">a4</span> <span class="n">i1</span> <span class="n">i2</span> <span class="n">i3</span> <span class="n">i4</span><span class="p">]</span> \
+   <span class="p">[</span><span class="o">-</span><span class="n">inherits</span> <span class="n">ForceFieldObject</span><span class="p">]</span> \
+   <span class="p">[</span><span class="o">-</span><span class="n">header</span> <span class="s2">&quot;import monomer.lt&quot;</span><span class="p">]</span> \
+   <span class="p">[</span><span class="o">-</span><span class="n">helix</span> <span class="n">deltaphi</span><span class="p">]</span> \
+   <span class="p">[</span><span class="o">-</span><span class="n">helix</span><span class="o">-</span><span class="n">angles</span> <span class="n">helix_angles_file</span><span class="o">.</span><span class="n">txt</span><span class="p">]</span> \
+   <span class="p">[</span><span class="o">-</span><span class="n">orientations</span> <span class="n">orientations_file</span><span class="o">.</span><span class="n">txt</span><span class="p">]</span> \
+   <span class="p">[</span><span class="o">-</span><span class="n">quaternions</span> <span class="n">quaternions_file</span><span class="o">.</span><span class="n">txt</span><span class="p">]</span> \
+   <span class="p">[</span><span class="o">-</span><span class="n">axis</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">z</span><span class="p">]</span> \
+   <span class="p">[</span><span class="o">-</span><span class="n">circular</span> <span class="n">yes</span><span class="o">/</span><span class="n">no</span><span class="o">/</span><span class="n">connected</span><span class="p">]</span> \
+   <span class="p">[</span><span class="o">-</span><span class="n">cuts</span> <span class="n">cuts</span><span class="o">.</span><span class="n">txt</span><span class="p">]</span> \
+   <span class="p">[</span><span class="o">-</span><span class="n">polymer</span><span class="o">-</span><span class="n">directions</span> <span class="n">polarities</span><span class="o">.</span><span class="n">txt</span><span class="p">]</span> \
+   <span class="p">[</span><span class="o">-</span><span class="nb">dir</span><span class="o">-</span><span class="n">indices</span> <span class="n">ia</span> <span class="n">ib</span><span class="p">]</span> \
+   <span class="p">[</span><span class="o">-</span><span class="n">box</span> <span class="n">paddingX</span><span class="p">,</span><span class="n">paddingY</span><span class="p">,</span><span class="n">paddingZ</span><span class="p">]</span> \
+   <span class="o">&lt;</span> <span class="n">coords</span><span class="o">.</span><span class="n">raw</span> <span class="o">&gt;</span> <span class="n">polymer</span><span class="o">.</span><span class="n">lt</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="arguments-optional">
+<h2><span class="section-number">20.3. </span>Arguments [optional]<a class="headerlink" href="#arguments-optional" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>-polymer-name name
+               Name of the moltemplate object that will be created.
+               (By default &quot;Polymer&quot;)
+
+-monomer-name name
+               Name of the moltemplate object that will be replicated along
+               the length of the polymer(s).  (&quot;Monomer&quot; by default).
+               This monomer should be defined elsewhere and
+               ORIENTED SO THAT THE POLYMER AXIS LIES IN THE +X DIRECTION.
+               You can use the &quot;-header&quot; argument to specify where
+               the monomer(s) is defined.  *Note: If you are defining
+               heteropolymers or polymers with end-caps, then do not use the
+               &quot;-monomer&quot; argument.  Use the &quot;-sequence&quot; argument instead.
+
+               You can include rotations or transformations to the monomer
+               subunit before it is moved into position.  For example, it
+               is often useful to to use a modified version of the monomer
+               whose initial coordinates are compressed to avoid collisions
+               with other monomers.  To do this, use something like
+               &quot;Monomer.scale(0.5,0.7,0.7)&quot; instead of &quot;Monomer&quot;.
+               This would compress each monomer lengthwise by 0.5
+               and 0.7 laterally. (After minimization, each monomer should
+               expand back to its ordinary size and shape.)*
+
+-sequence sequence.txt
+               If you are building a heteropolymer, this argument allows
+               you to specify the sequence of monomers in the polymer.
+               You can also use this argument to add *end-caps* (ie custom
+               monomer types) to the ends of your polymer, and orient them
+               in the forward and backward directions.  See example below.
+               The &quot;sequence.txt&quot; file contains the sequence of monomers
+               you want in your polymer(s).  Each line of this file should
+               be the name of a moltemplate object for the monomer subunit
+               you want at that location.  The number of lines in this file
+               should match the sum of all of the lengths of the polymers
+               (which equals the number of lines in the coordinate file).
+               Each type of monomer listed must be a moltemplate object
+               which contains atoms whose $atom (atom-ID) variables match
+               the a1,a2 atoms mentioned in the -bond, -angle, -dihedral,
+               and -improper arguments (if applicable).  (In the butane
+               example below, it would be the carbon atom in the backbone.)
+               As before, you can include coordinate transforms in each
+               monomer&#39;s name.  Here is an example for butane:
+               --- sequences.txt ---
+               CH3
+               CH2
+               CH2
+               CH3.rot(180,0,0,1)
+               -----
+               The CH2 and CH3 moltemplate objects are presumably defined
+               elsewhere and ORIENTED WITH THE POLYMER AXIS ALONG THE +X
+               DIRECTION.  The &quot;.rot(180,0,0,1)&quot; makes sure the final CH3
+               monomer is oriented in the -X (opposite) direction.
+               (Additional movement and rotation commands will be added
+               to align each monomer with the direction of the curve.)
+               If you are using the &quot;-cuts&quot; argument to create multiple
+               polymers, then this file would resemble the file above, with
+               the sequence of multiple such polymers appended together.
+               It would include additional &quot;CH3&quot; and &quot;CH3.rot(180,0,0,1)
+               end-cap monomers at places which are before and after the
+               integers specified using the &quot;-cuts&quot; argument.
+
+-bond btype a1 a2
+         Add a bond between successive monomers of type btype.
+         between atoms named a1 and a2 (all three arguments are strings and
+         omit the @bond: and $atom: prefixes in moltemplate variables)
+         Multiple bonds between successive monomers can be added by having
+         &quot;-bond bt a1 a2&quot; appear several times in the argument list.
+         For example, double-stranded DNA can be implemented as a polymer
+         with 2 bonds connecting separate monomers (if each &quot;monomer
+         corresponds to a base pair).
+
+-angle atype a1 a2 a3 i1 i2 i3
+         Add a 3-body angle interaction between atoms a1 a2 a3 in monomers
+         i1 i2 and i3.  (The aname atype a1, a2, a3 arguments are strings
+         containing moltemplate variable names. The standard moltemplate
+         prefixes &quot;$angle:&quot;, &quot;@angle:&quot;, and &quot;$atom:&quot; should be omitted.
+         The i1, i2, i3 arguments are integer indices indicating the monomer
+         that each atom belongs to.
+            0 corresponds to the current monomer
+            1 corresponds to the next monomer
+            2 corresponds to the following monomer, etc...
+     (For circular polymers, the indices will be wrapped appropriately.)
+         Multiple angles per monomer can be added by having:
+         &quot;-angle aname atype a1 a2 a3 i1 i2 i3&quot;
+         appear several times in the argument list with different parameters
+      (NOTE: USUALLY THE &quot;-angle&quot; ARGUMENT IS NOT NEEDED IF YOU ARE USING
+             A FORCE FIELD THAT AUTOMATICALLY GENERATES ANGLE INTERACTIONS.)
+
+-dihedral dtype a1 a2 a3 a4 i1 i2 i3 i4
+         Add a 4-body dihedral interaction between atoms a1 a2 a3 a4 in
+         monomers i1 i2 and i3.  (The dname dtype a1, a2, a3, a4, arguments
+         are strings containing moltemplate variable names. The moltemplate
+         prefixes &quot;$dihedral:&quot;, &quot;@dihedral:&quot;, and &quot;$atom:&quot; should be omitted
+         The i1, i2, i3, i4 arguments are integer indices indicating the
+         monomer that each atom belongs to.  (See explanation above.)
+         Multiple dihedrals per monomer can be added by having:
+         &quot;-dihedral dname dtype a1 a2 a3 a4 i1 i2 i3 i4&quot;
+         appear several times in the argument list with different parameters
+      (NOTE: USUALLY THE &quot;-dihedral&quot; ARGUMENT IS NOT NEEDED IF YOU ARE USING
+          A FORCE FIELD THAT AUTOMATICALLY GENERATES DIHEDRAL INTERACTIONS.)
+
+-improper itype a1 a2 a3 a4 i1 i2 i3 i4
+         Add a 4-body improper interaction between atoms a1 a2 a3 a4 in
+         monomers i1 i2 and i3.  (The iname itype a1, a2, a3, a4, arguments
+         are strings containing moltemplate variable names. The moltemplate
+         prefixes &quot;$improper:&quot;, &quot;@improper:&quot;, and &quot;$atom:&quot; should be omitted
+         The i1, i2, i3, i4 arguments are integer indices indicating the
+         that each atom belongs to.  (See explanation above.)
+         Multiple impropers per monomer can be added by having:
+         &quot;-improper iname itype a1 a2 a3 a4 i1 i2 i3 i4&quot;
+         appear several times in the argument list with different parameters
+      (NOTE: USUALLY THE &quot;-improper&quot; ARGUMENT IS NOT NEEDED IF YOU ARE USING
+           A FORCE FIELD THAT AUTOMATICALLY GENERATES IMPROPER INTERACTIONS,
+           ...OR IF YOUR POLYMER DOES NOT CONTAIN BACKBONE IMPROPERS.)
+
+-inherits FORCE_FIELD
+               This allows you to add &quot;inherits FORCE_FIELD&quot; when
+               defining the polymer object(s).  (It simply adds the text
+               &quot;inherits FORCE_FIELD&quot; after the polymer name.) In this
+               example, &quot;FORCE_FIELD&quot; is the name of a moltemplate object
+               which defines any rules for creating angles, dihedrals,
+               impropers which you want to be generated automatically.
+               This FORCE_FIELD object can be defined elsewhere (such as in
+               a separate file and imported using the &quot;-header&quot; argument).
+
+-header &#39;some text&#39;
+               This is a convenient way to insert a line of text at the
+               beginning of the file that will be created by genpoly_lt.py.
+               You can put any text at the beginning of the file, but
+               typically these are &quot;import&quot; statements.  For example:
+           -header &#39;import &quot;force_field.lt&quot; # (&lt;--defines FORCE_FIELD)&#39;
+           -header &#39;import &quot;monomer.lt&quot;     # (&lt;--defines Monomer)&#39;
+               The imported .LT files typically contain definitions of
+               monomers or force field parameters that the polymer needs.
+               (They must appear at the beginning of the .LT file, before
+               the polymer is defined or moltemplate will complain later.)
+               As shown in the example, you can insert multiple lines of
+               text at the beginning by using multiple -header arguments.
+
+-cuts cut_locations.txt
+               Cut the polymer in several places along its length.  This is
+               useful if your goal is to create many polymers of different
+               lengths instead of one long polymer.  This will simply
+               cut the polymer N times along its length.  The file
+               &quot;cut_locations.txt&quot; is a text file containing a list of
+               positive integers (one per line) indicating where you would
+               like the polymer to be cut.  For each integer, i, which
+               appears in this file, a cut is made between monomers
+               i-1 and i (Indexing begins at 0, so a value of 1
+               corresponds to a cut between the first and second monomers.)
+               A separate polymer object will be created for each polymer,
+               and an integer suffix will be added to the name, to
+               distinguish them from each other.  (Each of these
+               polymers will be part of a larger object defined by this
+               program.  Instantiating that object will create all of the
+               individual polymers.)
+               **NOTE** To put *end-caps* at the ends of each polymer
+               (ie. to change the monomer type at the ends of each polymer),
+               you *must* use the &quot;-sequence&quot; argument.  You must supply a
+               text file with the monomers you want to put at the beginning
+               and ending of each polymer listed at the appropriate place
+               in this file. (You also have the option to apply different
+               rotations to the monomers at either end of each polymer
+               to orient them in the forward and backward directions.)
+               See the description of the *-sequence* argument for details.
+
+-axis x,y,z  direction of the polymer axis in the original monomer object.
+         These three numbers (separated by commas with no spaces)
+         define the direction that the monomer subunit is pointing in.
+         By default, the three numbers are 1 0 0 (ie, the X axis)
+
+-helix deltaphi = Optionally, rotate each monomer around it&#39;s axis by
+         angle deltaphi (in degrees) beforehand
+
+-helix-angles helix_angles_file.txt = Optionally, rotate each monomer around
+         it&#39;s axis by specifying a list of angles contained in a file
+         (eg &quot;helix_angles_file.txt&quot;).  This file contains one number per
+         line (one line per monomer).  Each number represents the
+         angle of that monomer relative to the previous monomer around
+         that axis.
+
+-circular keyword
+   keyword must be one of these:
+         &quot;no&quot;          The polymer is a linear chain with the two ends
+                       not connected.  (default)
+         &quot;yes&quot;         The polymer is a circular loop with the two ends
+                       connected pointing in similar directions.
+         &quot;connected&quot;   Connect the two ends together with bonds (and angles,
+                       and dihedrals, if applicable) to make a closed loop.
+                       But do not adjust the orientation of the first and
+                       last monomers so that they point towards eachother.
+                       (Use this if you plan to simulate an &quot;infinitely&quot;
+                       long polymer using periodic boundary conditions,
+                       with the two ends are connected on opposite sides.)
+
+-box paddingX,paddingY,paddingZ
+               This will cause the program to attempt to estimate the size
+               of the smallest rectangular box which encloses all of the
+               coordinates in the coordinate file.  The user must supply 3
+               comma-separated numbers (no spaces) which indicate how much
+               extra room is needed in the ±x, ±y, ±z directions.
+
+-polymer-directions polarities.txt
+               Change the order that coordinates are read from the file.
+               This is specified once per polymer.  You must supply a file
+               containing one line per polymer.  (Unless you used the -cuts
+               argument this file will have only line.)  Each line must
+               contain either &quot;1&quot; or &quot;-1&quot;.  A value of &quot;1&quot; indicates that
+               you want to read the coordinates for that polymer in the
+               order they appear in the coordinate file.  (IE. the
+               normal behavior.)  A value of -1 will cause the coordinates
+               for that polymer to be reversed after reading.
+               (In other words, read the coordinates from the
+               corresponding portion of the file in reverse order.
+               This feature is probably not useful to most users.)
+
+-dir-indices ia ib
+         The program attempts to orient each monomer in a direction that
+         the polymer is pointing.  By default, the program will
+         orient monomer i in the direction connecting the monomers before
+         and after it (monomers i-1 and i+1).  The user can override this
+         using the -dir-indices command line argument.  The ia and ib
+         arguments are integer offsets.  To point monomer i in the direction
+         connecting it to the following monomer (i+1), use -dir-indices 0 1.
+         arguments are integer offsets.  To point monomer i in the direction
+         connecting it to the previous monomer (i-1), use -dir-indices -1 0.
+         (Note: If the -polymer-directions argument is used, and the current
+         polymer has a direction of -1, the indices ia, ib will be flipped.)
+     For circular polymers, the indices will be wrapped appropriately.
+
+-orientations orientations_file.txt
+         Specify the orientation of each monomer in the polymer by providing
+         a 9-column text file containing a list of rotation matrices (R,
+         one for each monomer).  Each 3x3 matrix describes the orientation
+         of that monomer relative to that monomer&#39;s original orientation
+         (*not* relative to to the previous monomer&#39;s orientation).
+         Each line in the file contains 9 numbers which are the entries of
+         a matrix:
+            R_11, R_12, R_13, R_21, R_22, R_23, R_31, R_32, R_33
+         This matrix applies the following coordinate transformation:
+           /x&#39;\   / R_11 R_12 R_13 \ /x\
+           |y&#39;| = | R_21 R_22 R_23 | |y|
+           \z&#39;/   \ R_31 R_32 R_33 / \z/
+         (This can be any linear transformation, not just a rotation.)
+         Note: These transformations are applied *after*:
+            1) Coordinate transformations included in the monomer&#39;s name
+               specified in the &quot;-monomer-name&quot; or &quot;-sequence&quot; arguments,
+               for example: &quot;EthyleneGlycol.move(0.2,-0.7,0).rot(180,1,0,0)&quot;
+            2) Rotations around the axis specified by the &quot;-helix&quot; or
+               &quot;-helix-angles&quot; and &quot;-axis&quot; arguments (if applicable).
+               (Consequently this argument can be supplied together with
+                the &quot;-helix&quot;, &quot;-helix-angles&quot;, and &quot;-axis&quot; arguments.)
+
+-quaternions quaternions_file.txt
+         Specify the orientation of each monomer in the polymer by providing
+         a 4-column text file containing a list of quaternions (one for
+         each monomer).  Each quaternion describes the orientation of
+         that monomer relative to that monomer&#39;s original orientation
+         (*not* relative to to the previous monomer&#39;s orientation).
+         Each quaternion has 4 numbers.  The first number is cos(θ/2)
+         (where θ is the rotation angle).  The remaining 3 numbers form
+         a vector (of length sin(θ/2)), pointing along the axis of
+         rotation.
+         Note: These rotations are applied *after*:
+            1) Coordinate transformations included in the monomer&#39;s name
+               specified in the &quot;-monomer-name&quot; or &quot;-sequence&quot; arguments,
+               for example: &quot;EthyleneGlycol.move(0.2,-0.7,0).rot(180,1,0,0)&quot;
+            2) Rotations around the axis specified by the &quot;-helix&quot; or
+               &quot;-helix-angles&quot; and &quot;-axis&quot; arguments (if applicable).
+               (Consequently this argument can be supplied together with
+                the &quot;-helix&quot;, &quot;-helix-angles&quot;, and &quot;-axis&quot; arguments.)
+</pre></div>
+</div>
+</div>
+<div class="section" id="examples">
+<h2><span class="section-number">20.4. </span>Examples:<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic simple">
+<li><p>Make a simple polymer, adding “&#64;bond:Backbone” type bonds between
+“<span class="math notranslate nohighlight">\(atom:c2&quot; from each monomer with &quot;\)</span>atom:c1” from the next
+monomer.</p></li>
+</ol>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">genpoly_lt</span><span class="o">.</span><span class="n">py</span> <span class="o">-</span><span class="n">bond</span> <span class="n">Backbone</span> <span class="n">c2</span> <span class="n">c1</span> <span class="o">&lt;</span> <span class="n">crds</span><span class="o">.</span><span class="n">raw</span> <span class="o">&gt;</span> <span class="n">poly</span><span class="o">.</span><span class="n">lt</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="2">
+<li><p>Make a circular twisted double-stranded DNA model, treating each
+base-pair as a monomer, and connecting each base-pair monomer with 2
+bonds with the next base-pair. This is done using 2 “-bond” commands
+connecting the “O3p_a” atom with the “P_a” atom (in strand A), and
+the “P_b” atom with the “O3p_b” atom (from the opposite strand, B).</p></li>
+</ol>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">genpoly_lt</span><span class="o">.</span><span class="n">py</span> <span class="o">-</span><span class="n">circular</span> <span class="n">yes</span> <span class="o">-</span><span class="n">helix</span> <span class="mf">34.2857</span> \
+              <span class="o">-</span><span class="n">header</span> <span class="s1">&#39;import &quot;basepair.lt&quot;   #&lt;--defines &quot;BasePair&quot;&#39;</span> \
+              <span class="o">-</span><span class="n">monomer</span><span class="o">-</span><span class="n">name</span> <span class="s2">&quot;BasePair&quot;</span> \
+              <span class="o">-</span><span class="n">polymer</span><span class="o">-</span><span class="n">name</span> <span class="s2">&quot;Plasmid&quot;</span> \
+              <span class="o">-</span><span class="n">bond</span> <span class="n">Backbone</span> <span class="n">O3p_a</span>   <span class="n">P_a</span> \
+              <span class="o">-</span><span class="n">bond</span> <span class="n">Backbone</span> <span class="n">P_b</span>   <span class="n">O3p_b</span> \
+              <span class="o">&lt;</span> <span class="n">dna_basepair_CM_coords</span><span class="o">.</span><span class="n">raw</span> \
+              <span class="o">&gt;</span> <span class="n">chromosome</span><span class="o">.</span><span class="n">lt</span>
+</pre></div>
+</div>
+<p>If you want to control the sequence of the polymer, replace the
+“-monomer-name” argument with “-sequence sequence.txt”.</p>
+</div>
+<div class="section" id="python-api">
+<h2><span class="section-number">20.5. </span>Python API<a class="headerlink" href="#python-api" title="Permalink to this headline">¶</a></h2>
+<p>It is possible to access the functionality of <em>genpoly_lt.py</em> from
+within python. To do that, you can create arrays of coordinates and
+python strings containing the names of the monomers in the polymer (see
+below). Then use <em>GenPoly.WriteLTFile()</em> create a file in MOLTEMPLATE
+(.LT) format. (If you prefer, the text in that file can be redirected to
+a python string using StringIO. In this way it is not necessary to read
+or write files to the file system.)</p>
+<p>However, (as you can probably tell) making this possible within python
+was an afterthought. Currently, the easy way to do this is to pass the
+same command line arguments (described above) to <em>GenPoly.ParseArgs()</em>
+<em>Then</em> invoke the <em>GenPoly.WriteLTFile()</em> function.</p>
+<p>However you can also edit the data members of the GenPoly object
+directly after it is created, instead of using the command-line
+arguments. The example below demonstrates how to specify the coordinates
+<em>(coords_multi)</em> and the names of the monomers <em>(name_sequence_multi)</em>
+so that you don’t have specify this information in the argument list (or
+read any files from the file system). Perhaps in the future, I will
+clean this up.)*</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">GenPoly</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Read coordinates from a file, and generate a list of \&quot;new\&quot; commands</span>
+<span class="sd">    in moltemplate format with the position of each monomer located</span>
+<span class="sd">    at these positions, oriented appropriately, with bonds (and angles,</span>
+<span class="sd">    dihedrals, etc...) connecting successive monomers together.</span>
+<span class="sd">    By default, only a single polymer is created.</span>
+<span class="sd">    However this class can create multiple polymers of different lengths.</span>
+<span class="sd">    The list of coordinates for each polymer are saved separately within</span>
+<span class="sd">    the &quot;self.coords_multi&quot; member.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="usage-example-inside-python">
+<h2><span class="section-number">20.6. </span>Usage example inside python<a class="headerlink" href="#usage-example-inside-python" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">moltemplate</span>
+
+<span class="n">N</span> <span class="o">=</span> <span class="mi">4</span>
+<span class="c1"># Generate a zig-zag curve containing N points</span>
+<span class="n">x_orig</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">i</span><span class="p">,</span> <span class="mf">0.5</span><span class="o">*</span><span class="p">(</span><span class="n">i</span><span class="o">%</span><span class="mi">2</span><span class="p">),</span> <span class="mf">0.0</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">N</span><span class="p">)])</span>
+
+<span class="c1"># It&#39;s a good idea to generate a smoother version of this curve</span>
+<span class="c1"># with 21 different positions along the curve (21=number of monomers).</span>
+<span class="n">x_new</span> <span class="o">=</span> <span class="n">moltemplate</span><span class="o">.</span><span class="n">interpolate_curve</span><span class="o">.</span><span class="n">ResampleCurve</span><span class="p">(</span><span class="n">x_orig</span><span class="p">,</span> <span class="mi">21</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>
+
+<span class="c1"># Optional:</span>
+<span class="c1"># We want the spacing between monomers to be 0.332nm per monomer.</span>
+<span class="n">x_new</span> <span class="o">*=</span> <span class="mf">0.332</span> <span class="o">/</span> <span class="p">((</span><span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="mf">0.5</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">x_orig</span><span class="p">))</span> <span class="o">/</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x_new</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+
+<span class="c1"># Now use genpoly_lt.GenPoly to generate an LT file describing</span>
+<span class="c1"># a coarse-grained DNA molecule placed at all of these locations (x_new).</span>
+<span class="c1"># (Note: Since there is only one polymer, the &quot;coords_multi&quot;</span>
+<span class="c1">#  and &quot;name_sequence_multi&quot; arguments contain only one list each.</span>
+<span class="c1">#  More generally they could contain multiple lists, one for each</span>
+<span class="c1">#  polymer in the system.  Don&#39;t worry about this detail.)</span>
+
+<span class="n">gp</span> <span class="o">=</span> <span class="n">moltemplate</span><span class="o">.</span><span class="n">genpoly_lt</span><span class="o">.</span><span class="n">GenPoly</span><span class="p">()</span>
+<span class="n">gp</span><span class="o">.</span><span class="n">coords_multi</span> <span class="o">=</span> <span class="p">[</span><span class="n">x_new</span><span class="p">]</span>
+
+<span class="c1"># Now specify the identity of each monomer in the polymer</span>
+<span class="c1"># (In this case each &quot;monomer&quot; is a DNA base-pair, with names like &quot;AT&quot;, &quot;GC&quot;.)</span>
+<span class="n">gp</span><span class="o">.</span><span class="n">name_sequence_multi</span> <span class="o">=</span><span class="p">[[</span><span class="s1">&#39;AT&#39;</span><span class="p">,</span> <span class="s1">&#39;CG&#39;</span><span class="p">,</span> <span class="s1">&#39;GC&#39;</span><span class="p">,</span> <span class="s1">&#39;TA&#39;</span><span class="p">,</span> <span class="s1">&#39;AT&#39;</span><span class="p">,</span> <span class="s1">&#39;CG&#39;</span><span class="p">,</span> <span class="s1">&#39;GC&#39;</span><span class="p">,</span> <span class="s1">&#39;TA&#39;</span><span class="p">,</span>
+                          <span class="s1">&#39;AT&#39;</span><span class="p">,</span> <span class="s1">&#39;CG&#39;</span><span class="p">,</span> <span class="s1">&#39;GC&#39;</span><span class="p">,</span> <span class="s1">&#39;TA&#39;</span><span class="p">,</span> <span class="s1">&#39;AT&#39;</span><span class="p">,</span> <span class="s1">&#39;CG&#39;</span><span class="p">,</span> <span class="s1">&#39;GC&#39;</span><span class="p">,</span> <span class="s1">&#39;TA&#39;</span><span class="p">,</span>
+                          <span class="s1">&#39;AT&#39;</span><span class="p">,</span> <span class="s1">&#39;CG&#39;</span><span class="p">,</span> <span class="s1">&#39;GC&#39;</span><span class="p">,</span> <span class="s1">&#39;TA&#39;</span><span class="p">,</span> <span class="s1">&#39;AT&#39;</span><span class="p">]]</span>
+
+<span class="c1"># The remaining settings are parsed from an argument list</span>
+<span class="n">gp</span><span class="o">.</span><span class="n">ParseArgs</span><span class="p">([</span><span class="s1">&#39;-helix&#39;</span><span class="p">,</span> <span class="s1">&#39;34.2857&#39;</span><span class="p">,</span>
+              <span class="s1">&#39;-bond&#39;</span><span class="p">,</span> <span class="s1">&#39;Backbone&#39;</span><span class="p">,</span> <span class="s1">&#39;f&#39;</span><span class="p">,</span> <span class="s1">&#39;f&#39;</span><span class="p">,</span>
+              <span class="s1">&#39;-bond&#39;</span><span class="p">,</span> <span class="s1">&#39;Backbone&#39;</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">,</span>
+              <span class="s1">&#39;-polymer-name&#39;</span><span class="p">,</span> <span class="s1">&#39;DNA_snippet&#39;</span><span class="p">,</span>
+              <span class="s1">&#39;-inherits&#39;</span><span class="p">,</span> <span class="s1">&#39;OXDNA2&#39;</span><span class="p">,</span>
+              <span class="s1">&#39;-header&#39;</span><span class="p">,</span> <span class="s1">&#39;import oxdna2.lt&#39;</span><span class="p">,</span>
+              <span class="s1">&#39;-circular&#39;</span><span class="p">,</span> <span class="s1">&#39;no&#39;</span><span class="p">])</span>
+
+<span class="c1"># Generate an .LT file and write it to the terminal (sys.stdout)</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="n">gp</span><span class="o">.</span><span class="n">WriteLTFile</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">moltemplate</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html">1. Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main/installation.html">2. Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main/quick_reference.html">3. Quick reference <em>(skip on first reading)</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main/tutorial.html">4. Introductory tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main/overview.html">5. Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main/coordinates.html">6. Object composition and coordinate generation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main/arrays.html">7. Arrays, slices, and coordinate transformations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main/custom_xform.html">8. Customizing molecule position and topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../appendix/spce_example_robust.html">9. Portability: Using <em>LT files</em> for force-field storage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main/limitations.html">10. Known bugs and limitations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../appendix/nbody_by_type.html">11. Bonded interactions “By Type”</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../appendix/ltemplify.html">12. Using ltemplify.py to create an <em>LT file</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../appendix/vmd_advanced.html">13. Visualization in VMD</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../appendix/ttree_man_page.html">14. Advanced moltemplate.sh Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../appendix/ttree.html">15. Using <em>lttree.py</em> or <em>ttree.py</em> directly</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../appendix/nbody_by_type_utility.html">16. Using the <em>nbody_by_type.py</em> utility</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../appendix/adv_variable_syntax.html">17. Variable syntax details</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dump2data.html">18. dump2data.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="extract_lammps_data.html">19. extract_lammps_data.py</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">20. genpoly_lt.py</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#description">20.1. Description</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#usage">20.2. Usage:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#arguments-optional">20.3. Arguments [optional]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#examples">20.4. Examples:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#python-api">20.5. Python API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#usage-example-inside-python">20.6. Usage example inside python</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="interpolate_curve.html">21. interpolate_curve.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ltemplify.html">22. ltemplify.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raw2data.html">23. raw2data.py</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="extract_lammps_data.html" title="previous chapter"><span class="section-number">19. </span>extract_lammps_data.py</a></li>
+      <li>Next: <a href="interpolate_curve.html" title="next chapter"><span class="section-number">21. </span>interpolate_curve.py</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Andrew Jewett.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/utils/genpoly_lt.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

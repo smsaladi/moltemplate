@@ -1,0 +1,372 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>6. Object composition and coordinate generation &#8212; moltemplate 2.1 documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="7. Arrays, slices, and coordinate transformations" href="arrays.html" />
+    <link rel="prev" title="5. Overview" href="overview.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="object-composition-and-coordinate-generation">
+<span id="sec-coordinates"></span><h1><span class="section-number">6. </span>Object composition and coordinate generation<a class="headerlink" href="#object-composition-and-coordinate-generation" title="Permalink to this headline">¶</a></h1>
+<p>Objects can be connected together to form larger molecule objects. These
+objects can be used to form still larger objects. As an example, we
+define a small 2-atom molecule named “Monomer”, and use it to construct
+a short polymer (“Polymer”).</p>
+<p><strong>a)</strong> <a class="reference internal" href="../_images/2bead_polymers_t=100ps_LR.jpg"><img alt="[fig:2bead_polymer] a)-b) Building a complex system from small pieces: Construction of a polymer (b) out of smaller (2-atom) subunits (a) using composition and rigid-body transformations. Bonds connecting different monomer together (blue) must be declared explicitly, but angle and dihedral interactions will be generated automatically. See section" src="../_images/2bead_polymers_t=100ps_LR.jpg" style="width: 4cm;" /></a><a class="reference internal" href="#sec-2bead"><span class="std std-ref">Building a large molecule from smaller pieces</span></a><a href="#id1"><span class="problematic" id="id2">|for details. c) An irregular lattice of
+short polymers. (See
+section|</span></a><a class="reference internal" href="arrays.html#sec-multidimensional-arrays"><span class="std std-ref">Multidimensional arrays</span></a><a href="#id3"><span class="problematic" id="id4">|.) d) The same system
+after 100000 time steps using Langevin dynamics. (The VMD console
+commands used for visualization were: “topo readlammpsdata system.data
+full”, “animate write psf system.psf”, “pbc wrap -compound res -all”,
+and “pbc box”. See sections|</span></a><a class="reference internal" href="tutorial.html#sec-vmd-topotools"><span class="std std-ref">Visualization using VMD &amp; topotools</span></a><a href="#id5"><span class="problematic" id="id6">|,
+and|</span></a>:ref:<a class="reference internal" href="../appendix/vmd_advanced.html#sec-vmd-advanced"><span class="std std-ref">Visualization in VMD</span></a><a href="#id7"><span class="problematic" id="id8">|for details.|</span></a> <strong>b)</strong>
+<a class="reference internal" href="../_images/2bead_polymers_t=100ps_LR.jpg"><img alt="[fig:2bead_polymer] a)-b) Building a complex system from small pieces: Construction of a polymer (b) out of smaller (2-atom) subunits (a) using composition and rigid-body transformations. Bonds connecting different monomer together (blue) must be declared explicitly, but angle and dihedral interactions will be generated automatically. See section" src="../_images/2bead_polymers_t=100ps_LR.jpg" style="width: 4cm;" /></a><a class="reference internal" href="#sec-2bead"><span class="std std-ref">Building a large molecule from smaller pieces</span></a><a href="#id9"><span class="problematic" id="id10">|for details. c) An irregular lattice of
+short polymers. (See
+section|</span></a><a class="reference internal" href="arrays.html#sec-multidimensional-arrays"><span class="std std-ref">Multidimensional arrays</span></a><a href="#id11"><span class="problematic" id="id12">|.) d) The same system
+after 100000 time steps using Langevin dynamics. (The VMD console
+commands used for visualization were: “topo readlammpsdata system.data
+full”, “animate write psf system.psf”, “pbc wrap -compound res -all”,
+and “pbc box”. See sections|</span></a><a class="reference internal" href="tutorial.html#sec-vmd-topotools"><span class="std std-ref">Visualization using VMD &amp; topotools</span></a><a href="#id13"><span class="problematic" id="id14">|,
+and|</span></a>:ref:<a class="reference internal" href="../appendix/vmd_advanced.html#sec-vmd-advanced"><span class="std std-ref">Visualization in VMD</span></a><a href="#id15"><span class="problematic" id="id16">|for details.|</span></a> <strong>c)</strong>
+<a class="reference internal" href="../_images/2bead_polymers_t=100ps_LR.jpg"><img alt="[fig:2bead_polymer] a)-b) Building a complex system from small pieces: Construction of a polymer (b) out of smaller (2-atom) subunits (a) using composition and rigid-body transformations. Bonds connecting different monomer together (blue) must be declared explicitly, but angle and dihedral interactions will be generated automatically. See section" src="../_images/2bead_polymers_t=100ps_LR.jpg" style="width: 4cm;" /></a><a class="reference internal" href="#sec-2bead"><span class="std std-ref">Building a large molecule from smaller pieces</span></a><a href="#id17"><span class="problematic" id="id18">|for details. c) An irregular lattice of
+short polymers. (See
+section|</span></a><a class="reference internal" href="arrays.html#sec-multidimensional-arrays"><span class="std std-ref">Multidimensional arrays</span></a><a href="#id19"><span class="problematic" id="id20">|.) d) The same system
+after 100000 time steps using Langevin dynamics. (The VMD console
+commands used for visualization were: “topo readlammpsdata system.data
+full”, “animate write psf system.psf”, “pbc wrap -compound res -all”,
+and “pbc box”. See sections|</span></a><a class="reference internal" href="tutorial.html#sec-vmd-topotools"><span class="std std-ref">Visualization using VMD &amp; topotools</span></a><a href="#id21"><span class="problematic" id="id22">|,
+and|</span></a>:ref:<a class="reference internal" href="../appendix/vmd_advanced.html#sec-vmd-advanced"><span class="std std-ref">Visualization in VMD</span></a><a href="#id23"><span class="problematic" id="id24">|for details.|</span></a> <strong>d)</strong>
+<a class="reference internal" href="../_images/2bead_polymers_t=100ps_LR.jpg"><img alt="[fig:2bead_polymer] a)-b) Building a complex system from small pieces: Construction of a polymer (b) out of smaller (2-atom) subunits (a) using composition and rigid-body transformations. Bonds connecting different monomer together (blue) must be declared explicitly, but angle and dihedral interactions will be generated automatically. See section" src="../_images/2bead_polymers_t=100ps_LR.jpg" style="width: 4cm;" /></a><a class="reference internal" href="#sec-2bead"><span class="std std-ref">Building a large molecule from smaller pieces</span></a><a href="#id25"><span class="problematic" id="id26">|for details. c) An irregular lattice of
+short polymers. (See
+section|</span></a><a class="reference internal" href="arrays.html#sec-multidimensional-arrays"><span class="std std-ref">Multidimensional arrays</span></a><a href="#id27"><span class="problematic" id="id28">|.) d) The same system
+after 100000 time steps using Langevin dynamics. (The VMD console
+commands used for visualization were: “topo readlammpsdata system.data
+full”, “animate write psf system.psf”, “pbc wrap -compound res -all”,
+and “pbc box”. See sections|</span></a><a class="reference internal" href="tutorial.html#sec-vmd-topotools"><span class="std std-ref">Visualization using VMD &amp; topotools</span></a><a href="#id29"><span class="problematic" id="id30">|,
+and|</span></a>:ref:<a class="reference internal" href="../appendix/vmd_advanced.html#sec-vmd-advanced"><span class="std std-ref">Visualization in VMD</span></a><a href="#id31"><span class="problematic" id="id32">|for details.|</span></a></p>
+<div class="section" id="building-a-large-molecule-from-smaller-pieces">
+<span id="sec-2bead"></span><h2><span class="section-number">6.1. </span>Building a large molecule from smaller pieces<a class="headerlink" href="#building-a-large-molecule-from-smaller-pieces" title="Permalink to this headline">¶</a></h2>
+<p>Consider the following simple 2-atom dumbell-shaped molelule (“Monomer”)</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span># -- file &quot;monomer.lt&quot; --
+
+import &quot;forcefield.lt&quot;   # contains force-field parameters
+
+Monomer inherits ForceField {
+
+  write(&quot;Data Atoms&quot;) {
+    # atomId molId   atomType   charge   x      y        z
+    $atom:ca $mol:... @atom:CA   0.0   0.000  1.0000   0.0000000
+    $atom:r  $mol:... @atom:R    0.0   0.000  4.4000   0.0000000
+  }
+  write(&quot;Data Bonds&quot;) {
+    # bond-id   bond-type        atom-id1  atom-id2
+    $bond:cr    @bond:Sidechain  $atom:ca  $atom:r
+  }
+}
+</pre></div>
+</div>
+<p>Soon will use it to construct a polymer (“Polymer”) <em>Note: The ellipsis
+notation used here “$mol:…”. warns moltemplate that the “Monomer”
+molecule may be part of a larger molecule. (This is explained in more
+detail in section</em><a class="reference external" href="#sec:ellipsis_mol">9.6.2</a><em>.) (Note: The
+meaning of “inherits ForceField” will be explained below in
+section</em><a class="reference external" href="#sec:nbody_by_type_intro">6.2</a><em>)</em></p>
+<p>In this example we will define two kinds of molecule objects: “Monomer”,
+and “Polymer” (<em>defined later</em>).</p>
+<div class="section" id="building-a-simple-polymer">
+<span id="sec-twobead-polymer"></span><h3><span class="section-number">6.1.1. </span>Building a simple polymer<a class="headerlink" href="#building-a-simple-polymer" title="Permalink to this headline">¶</a></h3>
+<p>We construct a short polymer by making 7 copies of “Monomer”, rotating
+and moving each copy: [sec:twobead_polymer]</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span># -- file &quot;polymer.lt&quot; --
+
+import &quot;monomer.lt&quot;  #(defines &quot;Monomer&quot; and &quot;ForceField&quot;)
+
+Polymer inherits ForceField {
+
+  # The next line is optional:
+  create_var {$mol}  #(force all monomers to share the same molecule-ID)
+
+  # Now create some monomers
+
+  mon1 = new Monomer     #(no need to move the first monomer)
+  mon2 = new Monomer.rot(180.0, 1,0,0).move(3.2,0,0)
+  mon3 = new Monomer.rot(360.0, 1,0,0).move(6.4,0,0)
+  mon4 = new Monomer.rot(540.0, 1,0,0).move(9.6,0,0)
+  mon5 = new Monomer.rot(720.0, 1,0,0).move(12.8,0,0)
+  mon6 = new Monomer.rot(900.0, 1,0,0).move(16.0,0,0)
+  mon7 = new Monomer.rot(1080.0, 1,0,0).move(19.2,0,0)
+
+  # Now, link the monomers together this way:
+  write(&quot;Data Bonds&quot;) {
+    $bond:backbone1  @bond:Backbone  $atom:mon1/ca  $atom:mon2/ca
+    $bond:backbone2  @bond:Backbone  $atom:mon2/ca  $atom:mon3/ca
+    $bond:backbone3  @bond:Backbone  $atom:mon3/ca  $atom:mon4/ca
+    $bond:backbone4  @bond:Backbone  $atom:mon4/ca  $atom:mon5/ca
+    $bond:backbone5  @bond:Backbone  $atom:mon5/ca  $atom:mon6/ca
+    $bond:backbone6  @bond:Backbone  $atom:mon6/ca  $atom:mon7/ca
+  }
+}
+</pre></div>
+</div>
+<p>The position and orientation of each copy of “Monomer” is specified
+after the “new” statement. Each “new” statement is typically followed by
+a chain of move/rotate/scale functions separated by dots, evaluated
+left-to-right (optionally followed by square brackets and then more
+dots). For example, “mon2” is a copy of “Monomer” which is first rotated
+180 degrees around the X axis (denoted by “1,0,0”), and <strong>then</strong> moved
+in the (3.2,0,0) direction. (The last three arguments to the “rot()”
+command denote the axis of rotation, which does not have to be
+normalized.) (A list of available coordinate transformations is provided
+in section <a class="reference internal" href="quick_reference.html#sec-xforms-table"><span class="std std-ref">Coordinate transformations</span></a>.)</p>
+<p><em>(Note: Although we did not do this here, it is sometimes convenient to
+represent polymers as 1-dimensional arrays. See
+sections</em><a class="reference external" href="#sec:arrays">7</a><em>and</em><a class="reference internal" href="arrays.html#sec-random-arrays"><span class="std std-ref">Random arrays</span></a><em>for
+examples.)</em></p>
+<p>To bond atoms in different molecules or molecular subunits together, we
+used the write(“Data Bonds”) command to append additional bonds to the
+system.</p>
+</div>
+</div>
+<div class="section" id="bonded-interactions-by-type">
+<span id="sec-nbody-by-type-intro"></span><h2><span class="section-number">6.2. </span>Bonded interactions <em>by type</em><a class="headerlink" href="#bonded-interactions-by-type" title="Permalink to this headline">¶</a></h2>
+<p>In this example we did <em>not</em> provide a list of all 3-body and 4-body
+angle forces between bonded atoms in the polymer. Moltemplate allows you
+to manually list all of these interactions (using the “write_once(“Data
+Angles”)” command from section <a class="reference internal" href="tutorial.html#sec-spce-example"><span class="std std-ref">Simulating a box of water using moltemplate and LAMMPS</span></a>, <em>or</em> the
+“write_once(“Data Dihedrals”)”, or “write_once(“Data Impropers”)”
+commands). However there are usually many of them. For this reason, it
+is often more convenient to provide moltemplate with instructions to
+help it automatically figure out which atoms participate in 3-body and
+4-body angle interactions, and what force field parameters to assign to
+them. We will do that below using the following commands:
+“write_once(“Data Angles By Type”)”, “write_once(“Data Dihedrals By
+Type”)”, and “write_once(“Data Impropers By Type”)”</p>
+<p>Furthermoree, since many different kinds molecules often share the same
+rules for creating 3-body and 4-body angle interactions, it is
+convenient to organize all of this information together into one place
+(eg an object named “ForceField”). A “ForceField” object will typically
+include many “write_once(“Data Angles By Type”)” commands, as well as
+force field parameters and related atom type properties. We also
+typically store that information in a separate file (eg “forcefield.lt”,
+“oplsaa.lt”, “gaff2.lt”, “compass.lt”, etc…).</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># -- file &quot;forcefield.lt&quot; --</span>
+
+<span class="n">ForceField</span> <span class="p">{</span>
+
+  <span class="c1"># There are 2 atom types: &quot;CA&quot; and &quot;R&quot;</span>
+  <span class="n">write_once</span><span class="p">(</span><span class="s2">&quot;Data Masses&quot;</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nd">@atom</span><span class="p">:</span><span class="n">CA</span>    <span class="mf">13.0</span>
+    <span class="nd">@atom</span><span class="p">:</span><span class="n">R</span>     <span class="mf">50.0</span>
+  <span class="p">}</span>
+
+  <span class="c1"># Force-field parameters (&quot;coeffs&quot;) go in the &quot;In Settings&quot; section:</span>
+
+  <span class="n">write_once</span><span class="p">(</span><span class="s2">&quot;In Settings&quot;</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1"># Pairwise (non-bonded) interactions:</span>
+    <span class="c1">#           atomType1 atomType2   epsilon sigma</span>
+    <span class="n">pair_coeff</span>   <span class="nd">@atom</span><span class="p">:</span><span class="n">CA</span> <span class="nd">@atom</span><span class="p">:</span><span class="n">CA</span>       <span class="mf">0.10</span> <span class="mf">2.0</span>
+    <span class="n">pair_coeff</span>   <span class="nd">@atom</span><span class="p">:</span><span class="n">R</span>  <span class="nd">@atom</span><span class="p">:</span><span class="n">R</span>        <span class="mf">0.50</span> <span class="mf">3.6</span>
+    <span class="c1"># (Interactions between different atoms are determined by mixing rules.)</span>
+  <span class="p">}</span>
+
+  <span class="c1"># 2-body (bonded) interactions:</span>
+  <span class="c1">#</span>
+  <span class="c1">#   Ubond(r) = k*(r-r0)^2</span>
+  <span class="c1">#</span>
+  <span class="n">write_once</span><span class="p">(</span><span class="s2">&quot;In Settings&quot;</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">#             bond-type        k     r0</span>
+    <span class="n">bond_coeff</span>  <span class="nd">@bond</span><span class="p">:</span><span class="n">Sidechain</span>   <span class="mf">15.0</span>   <span class="mf">3.4</span>
+    <span class="n">bond_coeff</span>  <span class="nd">@bond</span><span class="p">:</span><span class="n">Backbone</span>    <span class="mf">15.0</span>   <span class="mf">3.7</span>
+  <span class="p">}</span>
+
+  <span class="c1"># Although the simple &quot;Monomer&quot; object we defined above has only</span>
+  <span class="c1"># two atoms, later on, we will create molecules with many bonds.</span>
+  <span class="c1"># By convention, in this file we keep track of all of the possible</span>
+  <span class="c1"># interactions which could exist between these atoms:</span>
+
+  <span class="c1"># Rules for determining 3-body (angle) interactions by atom &amp; bond type:</span>
+  <span class="c1"># angle-type     atomType1 atomType2 atomType3  bondType1 bondType2</span>
+
+  <span class="n">write_once</span><span class="p">(</span><span class="s2">&quot;Data Angles By Type&quot;</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nd">@angle</span><span class="p">:</span><span class="n">Backbone</span>  <span class="nd">@atom</span><span class="p">:</span><span class="n">CA</span>  <span class="nd">@atom</span><span class="p">:</span><span class="n">CA</span>  <span class="nd">@atom</span><span class="p">:</span><span class="n">CA</span>   <span class="nd">@bond</span><span class="p">:</span><span class="o">*</span>   <span class="nd">@bond</span><span class="p">:</span><span class="o">*</span>
+    <span class="nd">@angle</span><span class="p">:</span><span class="n">Sidechain</span> <span class="nd">@atom</span><span class="p">:</span><span class="n">CA</span>  <span class="nd">@atom</span><span class="p">:</span><span class="n">CA</span>  <span class="nd">@atom</span><span class="p">:</span><span class="n">R</span>    <span class="nd">@bond</span><span class="p">:</span><span class="o">*</span>   <span class="nd">@bond</span><span class="p">:</span><span class="o">*</span>
+  <span class="p">}</span>
+
+  <span class="c1"># Force-field parameters for 3-body (angle) interactions:</span>
+  <span class="c1">#</span>
+  <span class="c1">#   Uangle(theta) = k*(theta-theta0)^2</span>
+  <span class="c1">#</span>
+  <span class="n">write_once</span><span class="p">(</span><span class="s2">&quot;In Settings&quot;</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">#             angle-type       k    theta0</span>
+    <span class="n">angle_coeff</span> <span class="nd">@angle</span><span class="p">:</span><span class="n">Backbone</span>   <span class="mf">30.00</span>  <span class="mi">114</span>
+    <span class="n">angle_coeff</span> <span class="nd">@angle</span><span class="p">:</span><span class="n">Sidechain</span>  <span class="mf">30.00</span>  <span class="mi">132</span>
+  <span class="p">}</span>
+
+  <span class="c1"># 4-body interactions in this example are listed by atomType</span>
+  <span class="c1"># Rules for determining 4-body (dihedral) interactions by atom &amp; bond type:</span>
+  <span class="n">write_once</span><span class="p">(</span><span class="s2">&quot;Data Dihedrals By Type&quot;</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1"># dihedralType atmType1 atmType2 atmType3 atmType4 bondType1 bType2 bType3</span>
+    <span class="nd">@dihedral</span><span class="p">:</span><span class="n">CCCC</span> <span class="nd">@atom</span><span class="p">:</span><span class="n">CA</span> <span class="nd">@atom</span><span class="p">:</span><span class="n">CA</span> <span class="nd">@atom</span><span class="p">:</span><span class="n">CA</span> <span class="nd">@atom</span><span class="p">:</span><span class="n">CA</span>  <span class="nd">@bond</span><span class="p">:</span><span class="o">*</span> <span class="nd">@bond</span><span class="p">:</span><span class="o">*</span> <span class="nd">@bond</span><span class="p">:</span><span class="o">*</span>
+    <span class="nd">@dihedral</span><span class="p">:</span><span class="n">RCCR</span> <span class="nd">@atom</span><span class="p">:</span><span class="n">R</span>  <span class="nd">@atom</span><span class="p">:</span><span class="n">CA</span> <span class="nd">@atom</span><span class="p">:</span><span class="n">CA</span> <span class="nd">@atom</span><span class="p">:</span><span class="n">R</span>   <span class="nd">@bond</span><span class="p">:</span><span class="o">*</span> <span class="nd">@bond</span><span class="p">:</span><span class="o">*</span> <span class="nd">@bond</span><span class="p">:</span><span class="o">*</span>
+  <span class="p">}</span>
+
+  <span class="c1"># The forumula used is:</span>
+  <span class="c1">#</span>
+  <span class="c1"># Udihedral(phi) = K * (1 + cos(n*phi - d))</span>
+  <span class="c1">#</span>
+  <span class="c1">#     The d parameter is in degrees, K is in kcal/mol/rad^2.</span>
+  <span class="c1">#</span>
+  <span class="c1"># The corresponding command is</span>
+  <span class="c1"># dihedral_coeff dihedralType       K  n   d  w(ignored)</span>
+
+  <span class="n">write_once</span><span class="p">(</span><span class="s2">&quot;In Settings&quot;</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">dihedral_coeff</span> <span class="nd">@dihedral</span><span class="p">:</span><span class="n">CCCC</span>   <span class="o">-</span><span class="mf">0.5</span> <span class="mi">1</span> <span class="o">-</span><span class="mi">180</span> <span class="mf">0.0</span>
+    <span class="n">dihedral_coeff</span> <span class="nd">@dihedral</span><span class="p">:</span><span class="n">RCCR</span>   <span class="o">-</span><span class="mf">1.5</span> <span class="mi">1</span> <span class="o">-</span><span class="mi">180</span> <span class="mf">0.0</span>
+  <span class="p">}</span>
+
+  <span class="n">write_once</span><span class="p">(</span><span class="s2">&quot;In Init&quot;</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1"># -- Styles used in &quot;ForceField&quot; --</span>
+    <span class="c1"># -- (Changing these styles will change the formulas above) --</span>
+    <span class="n">units</span>           <span class="n">real</span>
+    <span class="n">atom_style</span>      <span class="n">full</span>
+    <span class="n">bond_style</span>      <span class="n">harmonic</span>
+    <span class="n">angle_style</span>     <span class="n">harmonic</span>
+    <span class="n">dihedral_style</span>  <span class="n">charmm</span>
+    <span class="n">pair_style</span>      <span class="n">lj</span><span class="o">/</span><span class="n">cut</span> <span class="mf">11.0</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Any molecule that wants to access this information can use the “inherits
+ForceField” keyword. <em>(…as we did in the “monomer.lt” and “polymer.lt”
+files in theexample above. Note: the “import forcefield” statement was
+also necessary because the information is located in a separate file:
+“forcefield.lt”.</em> <em>You can customize these “By Type” rules further by
+altering the bond topology search rules and atom type symmetry. See
+appendix</em><a class="reference external" href="#sec:nbody_by_type_custom">16.2</a><em>for details.)</em></p>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">moltemplate</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html">1. Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">2. Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quick_reference.html">3. Quick reference <em>(skip on first reading)</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">4. Introductory tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="overview.html">5. Overview</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">6. Object composition and coordinate generation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#building-a-large-molecule-from-smaller-pieces">6.1. Building a large molecule from smaller pieces</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#bonded-interactions-by-type">6.2. Bonded interactions <em>by type</em></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="arrays.html">7. Arrays, slices, and coordinate transformations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="custom_xform.html">8. Customizing molecule position and topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../appendix/spce_example_robust.html">9. Portability: Using <em>LT files</em> for force-field storage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="limitations.html">10. Known bugs and limitations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../appendix/nbody_by_type.html">11. Bonded interactions “By Type”</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../appendix/ltemplify.html">12. Using ltemplify.py to create an <em>LT file</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../appendix/vmd_advanced.html">13. Visualization in VMD</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../appendix/ttree_man_page.html">14. Advanced moltemplate.sh Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../appendix/ttree.html">15. Using <em>lttree.py</em> or <em>ttree.py</em> directly</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../appendix/nbody_by_type_utility.html">16. Using the <em>nbody_by_type.py</em> utility</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../appendix/adv_variable_syntax.html">17. Variable syntax details</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utils/dump2data.html">18. dump2data.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utils/extract_lammps_data.html">19. extract_lammps_data.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utils/genpoly_lt.html">20. genpoly_lt.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utils/interpolate_curve.html">21. interpolate_curve.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utils/ltemplify.html">22. ltemplify.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utils/raw2data.html">23. raw2data.py</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="overview.html" title="previous chapter"><span class="section-number">5. </span>Overview</a></li>
+      <li>Next: <a href="arrays.html" title="next chapter"><span class="section-number">7. </span>Arrays, slices, and coordinate transformations</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Andrew Jewett.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/main/coordinates.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

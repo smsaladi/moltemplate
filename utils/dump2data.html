@@ -1,0 +1,371 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>18. dump2data.py &#8212; moltemplate 2.1 documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="19. extract_lammps_data.py" href="extract_lammps_data.html" />
+    <link rel="prev" title="17. Variable syntax details" href="../appendix/adv_variable_syntax.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="dump2data-py">
+<h1><span class="section-number">18. </span>dump2data.py<a class="headerlink" href="#dump2data-py" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="description">
+<h2><span class="section-number">18.1. </span>Description<a class="headerlink" href="#description" title="Permalink to this headline">¶</a></h2>
+<p><strong>dump2data.py</strong> is a tool to extract coordinates from LAMMPS “dump”
+(trajectory) files. It was originally designed to convert snapshots from
+trajectory files into LAMMPS DATA format (for restarting a simulation
+from where it left off). However it also reads and writes .XYZ and .RAW
+(simple 3-column text format) coordinate files. Although it was written
+in python, <strong>dump2data.py</strong> is a stand-alone executable intended to be
+run from the terminal (shell). <em>It has not been optimized for speed.</em></p>
+</div>
+<div class="section" id="comparison-with-pizza-py">
+<h2><span class="section-number">18.2. </span>Comparison with pizza.py<a class="headerlink" href="#comparison-with-pizza-py" title="Permalink to this headline">¶</a></h2>
+<p><strong>dump2data</strong> duplicates some of the tools in
+<a class="reference external" href="http://pizza.sandia.gov/doc/Manual.html">pizza.py,</a>. If you are
+willing to learn python, <strong>pizza.py</strong> can handle more some dump files
+which might cause <strong>dump2data.py</strong> to crash. It includes support for a
+wider variety of atom styles (eg “atom_style tri”). <strong>dump2data.py</strong> is
+maintained by the moltemplate developers. <strong>pizza.py</strong> is maintained by
+the lammps developers. <strong>pizza.py</strong> may be faster than <strong>dump2data.py</strong>
+(dump2data.py has not been optimized for speed).</p>
+</div>
+<div class="section" id="arguments">
+<h2><span class="section-number">18.3. </span>Arguments<a class="headerlink" href="#arguments" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">dump2data</span><span class="o">.</span><span class="n">py</span> <span class="p">[</span><span class="n">old_data_file</span><span class="p">]</span>           \
+             <span class="p">[</span><span class="o">-</span><span class="n">raw</span><span class="p">]</span>                    \
+             <span class="p">[</span><span class="o">-</span><span class="n">xyz</span><span class="p">]</span>                    \
+             <span class="p">[</span><span class="o">-</span><span class="n">t</span> <span class="n">time</span><span class="p">]</span>                 \
+             <span class="p">[</span><span class="o">-</span><span class="n">tstart</span> <span class="n">ta</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">tstop</span> <span class="n">tb</span><span class="p">]</span>  \
+             <span class="p">[</span><span class="o">-</span><span class="n">last</span><span class="p">]</span>                   \
+             <span class="p">[</span><span class="o">-</span><span class="n">interval</span> <span class="n">n</span><span class="p">]</span>             \
+             <span class="p">[</span><span class="o">-</span><span class="nb">type</span> <span class="n">atom_types</span><span class="p">]</span>        \
+             <span class="p">[</span><span class="o">-</span><span class="nb">id</span> <span class="n">atom_ids</span><span class="p">]</span>            \
+             <span class="p">[</span><span class="o">-</span><span class="n">mol</span> <span class="n">mol_ids</span><span class="p">]</span>            \
+             <span class="p">[</span><span class="o">-</span><span class="n">multi</span><span class="p">]</span>                  \
+             <span class="p">[</span><span class="o">-</span><span class="n">center</span><span class="p">]</span>                 \
+             <span class="p">[</span><span class="o">-</span><span class="n">scale</span> <span class="n">x</span><span class="p">]</span>                \
+             <span class="p">[</span><span class="o">-</span><span class="n">atomstyle</span> <span class="n">style</span><span class="p">]</span>        \
+             <span class="p">[</span><span class="o">-</span><span class="n">xyz</span><span class="o">-</span><span class="nb">id</span><span class="p">]</span>                 \
+             <span class="p">[</span><span class="o">-</span><span class="n">xyz</span><span class="o">-</span><span class="n">mol</span><span class="p">]</span>                \
+             <span class="p">[</span><span class="o">-</span><span class="n">xyz</span><span class="o">-</span><span class="nb">type</span><span class="o">-</span><span class="n">mol</span><span class="p">]</span>           \
+             <span class="o">&lt;</span> <span class="n">DUMP_FILE</span> <span class="o">&gt;</span> <span class="n">OUTPUT_FILE</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="examples">
+<h2><span class="section-number">18.4. </span>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="example-creating-raw-3-column-ascii-text-coordinate-files">
+<h3><span class="section-number">18.4.1. </span>Example creating RAW (3-column ascii text) coordinate files<a class="headerlink" href="#example-creating-raw-3-column-ascii-text-coordinate-files" title="Permalink to this headline">¶</a></h3>
+<p>If your LAMMPS dump file is named “traj.lammpstrj”, you can extract the
+coordinates this way:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">dump2data</span><span class="o">.</span><span class="n">py</span> <span class="o">-</span><span class="n">raw</span> <span class="o">&lt;</span> <span class="n">traj</span><span class="o">.</span><span class="n">lammpstrj</span> <span class="o">&gt;</span> <span class="n">traj</span><span class="o">.</span><span class="n">raw</span>
+</pre></div>
+</div>
+<p>The resulting file (“traj.raw”) will look like this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="mf">122.28</span> <span class="o">-</span><span class="mf">19.2293</span> <span class="o">-</span><span class="mf">7.93705</span>
+<span class="o">-</span><span class="mf">121.89</span> <span class="o">-</span><span class="mf">19.2417</span> <span class="o">-</span><span class="mf">8.85591</span>
+<span class="o">-</span><span class="mf">121.6</span> <span class="o">-</span><span class="mf">19.2954</span> <span class="o">-</span><span class="mf">7.20586</span>
+  <span class="p">:</span>       <span class="p">:</span>        <span class="p">:</span>
+
+<span class="o">-</span><span class="mf">121.59</span> <span class="o">-</span><span class="mf">20.3273</span> <span class="o">-</span><span class="mf">2.0079</span>
+<span class="o">-</span><span class="mf">122.2</span> <span class="o">-</span><span class="mf">19.8527</span> <span class="o">-</span><span class="mf">2.64669</span>
+<span class="o">-</span><span class="mf">120.83</span> <span class="o">-</span><span class="mf">19.7342</span> <span class="o">-</span><span class="mf">2.2393</span>
+  <span class="p">:</span>       <span class="p">:</span>        <span class="p">:</span>
+</pre></div>
+</div>
+<p>(Note: Blank lines are used to delimit different frames in the
+trajectory. If you only want a single frame from the trajectory, you can
+specify it using the -t or -last arguments. Alternately you can use the
+<em>head</em> and <em>tail</em> unix commands to extract a portion of the trajectory
+file containing the frame you are interested in beforehand.)</p>
+<p>To limit the output to consider only atoms of a certain type, (for
+example, atom types 1,3,5,6, and 7), you can use the <em>“-type LIST”</em>
+argument (for example “-type 1,3,5-7”). You can also restrict the output
+to atoms or molecules with a certain range of ID numbers using the “-id”
+and “-mol” arguments. <em>(These arguments have have no effect if you are
+creating a “.data” file. They only work if you are using the ‘-raw’ or
+‘-xyz’ arguments.)</em></p>
+</div>
+<div class="section" id="example-creating-xyz-4-column-ascii-text-coordinate-files">
+<h3><span class="section-number">18.4.2. </span>Example creating XYZ (4-column ascii text) coordinate files<a class="headerlink" href="#example-creating-xyz-4-column-ascii-text-coordinate-files" title="Permalink to this headline">¶</a></h3>
+<p>You can extract the coordinates using the .XYZ format this way:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">dump2data</span><span class="o">.</span><span class="n">py</span> <span class="o">-</span><span class="n">xyz</span> <span class="o">&lt;</span> <span class="n">traj</span><span class="o">.</span><span class="n">lammpstrj</span> <span class="o">&gt;</span> <span class="n">traj</span><span class="o">.</span><span class="n">xyz</span>
+</pre></div>
+</div>
+<p>This generates a 4-column text file containing the atom-type (first
+column) followed by the xyz coordinates on each line of each atom
+(sorted by atomid). (If you prefer the first column to be something
+else, you can use the “-xyz-id”, “-xyz-mol”, and “-xyz-type-mol”
+arguments instead.) If there are multiple frames in the trajectory file,
+it will concatenate them together this way:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mi">8192</span>
+<span class="n">LAMMPS</span> <span class="n">data</span> <span class="kn">from</span> <span class="nn">timestep</span> <span class="mi">50000</span>
+<span class="mi">5</span> <span class="o">-</span><span class="mf">122.28</span> <span class="o">-</span><span class="mf">19.2293</span> <span class="o">-</span><span class="mf">7.93705</span>
+<span class="mi">3</span> <span class="o">-</span><span class="mf">121.89</span> <span class="o">-</span><span class="mf">19.2417</span> <span class="o">-</span><span class="mf">8.85591</span>
+<span class="mi">7</span> <span class="o">-</span><span class="mf">121.6</span> <span class="o">-</span><span class="mf">19.2954</span> <span class="o">-</span><span class="mf">7.20586</span>
+<span class="p">:</span>   <span class="p">:</span>          <span class="p">:</span>            <span class="p">:</span>
+<span class="mi">8192</span>
+<span class="n">LAMMPS</span> <span class="n">data</span> <span class="kn">from</span> <span class="nn">timestep</span> <span class="mi">100000</span>
+<span class="mi">5</span> <span class="o">-</span><span class="mf">121.59</span> <span class="o">-</span><span class="mf">20.3273</span> <span class="o">-</span><span class="mf">2.0079</span>
+<span class="mi">3</span> <span class="o">-</span><span class="mf">122.2</span> <span class="o">-</span><span class="mf">19.8527</span> <span class="o">-</span><span class="mf">2.64669</span>
+<span class="mi">7</span> <span class="o">-</span><span class="mf">120.83</span> <span class="o">-</span><span class="mf">19.7342</span> <span class="o">-</span><span class="mf">2.2393</span>
+</pre></div>
+</div>
+<p>(Note: If you want the atom-ID to appear in the first column use
+“-xyz-id” If you want the molecule-ID to appear in the first column use
+“-xyz-mol” If you want the atom-type AND molecule-ID to appear, use
+“-xyz-type-mol”)</p>
+</div>
+</div>
+<div class="section" id="examples-creating-data-files">
+<h2><span class="section-number">18.5. </span>Examples creating DATA files<a class="headerlink" href="#examples-creating-data-files" title="Permalink to this headline">¶</a></h2>
+<p>“dump2data.py” (and “raw2data.py”) can also create lammps DATA files.
+You must supply them with an existing DATA file containing the correct
+number of atoms and topology information, and a file containing the
+coordinates of the atoms.</p>
+<p>If your coordinates are stored in a an ordinary 3-column text file
+(“RAW” file), you can create the new DATA file this way:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">raw2data</span><span class="o">.</span><span class="n">py</span> <span class="o">-</span><span class="n">atomstyle</span> <span class="n">ATOM_STYLE</span> <span class="n">data_file</span> <span class="o">&lt;</span> <span class="n">coords</span><span class="o">.</span><span class="n">raw</span>  <span class="o">&gt;</span> <span class="n">new_data_file</span>
+</pre></div>
+</div>
+<p>where ATOMSTYLE is a quoted string, such as “full” or “hybrid sphere
+dipole”. The “-atomstyle ATOM_STYLE” argument is optional. The default
+atom_style it is “full”.</p>
+<p>If your coordinates are stored in a DUMP file (eg “traj.lammpstrj”), you
+can create a new data file this way:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">dump2data</span><span class="o">.</span><span class="n">py</span> <span class="o">-</span><span class="n">t</span> <span class="mi">10000</span> <span class="n">data_file</span> <span class="o">&lt;</span> <span class="n">traj</span><span class="o">.</span><span class="n">lammpstrj</span> <span class="o">&gt;</span> <span class="n">new_data_file</span>
+</pre></div>
+</div>
+<p>In this example, “10000” is the timestep for the frame you have
+selected. You can use <em>-last</em> to select the last frame. If you do not
+specify the frame you want, multiple data files may be created.
+<strong>WARNING: dump2data.py is slow</strong>. (If you have a long trajectory file,
+I recommend using the <em>tail</em> and <em>head</em> unix commands to extract the
+portion of the trajectory file containing the frame you want before
+reading it with dump2data.py. This will be much faster than using the
+<em>-t</em> or <em>-last</em> commands.)</p>
+<p>(You can use the “-atomstyle” argument with <em>dump2data.py</em> as well.)</p>
+<p>Creating multiple data files: The “-multi” command line argument tells
+“dump2data.py” to generate a new data file for each frame in the
+trajectory/dump-file. Those files will have names ending in “.1”, “.2”,
+“.3”, … (If you use the <em>-interval</em> argument, frames in the trajectory
+whose timestep is not a multiple of the interval will be discarded.)
+This (probably) occurs automatically whenever the trajectory file
+contains multiple frames unless you have specified the frame you want
+(using the <em>-t</em> or <em>-last</em> arguments)</p>
+<div class="section" id="examples-using-optional-command-line-arguments">
+<h3><span class="section-number">18.5.1. </span>Examples using optional command line arguments<a class="headerlink" href="#examples-using-optional-command-line-arguments" title="Permalink to this headline">¶</a></h3>
+<p>If you want to select a particular frame from the trajectory, use:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">dump2data</span><span class="o">.</span><span class="n">py</span> <span class="o">-</span><span class="n">xyz</span> <span class="o">-</span><span class="n">t</span> <span class="mi">10000</span> <span class="o">&lt;</span> <span class="n">traj</span><span class="o">.</span><span class="n">lammpstrj</span> <span class="o">&gt;</span> <span class="n">coords</span><span class="o">.</span><span class="n">xyz</span>
+</pre></div>
+</div>
+<p>To select the most recent (complete) frame, use:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">dump2data</span><span class="o">.</span><span class="n">py</span> <span class="o">-</span><span class="n">xyz</span> <span class="o">-</span><span class="n">last</span> <span class="o">&lt;</span> <span class="n">traj</span><span class="o">.</span><span class="n">lammpstrj</span> <span class="o">&gt;</span> <span class="n">coords</span><span class="o">.</span><span class="n">xyz</span>
+</pre></div>
+</div>
+<p>(If the last frame is incomplete, this script will attempt to use the
+previous frame.)</p>
+<p>If you want to select multiple frames, but there are too many frames in
+your trajectory, you can run dump2data.py this way…</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">dump2data</span><span class="o">.</span><span class="n">py</span> <span class="o">-</span><span class="n">xyz</span> <span class="o">-</span><span class="n">interval</span> <span class="mi">10000</span> <span class="o">&lt;</span> <span class="n">traj</span><span class="o">.</span><span class="n">lammpstrj</span> <span class="o">&gt;</span> <span class="n">traj</span><span class="o">.</span><span class="n">xyz</span>
+</pre></div>
+</div>
+<p>…to indicate the desired interval between frames (it must be a multiple
+of the save interval). You can also use “-tstart 500000 and”-tstop
+1000000” arguments to limit the output to a particular range of time.
+(500000-1000000 in this example).</p>
+</div>
+<div class="section" id="arguments-for-scaling-and-centering-coordinates">
+<h3><span class="section-number">18.5.2. </span>Arguments for scaling and centering coordinates<a class="headerlink" href="#arguments-for-scaling-and-centering-coordinates" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="center">
+<h4><span class="section-number">18.5.2.1. </span>-center<a class="headerlink" href="#center" title="Permalink to this headline">¶</a></h4>
+<p>This will center the coordinates around the geometric center, so that
+the average position of the atoms in each frame is located at the
+origin. (This script attempts to pay attention to the periodic image
+flags. As such, I think this script works with triclinic cells, but I
+have not tested that feature carefully.)</p>
+</div>
+<div class="section" id="scale-1-6">
+<h4><span class="section-number">18.5.2.2. </span>-scale 1.6<a class="headerlink" href="#scale-1-6" title="Permalink to this headline">¶</a></h4>
+<p>This will multiply the coordinates by a constant (eg “1.6”) <em>(Warning:
+This argument has not been tested with trajectory files containing
+periodic image flags: ix iy iz)</em></p>
+</div>
+</div>
+</div>
+<div class="section" id="limitations">
+<h2><span class="section-number">18.6. </span>Limitations<a class="headerlink" href="#limitations" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="speed">
+<h3><span class="section-number">18.6.1. </span>Speed<a class="headerlink" href="#speed" title="Permalink to this headline">¶</a></h3>
+<p>The program is slow. If speed is important to you, you probably should
+write your own custom script or use pizza.py which might be faster.
+(Again, alternatively, you can use the unix <em>head</em> and <em>tail</em> commands
+to extract the portion of the trajectory file you are interested in
+beforehand.)</p>
+</div>
+<div class="section" id="triclinic-cells">
+<h3><span class="section-number">18.6.2. </span>Triclinic cells<a class="headerlink" href="#triclinic-cells" title="Permalink to this headline">¶</a></h3>
+<p>Support for triclinic cells has been added, but not tested.</p>
+</div>
+<div class="section" id="exotic-atom-styles">
+<h3><span class="section-number">18.6.3. </span>Exotic atom_styles<a class="headerlink" href="#exotic-atom-styles" title="Permalink to this headline">¶</a></h3>
+<p>This script was designed to work with point-like atoms, and it extracts
+the x,y,z coordinates (and if present vx,vy,vz velocity) and it (by
+default) copies it to the new data being created by this script.</p>
+<p>By default, this script assumes you are using “atom_style full”. If you
+are using some other atom style (eg “hybrid bond dipole”), then you can
+try to run it this way:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">dump2data</span><span class="o">.</span><span class="n">py</span> <span class="o">-</span><span class="n">t</span> <span class="mi">10000</span> \
+  <span class="o">-</span><span class="n">atomstyle</span> <span class="s2">&quot;hybrid bond dipole&quot;</span> \
+  <span class="n">old_data_file</span> <span class="o">&lt;</span> <span class="n">traj</span><span class="o">.</span><span class="n">lammpstrj</span> <span class="o">&gt;</span> <span class="n">new_data_file</span>
+</pre></div>
+</div>
+<p>In general, the -atomstyle argument can be any of the atom styles listed
+in the table at: <a class="reference external" href="http://lammps.sandia.gov/doc/atom_style.html">http://lammps.sandia.gov/doc/atom_style.html</a> …such as
+“angle”, “bond”, “charge”, “full”, “molecular”, “dipole”, “ellipsoid”,
+or any hybrid combination of these styles. (When using hybrid atom
+styles, you must enclose the argument in quotes, for example: “hybrid
+sphere dipole”)</p>
+<p><em>Warning: I have not tested using dump2data.py with exotic
+(non-point-like) atom styles. I suspect that the script will not crash,
+but the dipole or ellipsoid orientations might not be updated and may
+remain pointing in their initial directions. I suspect that “tri”,
+“template”, and “body” atom styles will not work at all.</em></p>
+<p>You can also customize the order columns you want to appear in that file
+using -atomstyle ”molid x y z atomid atomtype mux muy muz”. <em>(But again,
+I worry that the mux, muy, muz information in the new data file might be
+out of date.)</em></p>
+<p>Again, try using pizza.py if you are simulating systems with exotic data
+types. <a class="reference external" href="http://pizza.sandia.gov/doc/Manual.html">http://pizza.sandia.gov/doc/Manual.html</a></p>
+<p>I hope this is useful to someone.</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">moltemplate</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html">1. Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main/installation.html">2. Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main/quick_reference.html">3. Quick reference <em>(skip on first reading)</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main/tutorial.html">4. Introductory tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main/overview.html">5. Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main/coordinates.html">6. Object composition and coordinate generation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main/arrays.html">7. Arrays, slices, and coordinate transformations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main/custom_xform.html">8. Customizing molecule position and topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../appendix/spce_example_robust.html">9. Portability: Using <em>LT files</em> for force-field storage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main/limitations.html">10. Known bugs and limitations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../appendix/nbody_by_type.html">11. Bonded interactions “By Type”</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../appendix/ltemplify.html">12. Using ltemplify.py to create an <em>LT file</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../appendix/vmd_advanced.html">13. Visualization in VMD</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../appendix/ttree_man_page.html">14. Advanced moltemplate.sh Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../appendix/ttree.html">15. Using <em>lttree.py</em> or <em>ttree.py</em> directly</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../appendix/nbody_by_type_utility.html">16. Using the <em>nbody_by_type.py</em> utility</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../appendix/adv_variable_syntax.html">17. Variable syntax details</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">18. dump2data.py</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#description">18.1. Description</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#comparison-with-pizza-py">18.2. Comparison with pizza.py</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#arguments">18.3. Arguments</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#examples">18.4. Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#examples-creating-data-files">18.5. Examples creating DATA files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#limitations">18.6. Limitations</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="extract_lammps_data.html">19. extract_lammps_data.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="genpoly_lt.html">20. genpoly_lt.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="interpolate_curve.html">21. interpolate_curve.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ltemplify.html">22. ltemplify.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raw2data.html">23. raw2data.py</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="../appendix/adv_variable_syntax.html" title="previous chapter"><span class="section-number">17. </span>Variable syntax details</a></li>
+      <li>Next: <a href="extract_lammps_data.html" title="next chapter"><span class="section-number">19. </span>extract_lammps_data.py</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Andrew Jewett.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/utils/dump2data.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

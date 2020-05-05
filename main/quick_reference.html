@@ -1,0 +1,895 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>3. Quick reference (skip on first reading) &#8212; moltemplate 2.1 documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="4. Introductory tutorial" href="tutorial.html" />
+    <link rel="prev" title="2. Installation" href="installation.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="quick-reference-skip-on-first-reading">
+<span id="sec-quick-reference"></span><h1><span class="section-number">3. </span>Quick reference <em>(skip on first reading)</em><a class="headerlink" href="#quick-reference-skip-on-first-reading" title="Permalink to this headline">¶</a></h1>
+<p><em>Note: New users should skip to section</em> <a class="reference internal" href="tutorial.html#sec-tutorial"><span class="std std-ref">Introductory tutorial</span></a></p>
+<div class="section" id="moltemplate-commands">
+<h2><span class="section-number">3.1. </span>Moltemplate commands<a class="headerlink" href="#moltemplate-commands" title="Permalink to this headline">¶</a></h2>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p><strong>command</strong></p></th>
+<th class="head"><p><strong>meaning</strong></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><em>MolType</em> <strong>{</strong>
+<em>content</em> …
+<strong>}</strong></p></td>
+<td><p>Define a new type of molecule (or
+namespace) named <em>MolType</em>. The
+text enclosed in curly brackets
+(<em>content</em>) typically contains
+multiple write(), write_once()
+commands to define Atoms, Bonds,
+Angles, Coeffs, etc… <em>(If that
+molecule type exists already,
+then this will append
+additional</em><strong>content</strong><em>to its
+definition.)</em> <strong>new</strong> and
+<strong>delete</strong> commands can be used
+to create or delete molecular
+subunits <em>within</em> this molecule.
+(See the <em>SPCE</em>, <em>Monomer</em>, and
+<em>Butane</em> molecules, and the
+<em>TraPPE</em> namespace defined in
+sections
+<a class="reference internal" href="tutorial.html#sec-spce-example"><span class="std std-ref">Simulating a box of water using moltemplate and LAMMPS</span></a>,
+<a class="reference internal" href="coordinates.html#sec-2bead"><span class="std std-ref">Building a large molecule from smaller pieces</span></a>,
+<a class="reference internal" href="../appendix/spce_example_robust.html#sec-inheritance"><span class="std std-ref">Inheritance</span></a>, &amp;
+<a class="reference internal" href="../appendix/spce_example_robust.html#sec-trappe"><span class="std std-ref">Namespace example</span></a>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><em>mol_name</em> = <strong>new</strong> <em>MolType</em></p></td>
+<td><p>Create (instantiate) a copy of a
+molecule of type <em>MolType</em> and
+name it <em>mol_name</em>. (See section
+<a class="reference internal" href="tutorial.html#sec-spce-example"><span class="std std-ref">Simulating a box of water using moltemplate and LAMMPS</span></a>.)</p></td>
+</tr>
+<tr class="row-even"><td><p><em>mol_name</em> = <strong>new</strong>
+<em>MolType</em>.<em>xform()</em></p></td>
+<td><p>Create a copy of a molecule and
+apply coordinate transformation
+<em>xform()</em> to its coordinates.
+(See sections
+<a class="reference internal" href="tutorial.html#sec-coords-intro"><span class="std std-ref">Coordinate generation</span></a> and
+<a class="reference internal" href="#sec-xforms-table"><span class="std std-ref">Coordinate transformations</span></a>.)</p></td>
+</tr>
+<tr class="row-odd"><td><p><em>molecules</em> = <strong>new</strong> <em>MolType</em>
+[<em>N</em>].<em>xform()</em></p></td>
+<td><p>Create <em>N</em> copies of a molecule
+of type <em>MolType</em> and name them
+<em>molecules[0]</em>, <em>molecules[1]</em>,
+<em>molecules[2]</em>… Coordinates in
+each successive copy are
+cumulatively transformed
+according to <em>xform()</em>. (See
+sections
+<a class="reference internal" href="tutorial.html#sec-coords-intro"><span class="std std-ref">Coordinate generation</span></a>,
+<a class="reference internal" href="arrays.html#sec-xform-arrays"><span class="std std-ref">Transformations following brackets [] in a new statement</span></a> and
+<a class="reference internal" href="#sec-xforms-table"><span class="std std-ref">Coordinate transformations</span></a>.)
+Multidimensional arrays are also
+allowed. (See section
+<a class="reference internal" href="arrays.html#sec-multidimensional-arrays"><span class="std std-ref">Multidimensional arrays</span></a>
+.)</p></td>
+</tr>
+<tr class="row-even"><td><p><em>molecules</em> =
+<strong>new</strong> <em>MolType</em>.xform1()
+<strong>[N]</strong>.<em>xform2()</em></p></td>
+<td><p>Apply coordinate transformations
+(<em>xform1()</em> to <em>MolType</em>,
+before making <em>N</em> copies
+of it while cumulatively applying
+<em>xform2()</em>. (See section
+<a class="reference internal" href="arrays.html#sec-xform-arrays"><span class="std std-ref">Transformations following brackets [] in a new statement</span></a>
+and <a class="reference internal" href="arrays.html#sec-xform-order"><span class="std std-ref">Transformation order (general case)</span></a>.)</p></td>
+</tr>
+<tr class="row-odd"><td><p><em>molecules</em> = <strong>new</strong>
+<strong>random</strong>([<em>M1.xf1()</em>,</p>
+<p><em>M2.xf2()</em>,</p>
+<p><em>M3.xf2()</em>,…],</p>
+<p>[<span class="math notranslate nohighlight">\(p_1, p_2, p_3, ...\)</span>,</p>
+<p><em>seed</em>)</p>
+<p><strong>[N]</strong>.<em>xform()</em></p>
+</td>
+<td><p>Generate an array of <em>N</em>
+molecules randomly selected from
+with probabilities , using
+(optional) initial coordinate
+transformations <em>xf1(), xf2(),
+xf3, …</em>, and applying
+transformation <em>xform()</em>
+cumulatively thereafter. This
+also works with multidimensional
+arrays. <strong>You can directly
+specify the number of each type
+of molecule</strong> by replacing the
+list of probabilities , with a
+list of integers . (See sections
+<a class="reference internal" href="arrays.html#sec-random-arrays"><span class="std std-ref">Random arrays</span></a> and
+<a class="reference internal" href="arrays.html#sec-random-advanced"><span class="std std-ref">Creating random mixtures using multidimensional arrays</span></a>.)</p></td>
+</tr>
+<tr class="row-even"><td><p><em>NewMol</em> = <em>OldMol</em></p></td>
+<td><p>Create a new molecule <strong>type</strong>
+based on an existing molecule
+type. Additional atoms (or bonds,
+etc…) can be added later to the
+new molecule using . (See section
+<a class="reference internal" href="custom_xform.html#sec-molecule-customization"><span class="std std-ref">Customizing molecule types</span></a>
+.)</p></td>
+</tr>
+<tr class="row-odd"><td><p><em>NewMol</em> = <em>OldMol</em>.<em>xform()</em></p></td>
+<td><p>Create a new molecule <strong>type</strong>
+based on an existing molecule
+type, and apply coordinate
+transformation <em>xform()</em> to it.
+(See section
+<a class="reference internal" href="custom_xform.html#sec-molecule-customization"><span class="std std-ref">Customizing molecule types</span></a>
+.)</p></td>
+</tr>
+<tr class="row-even"><td><p><em>NewMol</em> <strong>inherits</strong> <em>Mol1</em>
+<em>Mol2</em> … {</p>
+<blockquote>
+<div><p><em>additional content</em> …</p>
+</div></blockquote>
+<p>}</p>
+</td>
+<td><p>Create a new molecule <strong>type</strong>
+based on multiple existing
+molecule types. Atom types, bond
+types, angle types (etc) which
+are defined in <em>Mol1</em>, or <em>Mol2</em>,
+… are available inside the new
+molecule. <em>Additional content</em>
+(including more <em>write()</em> or
+<em>write_once()</em> or <em>new</em> commands)
+follows within the curly
+brackets. (See sections
+<a class="reference internal" href="custom_xform.html#sec-inheritance-intro"><span class="std std-ref">(Advanced) Inheritance</span></a>,
+<a class="reference internal" href="../appendix/spce_example_robust.html#sec-inheritance"><span class="std std-ref">Inheritance</span></a>, and
+<a class="reference internal" href="../appendix/spce_example_robust.html#sec-multiple-inheritance"><span class="std std-ref">Multiple inheritance:</span></a>)</p></td>
+</tr>
+<tr class="row-odd"><td><p><em>MolType</em>.<em>xform()</em></p></td>
+<td><p>Apply the coordinate transform
+<em>xform()</em> to the coordinates of
+the atoms in all molecules of
+type <em>MolType</em>. (See section
+<a class="reference internal" href="custom_xform.html#sec-molecule-customization"><span class="std std-ref">Customizing molecule types</span></a>
+.)</p></td>
+</tr>
+<tr class="row-even"><td><p><em>molecule</em>.<em>xform()</em></p></td>
+<td><p>Apply the coordinate transform
+<em>xform()</em> to the coordinates in
+<em>molecule</em>. (Here <em>molecule</em>
+refers to a specific instance or
+copy of a particular molecule
+type. See sections
+<a class="reference internal" href="custom_xform.html#sec-custom-xform"><span class="std std-ref">Customizing molecule position and topology</span></a> and
+<a class="reference internal" href="tutorial.html#sec-coords-intro"><span class="std std-ref">Coordinate generation</span></a>.)</p></td>
+</tr>
+<tr class="row-odd"><td><p><em>molecules</em> [<em>range</em>].<em>xform()</em></p></td>
+<td><p>Apply the coordinate transform
+<em>xform()</em> to the coordinates of
+molecules specified by . (This
+also works for multidimensional
+arrays. See sections
+<a class="reference internal" href="arrays.html#sec-array-wildcards-intro"><span class="std std-ref">[*] and [i-j] slice notation</span></a>
+and <a class="reference internal" href="custom_xform.html#sec-custom-xform"><span class="std std-ref">Customizing molecule position and topology</span></a>.)</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>delete</strong> <em>molecule</em></p></td>
+<td><p>Delete the <em>molecule</em> instance.
+(This command can appear inside a
+molecule’s definition to delete a
+specific molecular subunit within
+a molecule. In that case, it will
+be carried out in every copy of
+that molecule type. <strong>delete</strong>
+can also be used to delete
+specific atoms, bonds, angles,
+dihedrals, and improper
+interactions.) See section
+<a class="reference internal" href="custom_xform.html#sec-delete"><span class="std std-ref">The delete command</span></a>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>delete</strong> <em>molecules</em>[<em>range</em>]</p></td>
+<td><p>Delete a range of molecules
+specified by . (This also works
+for multidimensional arrays. See
+sections <a class="reference internal" href="custom_xform.html#sec-delete"><span class="std std-ref">The delete command</span></a>
+and <a class="reference internal" href="arrays.html#sec-delete-holes"><span class="std std-ref">Cutting rectangular holes using delete</span></a>.)</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>write_once</strong> (‘<em>file</em>’) {</p>
+<p><em>text</em> …</p>
+<p>}</p>
+</td>
+<td><p>Write the text enclosed in curly
+brackets to file . The <em>text</em> can
+contain &#64;variables which are
+replaced by integers. (See
+sections <a class="reference internal" href="overview.html#sec-write"><span class="std std-ref">Basics: The write() and write_once() commands</span></a> and
+<a class="reference internal" href="overview.html#sec-variables"><span class="std std-ref">Basics: counter variables</span></a>.)</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>write</strong> (‘<em>file</em>’) {</p>
+<p><em>text</em> …</p>
+<p>}</p>
+</td>
+<td><p>Write the text enclosed in curly
+brackets to file <em>file</em>. <em>This is
+done every time a new copy of
+this molecule is created using
+the “new” command.</em> The <em>text</em>
+can contain either &#64;variables or
+$variables which will be replaced
+by integers. (See sections
+<a class="reference internal" href="overview.html#sec-write"><span class="std std-ref">Basics: The write() and write_once() commands</span></a> and
+<a class="reference internal" href="overview.html#sec-variables"><span class="std std-ref">Basics: counter variables</span></a>.)</p></td>
+</tr>
+<tr class="row-even"><td colspan="2"><p>Note:  <em>file</em> names beginning with ‘Data’ or ‘In’
+(such as ‘Data Atoms’ or ‘In Settings’) are inserted
+into the relevant section of the LAMMPS data file or input script.
+(See section <a class="reference internal" href="overview.html#sec-datain"><span class="std std-ref">“Data” and “In”</span></a>.)</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>include</strong> <em>file</em></p></td>
+<td><p>Insert the contents of file
+<em>file</em> here. (Quotes optional.)</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>import</strong> <em>file</em></p></td>
+<td><p>Insert the contents of file
+<em>file</em> here, preventing circular
+inclusions. <em>(recommended)</em></p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>using namespace</strong> <em>X</em></p></td>
+<td><p>This enables you to refer to any
+of the molecule types, defined
+within a <strong>namespace</strong> object
+(<em>X</em> in this example), <em>without</em>
+needing to refer to these objects
+by their full path. (This does
+not work for atom types. See
+section
+<a class="reference internal" href="../appendix/spce_example_robust.html#sec-using-namespaces"><span class="std std-ref">using namespace syntax</span></a>.)</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>category</strong>
+<em>$catname</em>(<span class="math notranslate nohighlight">\(i_0\)</span>, Delta`)</p>
+<p><em>or</em></p>
+<p><strong>category</strong>
+<em>&#64;catname</em>(<span class="math notranslate nohighlight">\(i_0\)</span>, Delta`)</p>
+</td>
+<td><p>Create a new variable category.
+See section
+<a class="reference internal" href="../appendix/ttree_man_page.html#sec-custom-categories"><span class="std std-ref">Customizing the counting method using category</span></a>
+for details.</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>create_var</strong> {
+<em>&#64;variable</em> }</p>
+<p><em>or</em></p>
+<p><strong>create_static_var</strong> {
+<em>&#64;variable</em> }</p>
+</td>
+<td><p>Create a variable specific to
+this molecule object.
+(<strong>create_var</strong> is typically used
+to create molecule-ID numbers
+that are shared between subunits
+of a larger molecule. See section
+<a class="reference internal" href="coordinates.html#sec-twobead-polymer"><span class="std std-ref">Building a simple polymer</span></a>.
+<strong>create_static_var</strong> is
+typically used to define shared
+&#64;atom types. )</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>replace</strong> { <em>oldvariable</em>
+<em>newvariable</em> }</p></td>
+<td><p>Allow alternate names for the
+same variable. This replaces all
+instances of <em>oldvariable</em> with
+<em>newvariable</em>. Both variable
+names must have a “&#64;” prefix.
+This is typically used to reduce
+the length of long variables, for
+example to allow the shorthand
+“&#64;atom:C2” to refer to
+“&#64;atom:C2_bC2_aC_dC_iC”</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>#</strong><em>commented text</em></p></td>
+<td><p>All text following a “#”
+character is treated as a comment
+and ignored.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="common-and-variables">
+<h2><span class="section-number">3.2. </span>Common $ and &#64; variables<a class="headerlink" href="#common-and-variables" title="Permalink to this headline">¶</a></h2>
+<div class="line-block">
+<div class="line">(See section <a class="reference internal" href="overview.html#sec-variables"><span class="std std-ref">Basics: counter variables</span></a> for details.)</div>
+</div>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p><strong>variable type</strong></p></th>
+<th class="head"><p><strong>meaning</strong></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>$atom:<em>name</em></p></td>
+<td><p>A unique ID number assigned to
+atom <em>name</em> in this molecule.
+(Note: The <em>:name</em> suffix can be
+omitted if the molecule in which
+this variable appears only
+contains a single atom.)</p></td>
+</tr>
+<tr class="row-odd"><td><p>&#64;atom:<em>type</em></p></td>
+<td><p>A number which indicates an
+atom’s <em>type</em> (typically used to
+lookup pair interactions.)</p></td>
+</tr>
+<tr class="row-even"><td><p>$bond:<em>name</em></p></td>
+<td><p>A unique ID number assigned to
+bond <em>name</em> (Note: The <em>:name</em>
+suffix can be omitted if the
+molecule in which this variable
+appears only contains a single
+bond.)</p></td>
+</tr>
+<tr class="row-odd"><td><p>&#64;bond:<em>type</em></p></td>
+<td><p>A number which indicates a bond’s
+<em>type</em></p></td>
+</tr>
+<tr class="row-even"><td><p>$angle:<em>name</em></p></td>
+<td><p>A unique ID number assigned to
+angle <em>name</em> (Note: The <em>:name</em>
+suffix can be omitted if the
+molecule in which this variable
+appears only contains a single
+angle interaction.)</p></td>
+</tr>
+<tr class="row-odd"><td><p>&#64;angle:<em>type</em></p></td>
+<td><p>A number which indicates an
+angle’s <em>type</em></p></td>
+</tr>
+<tr class="row-even"><td><p>$dihedral:<em>name</em></p></td>
+<td><p>A unique ID number assigned to
+dihedral <em>name</em> (Note: The
+<em>:name</em> suffix can be omitted if
+the molecule in which this
+variable appears only contains a
+single dihedral-angle
+interaction.)</p></td>
+</tr>
+<tr class="row-odd"><td><p>&#64;dihedral:<em>type</em></p></td>
+<td><p>A number which indicates a
+dihedral’s <em>type</em></p></td>
+</tr>
+<tr class="row-even"><td><p>$improper:<em>name</em></p></td>
+<td><p>A unique ID number assigned to
+improper <em>name</em> (Note: The
+<em>:name</em> suffix can be omitted if
+the molecule in which this
+variable appears only contains a
+single improper interaction.)</p></td>
+</tr>
+<tr class="row-odd"><td><p>&#64;improper:<em>type</em></p></td>
+<td><p>A number which indicates an
+improper’s <em>type</em></p></td>
+</tr>
+<tr class="row-even"><td><p>$<em>mol</em> or $<em>mol:.</em></p></td>
+<td><p>This variable refers to the ID
+number of <em>this</em> molecule object.
+(See section
+<a class="reference internal" href="tutorial.html#sec-spce-example"><span class="std std-ref">Simulating a box of water using moltemplate and LAMMPS</span></a>.
+Note: <code class="docutils literal notranslate"><span class="pre">$mol</span></code> is shorthand
+for <code class="docutils literal notranslate"><span class="pre">$mol:.</span></code>)</p></td>
+</tr>
+<tr class="row-odd"><td><p>$<em>mol:</em>…</p></td>
+<td><p>The ID number assigned to the
+molecule to which this object
+belongs (if applicable). See
+sections
+<a class="reference internal" href="coordinates.html#sec-twobead-polymer"><span class="std std-ref">Building a simple polymer</span></a>,
+<a class="reference internal" href="../appendix/spce_example_robust.html#sec-ellipsis-mol"><span class="std std-ref">(Advanced) $mol:… notation</span></a>,
+and appendix
+<a class="reference internal" href="../appendix/adv_variable_syntax.html#sec-adv-variable-syntax"><span class="std std-ref">Variable syntax details</span></a>.</p></td>
+</tr>
+</tbody>
+</table>
+<p>The numbers assigned to each variable are saved in the
+<strong>output_ttree/ttree_assignments.txt</strong>. See section <a class="reference internal" href="overview.html#sec-output-ttree"><span class="std std-ref">Troubleshooting using the output_ttree directory</span></a>.</p>
+</div>
+<div class="section" id="advanced-variable-usage">
+<h2><span class="section-number">3.3. </span>Advanced variable usage<a class="headerlink" href="#advanced-variable-usage" title="Permalink to this headline">¶</a></h2>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p><strong>variable type</strong></p></th>
+<th class="head"><p><strong>meaning</strong></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><em>$category</em>:<strong>query</strong>()</p></td>
+<td><p>Query the current value of the
+counter in this <em>$category</em>
+without incrementing it. (The
+“<em>$category</em>” is usually either
+<em>$atom</em>, <em>$bond</em>, <em>$angle</em>,
+<em>$dihedral</em>, <em>$improper</em>, or
+<em>$mol</em>.) This is useful for
+counting the number of atoms,
+bonds, angles, molecules, etc…
+created so far.</p></td>
+</tr>
+<tr class="row-odd"><td><p><em>&#64;category</em>:<strong>query</strong>()</p></td>
+<td><p>Query the current value of the
+counter in this <em>&#64;category</em>
+without incrementing it. (The
+“<em>&#64;category</em>” is usually either
+<em>&#64;atom</em>, <em>&#64;bond</em>, <em>&#64;angle</em>,
+<em>&#64;dihedral</em>, or <em>&#64;improper</em>.)
+This is useful for counting the
+number of atom types, bond types,
+angle types, etc… declared so
+far.)</p></td>
+</tr>
+<tr class="row-even"><td><p>${<em>category:variable</em>} or
+&#64;{<em>category:variable</em>}</p></td>
+<td><p>Curly-brackets, <strong>{}</strong>, are used
+to refer to variables with
+non-standard delimiters or
+whitespace characters. (See
+section
+<a class="reference internal" href="overview.html#sec-vardetails"><span class="std std-ref">Does “&#64;atom:H” conflict with “$atom:H”?</span></a>.)</p></td>
+</tr>
+<tr class="row-odd"><td><dl class="simple">
+<dt>&#64;{category:<em>type</em>.rjust(n)} or</dt><dd><p>&#64;{category:<em>type</em>.ljust(n)} or</p>
+</dd>
+<dt>${category:<em>name</em>.rjust(n)} or</dt><dd><p>${category:<em>name</em>.ljust(n)}</p>
+</dd>
+</dl>
+</td>
+<td><p>Print the counter variable in a
+right-justified or a
+left-justified text-field of
+fixed width <span class="math notranslate nohighlight">\(n\)</span> characters.
+(This is useful for generating
+text files which require
+fixed-width columns.)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="coordinate-transformations">
+<span id="sec-xforms-table"></span><h2><span class="section-number">3.4. </span>Coordinate transformations<a class="headerlink" href="#coordinate-transformations" title="Permalink to this headline">¶</a></h2>
+<p>See sections <a class="reference internal" href="tutorial.html#sec-coords-intro"><span class="std std-ref">Coordinate generation</span></a> and <a class="reference internal" href="arrays.html#sec-xform-arrays"><span class="std std-ref">Transformations following brackets [] in a new statement</span></a> for details.</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 48%" />
+<col style="width: 52%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p><strong>suffix</strong></p></th>
+<th class="head"><p><strong>meaning</strong></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(\textit{.move}(x,y,z)\)</span></p></td>
+<td><p>Add numbers to the coordinates of every atom</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(\textit{.rot}(\theta,x,y,z)\)</span></p></td>
+<td><p>Rotate atom coordinates by angle
+<span class="math notranslate nohighlight">\(\theta\)</span> around axis passing through the origin.
+(Dipole directions are also rotated.)</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(\textit{.rot}(\theta,x,y,z,x_0,y_0,z_0)\)</span></p></td>
+<td><p>Rotate atom coordinates by angle
+<span class="math notranslate nohighlight">\(\theta\)</span> around axis pointing in the direction ,
+passing through the point.
+(This point will be a <em>fixed point</em>.)</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(\textit{.rotvv}(v_{1x},v_{1y},v_{1z},v_{2x},v_{2y},v_{2z})\)</span></p></td>
+<td><p>Rotate atom coordinates with an angle which rotates the vector
+<span class="math notranslate nohighlight">\(\mathbf{v}_1\)</span> to <span class="math notranslate nohighlight">\(\mathbf{v}_2\)</span> (around an axis
+perpendicular to both <span class="math notranslate nohighlight">\(\mathbf{v}_1\)</span> and <span class="math notranslate nohighlight">\(\mathbf{v}_2\)</span>).
+If you supply 3 additional numbers <span class="math notranslate nohighlight">\(x_0,y_0,z_0\)</span>, the axis of
+rotation will pass through this location.</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(\textit{.scale}(\text{ratio})\)</span></p></td>
+<td><p>Multiply all atomic coordinates by <em>ratio</em>.
+<em>(</em><strong>Important:</strong><em>The scale() command does not update force-field
+parameters such as atomic radii or bond-lengths. Dipole magnitudes are
+affected.)</em></p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(\textit{.scale}(x_r,y_r,z_r)\)</span></p></td>
+<td><p>Multiply coordinates <span class="math notranslate nohighlight">\(x,y,z\)</span>) by <span class="math notranslate nohighlight">\(x_r,y_r,z_r\)</span>, respectively,</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(\textit{.scale}(\text{ratio},x_0,y_0,z_0)\)</span>  or
+<span class="math notranslate nohighlight">\(\textit{.scale}(x_r,y_r,z_r,x_0,y_0,z_0)\)</span></p></td>
+<td><p>You can supply 3 optional additional arguments which specify the
+point around which you want the scaling to occur. (This point will be
+a <em>fixed point</em>. Of omitted, the origin is used.)</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(\textit{.quat}(a,b,c,d)\)</span>  or
+<span class="math notranslate nohighlight">\(\textit{.quat}(a,b,c,d,x_0,y_0,z_0)\)</span></p></td>
+<td><p>Rotate atom coordinates by the rotation corresponding to quaternion
+<span class="math notranslate nohighlight">\(a+b\mathbf{i}+c\mathbf{j}+b\mathbf{k}\)</span> (around , if specified).</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(\textit{.matrix}(
+M_{1,1}, M_{1,2}, M_{1,3},
+M_{2,1}, M_{2,2}, M_{2,3},
+M_{3,1}, M_{3,2}, M_{3,3})\)</span></p></td>
+<td><p>Apply a general linear coordinate transformation.</p>
+<blockquote>
+<div><div class="math notranslate nohighlight">
+\[\begin{split}\begin{aligned}
+\left(\begin{array}{c}
+       x' \\
+       y' \\
+       z'
+\end{array}\right)
+=
+\left(\begin{array}{ccc}
+       M_{1,1} &amp; M_{1,2} &amp; M_{1,3} \\
+       M_{2,1} &amp; M_{2,2} &amp; M_{2,3} \\
+       M_{3,1} &amp; M_{3,2} &amp; M_{3,3}
+\end{array}\right)
+\left(\begin{array}{c}
+       x \\
+       y \\
+       z
+\end{array}\right)\end{aligned}\end{split}\]</div>
+</div></blockquote>
+</td>
+</tr>
+<tr class="row-odd"><td><p><em>push</em>(rot(152.3,0.79,0.43,-0.52))</p>
+<p>monomer1 = new Monomer</p>
+<p><em>push</em>(move(0.01,35.3,-10.1))</p>
+<p>monomer2 = new Monomer</p>
+<p><em>pop</em>()</p>
+<p><em>pop</em>()</p>
+</td>
+<td><p>Coordinate transformations introduced using the <em>push()</em> command are
+applied to molecules instantiated later (using the <em>new</em>) command, and
+remain in effect until they are removed using the <em>pop()</em> command.
+(And transformations appearing in arrays accumulate as well, but do
+not need to be removed with <em>pop()</em>.) In this example, the first
+transformation, “rot()”, is applied to both “monomer1” and “monomer2”.
+The last transformation, “move()”, is applied after “rot()” and only
+acts on “monomer2”.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="moltemplate-sh-command-line-arguments">
+<span id="sec-args-table"></span><h2><span class="section-number">3.5. </span>moltemplate.sh command line arguments:<a class="headerlink" href="#moltemplate-sh-command-line-arguments" title="Permalink to this headline">¶</a></h2>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p><strong>argument</strong></p></th>
+<th class="head"><p><strong>meaning</strong></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>-atomstyle <em>style</em></p></td>
+<td><p>Inform moltemplate which
+atom_style you are using.
+(<em>style</em> is “full” by default).
+Other styles like “molecular” or
+“hybrid full dipole” are
+supported. For custom atom
+styles, you can also specify the
+list of column names manually.
+For example: <strong>-atomstyle “molid
+x y z atomid atomtype mux muy
+muz”</strong> Atom styles should be
+enclosed in quotes (“).</p></td>
+</tr>
+<tr class="row-odd"><td><p>-raw coords.raw</p></td>
+<td><p>Read all of the atomic
+coordinates from an external RAW
+file. (RAW files are simple
+3-column ASCII files contain X Y
+Z coordinates for every atom,
+separated by spaces.)</p></td>
+</tr>
+<tr class="row-even"><td><p>-xyz coords.xyz</p></td>
+<td><p>Read all of the atomic
+coordinates from an external XYZ
+file (XYZ files are 4-column
+ascii files in ATOMTYPE X Y Z
+format. The first column,
+ATOMTYPE, is skipped. The first
+line should contain the number of
+atoms. The second line is
+skipped. See section
+<a class="reference internal" href="tutorial.html#sec-coords-intro"><span class="std std-ref">Coordinate generation</span></a>.)</p></td>
+</tr>
+<tr class="row-odd"><td><p>-pdb coords.pdb</p></td>
+<td><p>Read all of the atomic
+coordinates from an external PDB
+file (Periodic boundary
+conditions are also read, if
+present. Atoms are sorted by the
+chainID, resID, insertCode, and
+atomID fields on every line
+beginning with “ATOM” or
+“HETATM”. This order must match
+the order that the atoms appear
+in the data file. See section
+<a class="reference internal" href="tutorial.html#sec-coords-intro"><span class="std std-ref">Coordinate generation</span></a>.)</p></td>
+</tr>
+<tr class="row-even"><td><p>-a ‘<em>variable</em> <em>value</em>’</p></td>
+<td><p>Assign <em>variable</em> to <em>value</em>.
+(The <em>variable</em> should begin with
+either a &#64; character or a $
+character. Single-quotes and a
+space separator are required. See
+appendix
+<a class="reference internal" href="../appendix/ttree_man_page.html#sec-manual-assignment"><span class="std std-ref">Manual variables assignment (“-a” or “-b”)</span></a>.)</p></td>
+</tr>
+<tr class="row-odd"><td><p>-a ‘bindings_file’</p></td>
+<td><p>The variables in column 1 of
+<em>bindings_file</em> (which is a text
+file) will be assigned to the
+values in column 2 of that file.
+(This is useful when there are
+many variable assignments to
+make. See appendix
+<a class="reference internal" href="../appendix/ttree_man_page.html#sec-manual-assignment"><span class="std std-ref">Manual variables assignment (“-a” or “-b”)</span></a>.)</p></td>
+</tr>
+<tr class="row-even"><td><p>-b ‘<em>variable</em> <em>value</em>’</p>
+<p><em>or</em></p>
+<p>-b <em>bindings_file</em></p>
+</td>
+<td><p>Assign variables to values.
+Unlike assignments made with
+“-a”, assignments made using “-b”
+are non-exclusive. (They may
+overlap with other variables in
+the same category. See appendix
+<a class="reference internal" href="../appendix/ttree_man_page.html#sec-manual-assignment"><span class="std std-ref">Manual variables assignment (“-a” or “-b”)</span></a>.)</p></td>
+</tr>
+<tr class="row-odd"><td><p>-overlay-angles</p>
+<p>-overlay-dihedrals</p>
+<p>-overlay-impropers</p>
+</td>
+<td><p>By default moltemplate overwrites
+duplicate bonded interactions
+which involve the same set of
+atoms. These flags disable that
+behavior. This can be useful when
+you want to superimpose multiple
+angular or dihedral forces on the
+same set of atoms (eg. to enable
+more complex force fields). Note:
+Each duplicate must still be
+given an unique $bond, $angle,
+$dihedral, $improper style
+variable name.</p></td>
+</tr>
+<tr class="row-even"><td><p>-nocheck</p></td>
+<td><p>Do <em>not</em> check for common
+LAMMPS/moltemplate syntax errors.
+(This might be useful when using
+moltemplate with simulation
+software other than LAMMPS, <em>or</em>
+to build systems which need new
+non-standard LAMMPS features.)</p></td>
+</tr>
+<tr class="row-odd"><td><p>-checkff</p></td>
+<td><p>This forces moltemplate.sh to
+check that there are valid angle
+and dihedral interactions defined
+for every 3 or 4 consecutively
+bonded atoms in the system
+(defined in “Data Angles By Type”
+and “Data Dihedrals By Type”
+sections).</p></td>
+</tr>
+<tr class="row-even"><td><p>-vmd</p></td>
+<td><p>Invoke VMD after running
+moltemplate to view the system
+you have just created. (VMD must
+be installed. See sections
+<a class="reference internal" href="tutorial.html#sec-vmd-topotools"><span class="std std-ref">Visualization using VMD &amp; topotools</span></a>,
+<a class="reference internal" href="../appendix/vmd_advanced.html#sec-vmd-advanced"><span class="std std-ref">Visualization in VMD</span></a> for
+details.)</p></td>
+</tr>
+<tr class="row-odd"><td><p>-dihedral-sym file.py</p>
+<p>-improper-sym file.py</p>
+<p>-bond-symmetry file.py</p>
+<p>-angle-symmetry file.py</p>
+</td>
+<td><p>Normally moltemplate.sh reorders
+the atoms in each bond, angle,
+dihedral, and improper
+interaction before writing them
+to the DATA file in order to help
+avoid duplicate interactions
+between the same atoms if listed
+in different but equivalent
+orders. Sometimes this is
+undesirable. <strong>To disable this
+behavior, set “file.py” to
+“None”.</strong> You can also manually
+choose alternate symmetry rules
+for unusual force fields. (Such
+as class2 force fields,
+dihedral_style spherical, etc…
+For an example of the file format
+for “file.py”, see the
+“nbody_Impropers.py” file.)</p></td>
+</tr>
+<tr class="row-even"><td><p>-molc</p></td>
+<td><p>Helpful additional
+post-processing for users of the
+<strong>MOLC</strong> coarse-grained model.</p></td>
+</tr>
+<tr class="row-odd"><td><p>-full-comment-names</p></td>
+<td><p>Moltemplate writes atom type
+names in the comments following
+the “Masses” section of a LAMMPS
+data file. These two arguments
+control whether or not the
+<em>short</em> or <em>full</em> versions of the
+atom type names are printed
+there. (Default: short. See
+section <a class="reference internal" href="overview.html#sec-full-names"><span class="std std-ref">Variable names: short-names vs. full-names</span></a> for
+details.)</p></td>
+</tr>
+<tr class="row-even"><td><p>-forbid-wildcards</p></td>
+<td><p>Forbid the use of “*” and “?”
+characters in “pair_coeff”,
+“bond_coeff”, “angle_coeff”,
+“dihedral_coeff”, and
+“improper_coeff” commands. (eg:
+“bond_coeff &#64;bond:CH?? …”,
+“pair_coeff &#64;atom:C* &#64;atom:C*
+…”. These are allowed by
+default.)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">moltemplate</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html">1. Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">2. Installation</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">3. Quick reference <em>(skip on first reading)</em></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#moltemplate-commands">3.1. Moltemplate commands</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#common-and-variables">3.2. Common $ and &#64; variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#advanced-variable-usage">3.3. Advanced variable usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#coordinate-transformations">3.4. Coordinate transformations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#moltemplate-sh-command-line-arguments">3.5. moltemplate.sh command line arguments:</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">4. Introductory tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="overview.html">5. Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="coordinates.html">6. Object composition and coordinate generation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="arrays.html">7. Arrays, slices, and coordinate transformations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="custom_xform.html">8. Customizing molecule position and topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../appendix/spce_example_robust.html">9. Portability: Using <em>LT files</em> for force-field storage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="limitations.html">10. Known bugs and limitations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../appendix/nbody_by_type.html">11. Bonded interactions “By Type”</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../appendix/ltemplify.html">12. Using ltemplify.py to create an <em>LT file</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../appendix/vmd_advanced.html">13. Visualization in VMD</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../appendix/ttree_man_page.html">14. Advanced moltemplate.sh Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../appendix/ttree.html">15. Using <em>lttree.py</em> or <em>ttree.py</em> directly</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../appendix/nbody_by_type_utility.html">16. Using the <em>nbody_by_type.py</em> utility</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../appendix/adv_variable_syntax.html">17. Variable syntax details</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utils/dump2data.html">18. dump2data.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utils/extract_lammps_data.html">19. extract_lammps_data.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utils/genpoly_lt.html">20. genpoly_lt.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utils/interpolate_curve.html">21. interpolate_curve.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utils/ltemplify.html">22. ltemplify.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utils/raw2data.html">23. raw2data.py</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="installation.html" title="previous chapter"><span class="section-number">2. </span>Installation</a></li>
+      <li>Next: <a href="tutorial.html" title="next chapter"><span class="section-number">4. </span>Introductory tutorial</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Andrew Jewett.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/main/quick_reference.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

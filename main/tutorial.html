@@ -1,0 +1,509 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>4. Introductory tutorial &#8212; moltemplate 2.1 documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="5. Overview" href="overview.html" />
+    <link rel="prev" title="3. Quick reference (skip on first reading)" href="quick_reference.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="introductory-tutorial">
+<span id="sec-tutorial"></span><h1><span class="section-number">4. </span>Introductory tutorial<a class="headerlink" href="#introductory-tutorial" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="summary">
+<h2><span class="section-number">4.1. </span><em>Summary</em><a class="headerlink" href="#summary" title="Permalink to this headline">¶</a></h2>
+<p><em>Moltemplate is based on a very simple text generator (wrapper) which
+repetitively copies short text fragments into one (or more) files and
+keeps track of various kinds of counters.</em></p>
+<p>LAMMPS is a powerful but complex program with many contributors.
+Moltemplate is a front-end for LAMMPS. Moltemplate users will have to
+tackle the same steep learning-curve (and occasional bugs) that other
+LAMMPS users must face. Moltemplate files (LT files) share the same file
+format and syntax structure as LAMMPS DATA files and INPUT scripts.
+Moltemplate will attempt to correct user mistakes, however users must
+still learn LAMMPS syntax and write LT files which obey it. For users
+who are new to LAMMPS, the easiest way to do this is to modify an
+existing example (such as the water box example in this section). (The
+official LAMMPS documentation <a class="reference external" href="http://lammps.sandia.gov/doc/Manual.html">http://lammps.sandia.gov/doc/Manual.html</a>
+is an excellent reference to look up LAMMPS commands you see in these
+examples that you are not familiar with.)</p>
+</div>
+<div class="section" id="simulating-a-box-of-water-using-moltemplate-and-lammps">
+<span id="sec-spce-example"></span><h2><span class="section-number">4.2. </span>Simulating a box of water using moltemplate and LAMMPS<a class="headerlink" href="#simulating-a-box-of-water-using-moltemplate-and-lammps" title="Permalink to this headline">¶</a></h2>
+<div class="figure align-default" id="id3">
+<a class="reference internal image-reference" href="../_images/single_water_LR.jpg"><img alt="single water molecule" src="../_images/single_water_LR.jpg" style="width: 2.4cm;" /></a>
+<p class="caption"><span class="caption-number">Fig. 4.1 </span><span class="caption-text">Coordinates of a single water molecule in our example. (Atomic radii not to scale.)</span><a class="headerlink" href="#id3" title="Permalink to this image">¶</a></p>
+</div>
+<p>Here we show an example of a lammps-template file for water. (The
+settings shown here are borrowed from the simple-point-charge
+<a class="bibtex reference internal" href="#berendsenstraatsmajphyschem1987" id="id1">[BGS87]</a> SPC/E model.) In
+addition to coordinates, topology and force-field settings, “LT” files
+can optionally include any other kind of LAMMPS settings including SHAKE
+constraints, k-space settings, and even group definitions.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span># (NOTE: Text following &#39;#&#39; characters are comments)
+#
+# file &quot;spce_simple.lt&quot;
+#
+#    H1     H2
+#      \   /
+#        O
+#
+
+SPCE {
+
+  ## Atom properties and molecular topology go in the various &quot;Data ...&quot; sections
+
+  # We selected &quot;atom_style full&quot;.  That means we use this column format:
+  # atomID      molID         atomType  charge  coordX    coordY    coordZ
+
+  write(&quot;Data Atoms&quot;) {
+    $atom:o      $mol:.       @atom:O  -0.8476  0.0000000 0.000000  0.00000
+    $atom:h1     $mol:.       @atom:H   0.4238  0.8164904 0.5773590 0.00000
+    $atom:h2     $mol:.       @atom:H   0.4238  -0.8164904 0.5773590 0.00000
+  }
+
+  # Variables beginning with $ or @ will be replaced by numbers LAMMPS will
+  # eventually read.  Each of the three atoms&quot; will be assigned unique
+  # atomIDs (denoted here by &quot;$atom:o&quot;, &quot;$atom:h1&quot;, &quot;$atom:h2&quot;), even if
+  # they belong to different molecules.  However, the atom types
+  # (denoted &quot;@atom:O&quot;, &quot;@atom:H&quot;) are shared for atoms in all molecules.
+  # All 3 atoms share same molID number (represeted here by &quot;$mol:.&quot;)
+  # however that number is different for different water molecules.
+
+  write_once(&quot;Data Masses&quot;) {
+    # atomType  mass
+    @atom:O    15.9994
+    @atom:H    1.008
+  }
+
+  write(&quot;Data Bonds&quot;) {
+    #  bondID  bondType  atomID1  atomID2
+    $bond:oh1  @bond:OH  $atom:o  $atom:h1
+    $bond:oh2  @bond:OH  $atom:o  $atom:h2
+  }
+
+  write(&quot;Data Angles&quot;) {
+    # angleID  angleType  atomID1  atomID2 atomID3
+    $angle:hoh @angle:HOH $atom:h1 $atom:o $atom:h2
+  }
+
+  # --- Force-field parameters go in the &quot;In Settings&quot; section: ---
+
+  write_once(&quot;In Settings&quot;) {
+    # -- Non-bonded (Pair) interactions --
+    #          atomType1 atomType2  parameter-list (epsilon, sigma)
+    pair_coeff  @atom:O  @atom:O    0.1553 3.166
+    pair_coeff  @atom:H  @atom:H    0.0    2.058
+    # (mixing rules determine interactions between types @atom:O and @atom:H)
+
+    # -- Bonded interactions --
+    #             bondType   parameter list (k_bond, r0)
+    bond_coeff   @bond:OH    1000.00 1.0
+    #             angleType  parameter-list (k_theta, theta0)
+    angle_coeff  @angle:HOH  1000.0   109.47
+
+    # Group definitions and constraints can also go in the &quot;In Settings&quot; section
+    group spce type  @atom:O  @atom:H
+    fix fSHAKE spce shake 0.0001 10 100 b @bond:OH a @angle:HOH
+    # (lammps quirk: Remember to &quot;unfix fSHAKE&quot; during minimization.)
+  }
+
+  # LAMMPS supports a large number of force-field styles. We must select
+  # which ones we need. This information belongs in the &quot;In Init&quot; section.
+
+  write_once(&quot;In Init&quot;) {
+    units        real                 # angstroms, kCal/mole, Daltons, Kelvin
+    atom_style   full                 # select column format for Atoms section
+    pair_style   lj/charmm/coul/long 9.0 10.0 10  # params needed: epsilon sigma
+    bond_style   harmonic             # parameters needed: k_bond, r0
+    angle_style  harmonic             # parameters needed: k_theta, theta0
+    kspace_style pppm 0.0001          # long-range electrostatics sum method
+    pair_modify  mix arithmetic       # using Lorenz-Berthelot mixing rules
+  }
+
+} # SPCE
+</pre></div>
+</div>
+<p>Words which are preceded by “$” or “&#64;” characters are counter variables
+and will be replaced by integers. (See section <a class="reference internal" href="overview.html#sec-variables"><span class="std std-ref">Basics: counter variables</span></a>
+for details.) Users can include SPCE water in their simulations using
+commands like these:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># -- file &quot;system.lt&quot; --</span>
+<span class="kn">import</span> <span class="s2">&quot;spce_simple.lt&quot;</span>
+<span class="n">wat</span> <span class="o">=</span> <span class="n">new</span> <span class="n">SPCE</span> <span class="p">[</span><span class="mi">1000</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>You can now use “moltemplate.sh” to create simulation input files for
+LAMMPS</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">moltemplate</span><span class="o">.</span><span class="n">sh</span> <span class="o">-</span><span class="n">pdb</span> <span class="n">coords</span><span class="o">.</span><span class="n">pdb</span> <span class="o">-</span><span class="n">atomstyle</span> <span class="s2">&quot;full&quot;</span> <span class="n">system</span><span class="o">.</span><span class="n">lt</span>
+</pre></div>
+</div>
+<p>This command will create lammps input files for the molecular system
+described in “system.lt”, using the desired atom style (“full” by
+default). In this example, moltemplate is relying on an external file
+(“coords.pdb”) to supply the atomic coordinates of the water molecules,
+as well as the periodic boundary conditions. Coordinates in XYZ format
+are also supported using “-xyz coords.xyz”.</p>
+<div class="section" id="details">
+<h3><span class="section-number">4.2.1. </span><em>Details</em><a class="headerlink" href="#details" title="Permalink to this headline">¶</a></h3>
+<p><em>Note that since XYZ files lack boundary information, you must also
+include a “Boundary” section in your “.lt” file, as demonstrated in
+section</em><a class="reference external" href="#sec:pbc">[sec:pbc]</a><em>. In both cases, the order of the
+atom types in a PDB or XYZ file (after sorting) should match the order
+they are created by moltemplate (which is determined by the order of the
+“new” commands in the LT file). Unfortunately this may require careful
+manual editing of the PDB or XYZ file.</em></p>
+</div>
+</div>
+<div class="section" id="coordinate-generation">
+<span id="sec-coords-intro"></span><h2><span class="section-number">4.3. </span>Coordinate generation<a class="headerlink" href="#coordinate-generation" title="Permalink to this headline">¶</a></h2>
+<p>It is not necessary to provide a separate file with atomic coordinates.
+It is more common to manually specify the location (and orientation) of
+the molecules in your system using the “.move()” and “.rot()” commands
+in the LT file itself (discussed in section <a class="reference internal" href="coordinates.html#sec-coordinates"><span class="std std-ref">Object composition and coordinate generation</span></a>).
+For example you can replace the line:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">wat</span> <span class="o">=</span> <span class="n">new</span> <span class="n">SPCE</span> <span class="p">[</span><span class="mi">1000</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>from the example above with 1000 lines:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">wat1</span>    <span class="o">=</span> <span class="n">new</span> <span class="n">SPCE</span>
+<span class="n">wat2</span>    <span class="o">=</span> <span class="n">new</span> <span class="n">SPCE</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="mf">3.1034</span><span class="p">,</span> <span class="mf">0.00</span><span class="p">,</span> <span class="mf">0.00</span><span class="p">)</span>
+<span class="n">wat3</span>    <span class="o">=</span> <span class="n">new</span> <span class="n">SPCE</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="mf">6.2068</span><span class="p">,</span> <span class="mf">0.00</span><span class="p">,</span> <span class="mf">0.00</span><span class="p">)</span>
+<span class="n">wat4</span>    <span class="o">=</span> <span class="n">new</span> <span class="n">SPCE</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="mf">9.3102</span><span class="p">,</span> <span class="mf">0.00</span><span class="p">,</span> <span class="mf">0.00</span><span class="p">)</span>
+  <span class="p">:</span>           <span class="p">:</span>
+<span class="n">wat1000</span> <span class="o">=</span> <span class="n">new</span> <span class="n">SPCE</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="mf">31.034</span><span class="p">,</span> <span class="mf">31.034</span><span class="p">,</span> <span class="mf">31.034</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Specifying geometry this way is tedious. Alternatively, moltemplate has
+simple commands for arranging multiple copies of a molecule in periodic,
+crystalline, toroidal, and helical 1-D, 2-D, and 3-D lattices. For
+example, you can generate a simple cubic lattice of
+10<span class="math notranslate nohighlight">\(\times\)</span>10<span class="math notranslate nohighlight">\(\times\)</span>10 water molecules (with a
+3.1034 Angstrom spacing) using a single command (which in this example
+we split into multiple lines)</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">wat</span>  <span class="o">=</span> <span class="n">new</span> <span class="n">SPCE</span> <span class="p">[</span><span class="mi">10</span><span class="p">]</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">3.1034</span><span class="p">)</span>
+                <span class="p">[</span><span class="mi">10</span><span class="p">]</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">3.1034</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+                <span class="p">[</span><span class="mi">10</span><span class="p">]</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="mf">3.1034</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>(See section <a class="reference internal" href="coordinates.html#sec-coordinates"><span class="std std-ref">Object composition and coordinate generation</span></a> for more details and examples.)
+This will create 1000 molecules with names like “wat[0][0][0]”,
+“wat[0][0][1]”,<span class="math notranslate nohighlight">\(\ldots\)</span>, “wat[9][9][9]”. You can always access
+individual atomIDs, molIDs, bondIDs, angleIDs, and dihedralIDs (if
+present), for any molecule elsewhere in your LT files using this
+notation: “$atom:wat[2][3][4]/h1”, “$bond:wat[0][5][1]/oh1”,
+“$angle:wat[2][8][3]/hoh”, “$mol:wat[0][1][2]”. This allows you to
+define interactions which link different molecules together (see section
+<a class="reference internal" href="coordinates.html#sec-coordinates"><span class="std std-ref">Object composition and coordinate generation</span></a>).</p>
+<p>A list of available coordinate transformations is provided in section
+<a class="reference internal" href="quick_reference.html#sec-xforms-table"><span class="std std-ref">Coordinate transformations</span></a>.</p>
+<div class="section" id="boundary-conditions">
+<span id="sec-pbc"></span><h3><span class="section-number">4.3.1. </span>Boundary Conditions:<a class="headerlink" href="#boundary-conditions" title="Permalink to this headline">¶</a></h3>
+<p>LAMMPS simulations have finite volume and are usually periodic. We must
+specify the dimensions of the simulation boundary using the
+“write_once(“Data Boundary”)” command.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">write_once</span><span class="p">(</span><span class="s2">&quot;Data Boundary&quot;</span><span class="p">)</span> <span class="p">{</span>
+   <span class="mf">0.0</span>  <span class="mf">31.034</span>  <span class="n">xlo</span> <span class="n">xhi</span>
+   <span class="mf">0.0</span>  <span class="mf">31.034</span>  <span class="n">ylo</span> <span class="n">yhi</span>
+   <span class="mf">0.0</span>  <span class="mf">31.034</span>  <span class="n">zlo</span> <span class="n">zhi</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>This is usually specified in the outermost LT file (“system.lt” in this
+example). <em>(Note: Boundary conditions do not have to be rectangular or
+even periodic. For triclinic cells, additional “xy”, “xz”, and “yz” tilt
+parameters can be added. For details, lookup the “read_data” and
+“boundary” commands in the official LAMMPS documentation.)</em></p>
+<p>This system is shown in figure <a class="reference internal" href="#fig-spce-x-1000-before"><span class="std std-numref">Fig. 4.2</span></a>
+and <a class="reference internal" href="#fig-spce-x-1000-after"><span class="std std-numref">Fig. 4.3</span></a>. After you have specified
+the geometry, then you can run moltemplate.sh this way:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">moltemplate</span><span class="o">.</span><span class="n">sh</span> <span class="o">-</span><span class="n">atomstyle</span> <span class="s2">&quot;full&quot;</span> <span class="n">system</span><span class="o">.</span><span class="n">lt</span>
+</pre></div>
+</div>
+<div class="figure align-center" id="id4">
+<span id="fig-spce-x-1000-before"></span><a class="reference internal image-reference" href="../_images/waterSPCEx1000_LR.jpg"><img alt="water before equilibration" src="../_images/waterSPCEx1000_LR.jpg" style="width: 5cm;" /></a>
+<p class="caption"><span class="caption-number">Fig. 4.2 </span><span class="caption-text">A box of 1000 water molecules (before pressure equilibration),
+generated by moltemplate and visualized
+by VMD with the topotools plugin. (The VMD console commands used for
+visualization were: “topo readlammpsdata system.data full”, “animate
+write psf system.psf”, “pbc wrap -compound res -all”, and “pbc box”. See
+<a class="reference internal" href="#sec-vmd-topotools"><span class="std std-ref">Visualization using VMD &amp; topotools</span></a> and <a class="reference internal" href="../appendix/vmd_advanced.html#sec-vmd-advanced"><span class="std std-ref">Visualization in VMD</span></a> for details.</span><a class="headerlink" href="#id4" title="Permalink to this image">¶</a></p>
+</div>
+<div class="figure align-center" id="id5">
+<span id="fig-spce-x-1000-after"></span><a class="reference internal image-reference" href="../_images/waterSPCEx1000_t=25_LR.jpg"><img alt="water after equilibration" src="../_images/waterSPCEx1000_t=25_LR.jpg" style="width: 5cm;" /></a>
+<p class="caption"><span class="caption-number">Fig. 4.3 </span><span class="caption-text">A box of 1000 water molecules (after pressure equilibration).</span><a class="headerlink" href="#id5" title="Permalink to this image">¶</a></p>
+</div>
+</div>
+</div>
+<div class="section" id="visualization-using-vmd-topotools">
+<span id="sec-vmd-topotools"></span><h2><span class="section-number">4.4. </span>Visualization using VMD &amp; topotools<a class="headerlink" href="#visualization-using-vmd-topotools" title="Permalink to this headline">¶</a></h2>
+<p>When you run moltemplate, it generates a LAMMPS <em>data</em> file. This file
+is usually called “system.data”. Geometric information, and bonded
+topology are stored in this file. After you have run moltemplate, you
+should look at your system to check it for mistakes. Problems can easily
+occur with overlapping atoms (missing molecules), periodic boundaries,
+incorrectly bonded atoms, incorrect rotation and movement. Sometimes
+many iterations of running moltemplate and visualization are necessary.</p>
+<p><em>Optional:</em> If you have VMD installed, you can automatically visualize
+the system you have just created automatically by invoking moltemplate
+with the <strong>-vmd</strong> command line argument. (In other words invoke
+moltemplate.sh using <em>moltemplate.sh -vmd</em> instead of <em>moltemplate.sh</em>.
+VMD must be installed.) If you don’t use the -vmd command line argument,
+you can always view the system in VMD later manually. For instructions
+how to do that, keep reading…</p>
+<p>Some very basic instructions how to use VMD are provided below: <em>(Note:
+These instructions were written for VMD 1.9 and topotools 1.2)</em></p>
+<p>To view a <em>data</em> file:</p>
+<ol class="loweralpha simple">
+<li><p>start VMD</p></li>
+<li><p>from the menu, select <strong>Extensions</strong> <span class="math notranslate nohighlight">\(\rightarrow\)</span></p></li>
+<li><p>enter:</p></li>
+</ol>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">topo</span> <span class="n">readlammpsdata</span> <span class="n">system</span><span class="o">.</span><span class="n">data</span> <span class="n">full</span>
+<span class="n">animate</span> <span class="n">write</span> <span class="n">psf</span> <span class="n">system</span><span class="o">.</span><span class="n">psf</span>
+</pre></div>
+</div>
+<p>The first command will display all of the atoms and bonds in your system
+in VMD’s 3-D window. (We use “<strong>full</strong>” because we are using the “full”
+atom_style in this particular example. If you are using a different
+atom_style, then change the command above accordingly.)</p>
+<p>The second command will create a PSF file (“system.psf”) which will be
+useful later for viewing a trajectory file created during a LAMMPS
+simulation. (See section <a class="reference external" href="#sec:vmd_trajectory">4.5</a>.)</p>
+<p>Most likely, atoms and bonds will be represented by ugly dots and lines
+by default. To change the way molecules are displayed, control their
+color, display periodic boundaries, and wrap atomic coordinates, read
+the short VMD tutorial in appendix <a class="reference internal" href="../appendix/vmd_advanced.html#sec-vmd-advanced"><span class="std std-ref">Visualization in VMD</span></a>.</p>
+<p><em>(Note: As of 2019-9-03, VMD does not have built-in support for exotic
+atom_styles such as ellipsoids and dipoles, but their are 3rd-party
+scripts, plugins and settings you can use. Search the VMD and LAMMPS
+mailing lists for help.</em>)</p>
+</div>
+<div class="section" id="running-a-lammps-simulation-after-using-moltemplate">
+<span id="sec-run"></span><h2><span class="section-number">4.5. </span>Running a LAMMPS simulation (after using moltemplate)<a class="headerlink" href="#running-a-lammps-simulation-after-using-moltemplate" title="Permalink to this headline">¶</a></h2>
+<p>To run a simulation of one or more molecules, LAMMPS requires an <em>input
+script</em> and a <em>data file</em>. Input scripts typically contain force field
+styles, parameters and run settings. (They sometimes also contain atom
+coordinates.) Data files typically contain atom coordinates and bonded
+topology data. (They sometimes also contain force-field parameters.)</p>
+<p>Moltemplate will create the following files: “system.data”, “system.in”,
+“system.in.init”, “system.in.settings”, (and possibly other files
+including “system.in.coords”). These are LAMMPS input/data files, and
+they can be run in LAMMPS with minimal modification (see below). The
+main input script file is named “system.in”, and it usually contains
+just three lines:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">include</span>   <span class="s2">&quot;system.in.init&quot;</span>
+<span class="n">read_data</span> <span class="s2">&quot;system.data&quot;</span>
+<span class="n">include</span>   <span class="s2">&quot;system.in.settings&quot;</span>
+</pre></div>
+</div>
+<p>To <em>run</em> a simulation, you will have to edit this file in order to add a
+couple of run commands. These commands tell LAMMPS about the simulation
+conditions you want to use (temperature, pressure), how long to run the
+simulation, how to integrate the equations of motion, and how to write
+the results to a file (file format, frequency, etc). Moltemplate.sh can
+not do this for you. Some simple examples (which you can paste into your
+input script) are provided in the <em>online examples</em> which can be
+downloaded from <a class="reference external" href="http://moltemplate.org">http://moltemplate.org</a>. (These example input scripts
+typically have names like “run.in.nvt” and “run.in.npt”.)</p>
+<p>In addition to the examples, an introduction to LAMMP input scripts is
+provided at these links:
+<a class="reference external" href="http://lammps.sandia.gov/doc/Section_commands.html#cmd_1">http://lammps.sandia.gov/doc/Section_commands.html#cmd_1</a>.
+<a class="reference external" href="http://lammps.sandia.gov/doc/Section_howto.html">http://lammps.sandia.gov/doc/Section_howto.html</a> and
+<a class="reference external" href="http://lammps.sandia.gov/doc/Section_howto.html#howto_15">http://lammps.sandia.gov/doc/Section_howto.html#howto_15</a></p>
+<p>Here is a list of basic input script commands used in the moltemplate
+examples (and links to their documentation):</p>
+<p><strong>run</strong>  <a class="reference external" href="http://lammps.sandia.gov/doc/run.html">http://lammps.sandia.gov/doc/run.html</a></p>
+<p><strong>timestep</strong>  <a class="reference external" href="http://lammps.sandia.gov/doc/timestep.html">http://lammps.sandia.gov/doc/timestep.html</a></p>
+<p><strong>thermo</strong>  <a class="reference external" href="http://lammps.sandia.gov/doc/thermo.html">http://lammps.sandia.gov/doc/thermo.html</a></p>
+<p><strong>dump</strong>  <a class="reference external" href="http://lammps.sandia.gov/doc/dump.html">http://lammps.sandia.gov/doc/dump.html</a></p>
+<p><strong>read_data</strong>  <a class="reference external" href="http://lammps.sandia.gov/doc/read_data.html">http://lammps.sandia.gov/doc/read_data.html</a></p>
+<p><strong>restart</strong>  <a class="reference external" href="http://lammps.sandia.gov/doc/restart.html">http://lammps.sandia.gov/doc/restart.html</a></p>
+<p><strong>include</strong>  <a class="reference external" href="http://lammps.sandia.gov/doc/include.html">http://lammps.sandia.gov/doc/include.html</a></p>
+<p><strong>fix nve</strong>  <a class="reference external" href="http://lammps.sandia.gov/doc/fix_nve.html">http://lammps.sandia.gov/doc/fix_nve.html</a></p>
+<p><strong>fix nvt</strong>  <a class="reference external" href="http://lammps.sandia.gov/doc/fix_nh.html">http://lammps.sandia.gov/doc/fix_nh.html</a></p>
+<p><strong>fix npt</strong>  <a class="reference external" href="http://lammps.sandia.gov/doc/fix_nh.html">http://lammps.sandia.gov/doc/fix_nh.html</a></p>
+<p><strong>fix langevin</strong>  <a class="reference external" href="http://lammps.sandia.gov/doc/fix_langevin.html">http://lammps.sandia.gov/doc/fix_langevin.html</a></p>
+<p><strong>fix</strong>  <a class="reference external" href="http://lammps.sandia.gov/doc/fix.html">http://lammps.sandia.gov/doc/fix.html</a></p>
+<p><strong>group</strong>  <a class="reference external" href="http://lammps.sandia.gov/doc/group.html">http://lammps.sandia.gov/doc/group.html</a></p>
+<p><strong>compute</strong>  <a class="reference external" href="http://lammps.sandia.gov/doc/compute.html">http://lammps.sandia.gov/doc/compute.html</a></p>
+<p><strong>print</strong>  <a class="reference external" href="http://lammps.sandia.gov/doc/print.html">http://lammps.sandia.gov/doc/print.html</a></p>
+<p><strong>variable</strong>  <a class="reference external" href="http://lammps.sandia.gov/doc/variable.html">http://lammps.sandia.gov/doc/variable.html</a></p>
+<p><strong>rerun</strong>  <a class="reference external" href="http://lammps.sandia.gov/doc/rerun.html">http://lammps.sandia.gov/doc/rerun.html</a></p>
+<p><strong>fix shake</strong>  <a class="reference external" href="http://lammps.sandia.gov/doc/fix_shake.html">http://lammps.sandia.gov/doc/fix_shake.html</a></p>
+<p><strong>fix rigid</strong>  <a class="reference external" href="http://lammps.sandia.gov/doc/fix_rigid.html">http://lammps.sandia.gov/doc/fix_rigid.html</a></p>
+<p>In addition, all users should be familiar with the following commands:
+(These appear in the “In Init” section of most LT files.)</p>
+<p><strong>atom_style</strong>  <a class="reference external" href="http://lammps.sandia.gov/doc/atom_style.html">http://lammps.sandia.gov/doc/atom_style.html</a></p>
+<p><strong>pair_style</strong>  <a class="reference external" href="http://lammps.sandia.gov/doc/pair_style.html">http://lammps.sandia.gov/doc/pair_style.html</a></p>
+<p><strong>bond_style</strong>  <a class="reference external" href="http://lammps.sandia.gov/doc/bond_style.html">http://lammps.sandia.gov/doc/bond_style.html</a></p>
+<p><strong>angle_style</strong>  <a class="reference external" href="http://lammps.sandia.gov/doc/angle_style.html">http://lammps.sandia.gov/doc/angle_style.html</a></p>
+</div>
+<div class="section" id="visualizing-trajectories">
+<span id="sec-vmd-trajectory"></span><h2><span class="section-number">4.6. </span>Visualizing Trajectories<a class="headerlink" href="#visualizing-trajectories" title="Permalink to this headline">¶</a></h2>
+<p>After you have run a simulation in LAMMPS, there are several programs
+which can visualize the system. If you have saved your trajectory in
+LAMMPS “dump” format, later you can view it in VMD
+<a class="bibtex reference internal" href="#vmd" id="id2">[HDS96]</a>. For the purpose of viewing trajectories in
+LAMMPS, I recommend using the following style of “dump” commands in the
+LAMMPS input-script that you use when you run LAMMPS:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">dump</span> <span class="mi">1</span> <span class="nb">all</span> <span class="n">custom</span> <span class="mi">1000</span> <span class="n">DUMP_FILE</span><span class="o">.</span><span class="n">lammpstrj</span> <span class="nb">id</span> <span class="n">mol</span> <span class="nb">type</span> <span class="n">x</span> <span class="n">y</span> <span class="n">z</span> <span class="n">ix</span> <span class="n">iy</span> <span class="n">iz</span>
+</pre></div>
+</div>
+<p>(The “all” and “1000”, refer to the atom selection and save interval,
+which may differ depending on the kind of simulation you are running.
+See <a class="reference external" href="http://lammps.sandia.gov/doc/dump.html">http://lammps.sandia.gov/doc/dump.html</a> for details.)</p>
+<p>Once you have a dump file, you can view it in VMD using:</p>
+<p>a) Start VMD From the menu in the upper-left, select
+<strong>File</strong><span class="math notranslate nohighlight">\(\rightarrow\)</span></p>
+<p>b) Browse to select the PSF file you created above, and load it. (Don’t
+close the window yet.)</p>
+<p>c) Browse to select the trajectory file. If necessary, for “file type”
+select: “LAMMPS Trajectory”. Click on <strong>OK</strong>.</p>
+<ol class="loweralpha simple" start="4">
+<li><p>Click on the <strong>Load</strong> button.</p></li>
+</ol>
+<p>Again, to customize molecule appearance, display periodic boundary
+conditions and wrap molecule coordinates, see the commands discussed in
+appendix <a class="reference internal" href="../appendix/vmd_advanced.html#sec-vmd-advanced"><span class="std std-ref">Visualization in VMD</span></a>.</p>
+<p><em>(Note: VMD may not be able to correctly visualize simulations which do
+not preserve the number of atoms and bonds over time, such as those run
+using</em><strong>fix bond/create</strong><em>,</em><strong>fix bond/break</strong><em>, or</em><strong>fix
+gcmc</strong><em>.)</em></p>
+<p id="bibtex-bibliography-main/tutorial-0"><dl class="citation">
+<dt class="bibtex label" id="berendsenstraatsmajphyschem1987"><span class="brackets"><a class="fn-backref" href="#id1">BGS87</a></span></dt>
+<dd><p>H. J. C. Berendsen, J. R. Grigera, and T. P. Straatsma. The missing term in effective pair potentials. <em>J. Phys. Chem.</em>, 91(24):6269–6271, 1987.</p>
+</dd>
+<dt class="bibtex label" id="vmd"><span class="brackets"><a class="fn-backref" href="#id2">HDS96</a></span></dt>
+<dd><p>William Humphrey, Andrew Dalke, and Klaus Schulten. VMD – Visual Molecular Dynamics. <em>Journal of Molecular Graphics</em>, 14:33–38, 1996. <span><a class="reference external" href="#"></a></span>http://www.ks.uiuc.edu/Research/vmd.</p>
+</dd>
+</dl>
+</p>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">moltemplate</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html">1. Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">2. Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quick_reference.html">3. Quick reference <em>(skip on first reading)</em></a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">4. Introductory tutorial</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#summary">4.1. <em>Summary</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#simulating-a-box-of-water-using-moltemplate-and-lammps">4.2. Simulating a box of water using moltemplate and LAMMPS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#coordinate-generation">4.3. Coordinate generation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#visualization-using-vmd-topotools">4.4. Visualization using VMD &amp; topotools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#running-a-lammps-simulation-after-using-moltemplate">4.5. Running a LAMMPS simulation (after using moltemplate)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#visualizing-trajectories">4.6. Visualizing Trajectories</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="overview.html">5. Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="coordinates.html">6. Object composition and coordinate generation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="arrays.html">7. Arrays, slices, and coordinate transformations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="custom_xform.html">8. Customizing molecule position and topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../appendix/spce_example_robust.html">9. Portability: Using <em>LT files</em> for force-field storage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="limitations.html">10. Known bugs and limitations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../appendix/nbody_by_type.html">11. Bonded interactions “By Type”</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../appendix/ltemplify.html">12. Using ltemplify.py to create an <em>LT file</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../appendix/vmd_advanced.html">13. Visualization in VMD</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../appendix/ttree_man_page.html">14. Advanced moltemplate.sh Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../appendix/ttree.html">15. Using <em>lttree.py</em> or <em>ttree.py</em> directly</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../appendix/nbody_by_type_utility.html">16. Using the <em>nbody_by_type.py</em> utility</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../appendix/adv_variable_syntax.html">17. Variable syntax details</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utils/dump2data.html">18. dump2data.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utils/extract_lammps_data.html">19. extract_lammps_data.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utils/genpoly_lt.html">20. genpoly_lt.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utils/interpolate_curve.html">21. interpolate_curve.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utils/ltemplify.html">22. ltemplify.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utils/raw2data.html">23. raw2data.py</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="quick_reference.html" title="previous chapter"><span class="section-number">3. </span>Quick reference <em>(skip on first reading)</em></a></li>
+      <li>Next: <a href="overview.html" title="next chapter"><span class="section-number">5. </span>Overview</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Andrew Jewett.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/main/tutorial.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

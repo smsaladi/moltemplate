@@ -1,0 +1,261 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>17. Variable syntax details &#8212; moltemplate 2.1 documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="18. dump2data.py" href="../utils/dump2data.html" />
+    <link rel="prev" title="16. Using the nbody_by_type.py utility" href="nbody_by_type_utility.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="variable-syntax-details">
+<span id="sec-adv-variable-syntax"></span><h1><span class="section-number">17. </span>Variable syntax details<a class="headerlink" href="#variable-syntax-details" title="Permalink to this headline">¶</a></h1>
+<p>Counter variables have names like:</p>
+<p>$<strong>cpath</strong>/<strong>catname</strong>:<strong>lpath</strong></p>
+<p>or</p>
+<p>&#64;<strong>cpath</strong>/<strong>catname</strong>:<strong>lpath</strong></p>
+<p>(Note: All of the variable examples in this appendix can refer to either
+static &#64; variables or instance $ variables. Both variable types obey the
+same syntax rules. For brevity, only the instance $ variables are
+shown.)</p>
+<p>All counter variables have 3 parts:</p>
+<p><strong>cpath</strong>, the category scope object (which is usually omitted)</p>
+<p><strong>catname</strong>, the category name</p>
+<p><strong>lpath</strong>, the “leaf path”. This includes the variable’s name and
+(optionally) the location of that variable in the object tree relative
+to the object in which the variable is referenced (the current-context
+object)</p>
+<p>Typically the <strong>cpath</strong> is omitted, in which case it means that the
+category has global scope. <em>(This is true for all of the standard
+counter variable types: “&#64;atom”, “$atom”, “$mol”, “&#64;bond”, “$bond”,
+“&#64;angle”, “$angle”, “&#64;dihedral”, “$dihedral”, “&#64;improper”, and
+“$improper”.)</em> However the <strong>cpath</strong> can be specified explicitly, as in
+this example: “$/atom:” (“/” denotes explicitly that the counter has
+global scope). Another example with an explicit <strong>cpath</strong> is the custom
+local counter variable named “$/proteins[5]/monomerid:.” (See section
+<a class="reference internal" href="ttree_man_page.html#sec-cpath-simple"><span class="std std-ref">Creating local independent counters</span></a>.) In this example, the <strong>cpath</strong> is
+“$/proteins[5]”, the <strong>catname</strong> is “monomerid”, and the <strong>lpath</strong> is
+“.”. (In section <a class="reference internal" href="ttree_man_page.html#sec-cpath-simple"><span class="std std-ref">Creating local independent counters</span></a>, we never explicitly
+specified the <strong>cpath</strong>. This is a source of confusion. When <strong>cpath</strong>
+is omitted, then the program searches up the tree for an ancestor node
+containing a category with a matching <strong>catname</strong>. Consequently the
+<strong>cpath</strong> rarely ever needs to be stated explicitly. See section
+<a class="reference external" href="#sec:variables_shorthand">17.2</a> for more details.)</p>
+<div class="section" id="general-variable-syntax">
+<h2><span class="section-number">17.1. </span>General variable syntax<a class="headerlink" href="#general-variable-syntax" title="Permalink to this headline">¶</a></h2>
+<p>The ellipsis (“…”) commonly appears in counter variables (or it is
+implied). The most complex and general variable syntax is:</p>
+<p>$<strong>cpath</strong>/…/<strong>catname</strong>:<strong>lpath</strong></p>
+<p>This means: find the closest ancestor of the <strong>cpath</strong> object containing
+a category named “<strong>catname</strong>”. This ancestor determines the category’s
+scope. Counter variables in this category are local to ancestors of that
+object. In this usage example, <strong>lpath</strong> identifies the location of the
+variable’s corresponding “leaf” object relative to the category scope
+object (<strong>cpath</strong>). On the other hand, if the the category’s scope
+(<strong>cpath</strong>) was not explicitly stated by the user (which is typical),
+then the <strong>lpath</strong> identifies the location of the leaf object relative
+to the object in which the variable was referenced (the current-context
+“.”).</p>
+</div>
+<div class="section" id="variable-shorthand-equivalents">
+<span id="sec-variables-shorthand"></span><h2><span class="section-number">17.2. </span>Variable shorthand equivalents<a class="headerlink" href="#variable-shorthand-equivalents" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="catname-lpath-is-equivalent-to-catname-lpath">
+<h3><span class="section-number">17.2.1. </span>$<strong>catname</strong>:<strong>lpath</strong> is equivalent to “$…/<strong>catname</strong>:<strong>lpath</strong>”<a class="headerlink" href="#catname-lpath-is-equivalent-to-catname-lpath" title="Permalink to this headline">¶</a></h3>
+<p>This means: find the closest direct ancestor of the current object
+containing a category whose name matches <strong>catname</strong>. If not found,
+create a new category (at the global level). <em>This is the syntax used
+most frequently in LT files.</em></p>
+<p>If the colon is omitted, as in $<strong>lpath</strong>/<strong>catname</strong>, then it is
+equivalent to: $<strong>catname</strong>:<strong>lpath</strong>. Again, in these cases,
+<strong>lpath</strong> is a path which is relative to the object in which the
+variable was referenced.</p>
+<p>If $<strong>lpath</strong> is omitted, then this is equivalent to $<strong>catname</strong>:.
+In other words, the the leaf node is the current node, “.”. (This syntax
+is often used to count keep track of molecule ID numbers. You can use
+the counter variable “$mol” to keep track of the current molecule id
+number, because it counts the molecular objects in which this variable
+was defined. In this case the name of the category is “mol”. As in most
+examples, the category object, <strong>cpath</strong>, is not specified. This means
+the category object is automatically global. A global category object
+means that every molecule object is given a unique ID number which is
+unique for the entire system, not just unique within some local
+molecule. As a counter-example, consider amino acid residue counters.
+Each amino acid in a protein can be assigned a residue ID number which
+identifies it within a single protein chain. However because their
+category was defined locally at the protein level, these residue ID
+numbers are not global, and are not uniquely defined if there are
+multiple protein chains present.) (See section
+<a class="reference internal" href="ttree_man_page.html#sec-cpath-simple"><span class="std std-ref">Creating local independent counters</span></a> for details.)</p>
+</div>
+<div class="section" id="cpath-catname-lpath">
+<h3><span class="section-number">17.2.2. </span>$<strong>cpath</strong>/<strong>catname</strong>:<strong>lpath</strong>/…<a class="headerlink" href="#cpath-catname-lpath" title="Permalink to this headline">¶</a></h3>
+<p><em>(SHORTHAND equivalent)</em></p>
+<p>Find the category name and object corresponding to
+“$<strong>cpath</strong>/<strong>catname</strong>:” (see above) If $<strong>cpath</strong>/ is blank, then
+search for an ancestor with a category whose name matches <strong>catname</strong>,
+as described above. To find the variable’s corresponding “leaf object”,
+start from the CURRENT object (not the category object). If <strong>lpath</strong> is
+not empty, follow <strong>lpath</strong> to a new position in the tree. Otherwise,
+start at the current object. (An empty <strong>lpath</strong> corresponds to the
+current object.) From this position in the object tree search for a
+direct ancestor which happens to also be “leaf object” for some other
+variable which belongs to the desired category. If no such variable is
+found, then ttree creates a new variable whose leaf object is the object
+at the <strong>lpath</strong> position, and put it in the desired category.</p>
+</div>
+<div class="section" id="lpath-catname-is-equivalent-to-catname-lpath">
+<h3><span class="section-number">17.2.3. </span>$<strong>lpath</strong>/…/<strong>catname</strong> is equivalent to $<strong>catname</strong>:<strong>lpath</strong>/…<a class="headerlink" href="#lpath-catname-is-equivalent-to-catname-lpath" title="Permalink to this headline">¶</a></h3>
+<p><em>(SHORTHAND equivalent)</em></p>
+<p>If <strong>lpath</strong> is omitted, then start from the current node. (In the
+molecular examples, “$…/mol” is a variable whose category name is
+“mol”. The “leaf object” for the variable is either the current object
+in which this variable was defined, OR a direct ancestor of this object
+which has been assigned to a variable belonging to the category named
+“mol”. In this way large objects (large molecules) can be comprised of
+smaller objects, without corrupting the “mol” counter which keeps track
+of which molecule we belong to. In other words, “$…/mol” unambiguously
+refers to the ID# of the large molecule to which this sub-molecule
+belongs (regardless of however many layers up that may be).)</p>
+</div>
+<div class="section" id="id1">
+<h3><span class="section-number">17.2.4. </span>$<strong>cpath</strong>/<strong>catname</strong>:<strong>lpath</strong><a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
+<p><em>Variables in the output_ttree/ttree_assignments.txt file use the this
+syntax.</em></p>
+<p>If the user explicitly specifies the path leading up to the cat node,
+and avoids using “…”, then <strong>lpath</strong> is interpreted relative to the
+category object, not the current object (however <strong>cpath</strong> is
+interpreted relative to the current object). This happens to be the
+format used in the “ttree_assignments.txt” file (although you can use it
+anywhere else in an “.LT” file). In “ttree_assignments.txt” file,
+<strong>cpath</strong> is defined relative to the global object. The variables in
+that file always begin with “$/” or “&#64;/”. The slash at the beginning
+takes us to the global environment object (to which all the other
+objects belong). (Since the variables in the “ttree_assignments.txt”
+always begin with “$/” or “&#64;/”, this distinction is usually not
+important because the category object for most variables usually is the
+“global” root object.)</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">moltemplate</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html">1. Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main/installation.html">2. Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main/quick_reference.html">3. Quick reference <em>(skip on first reading)</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main/tutorial.html">4. Introductory tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main/overview.html">5. Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main/coordinates.html">6. Object composition and coordinate generation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main/arrays.html">7. Arrays, slices, and coordinate transformations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main/custom_xform.html">8. Customizing molecule position and topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="spce_example_robust.html">9. Portability: Using <em>LT files</em> for force-field storage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main/limitations.html">10. Known bugs and limitations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="nbody_by_type.html">11. Bonded interactions “By Type”</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ltemplify.html">12. Using ltemplify.py to create an <em>LT file</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="vmd_advanced.html">13. Visualization in VMD</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ttree_man_page.html">14. Advanced moltemplate.sh Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ttree.html">15. Using <em>lttree.py</em> or <em>ttree.py</em> directly</a></li>
+<li class="toctree-l1"><a class="reference internal" href="nbody_by_type_utility.html">16. Using the <em>nbody_by_type.py</em> utility</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">17. Variable syntax details</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#general-variable-syntax">17.1. General variable syntax</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#variable-shorthand-equivalents">17.2. Variable shorthand equivalents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../utils/dump2data.html">18. dump2data.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utils/extract_lammps_data.html">19. extract_lammps_data.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utils/genpoly_lt.html">20. genpoly_lt.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utils/interpolate_curve.html">21. interpolate_curve.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utils/ltemplify.html">22. ltemplify.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utils/raw2data.html">23. raw2data.py</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="nbody_by_type_utility.html" title="previous chapter"><span class="section-number">16. </span>Using the <em>nbody_by_type.py</em> utility</a></li>
+      <li>Next: <a href="../utils/dump2data.html" title="next chapter"><span class="section-number">18. </span>dump2data.py</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Andrew Jewett.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/appendix/adv_variable_syntax.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

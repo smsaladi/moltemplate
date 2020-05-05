@@ -1,0 +1,268 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>1. Introduction &#8212; moltemplate 2.1 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="2. Installation" href="main/installation.html" />
+    <link rel="prev" title="Welcome to moltemplate’s documentation!" href="index.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="introduction">
+<span id="sec-introduction"></span><h1><span class="section-number">1. </span>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h1>
+<p>Moltemplate is a general molecule builder and force-field database
+system for LAMMPS. A simple file format has been created to store
+molecule definitions and force-fields (the LAMMPS-template format,
+“LT”). LT files are templates containing <em>all</em> of the text relevant to a
+particular molecule (including coordinates, bond-topology, angles,
+force-field parameters, constraints, groups and fixes). Moltemplate can
+then duplicate the molecule, customize it, and use it as a
+building-block for constructing larger, more complex molecules. (These
+molecules can be used to build even larger molecules.) Once built,
+individual molecules and subunits can be customized (atoms and bonds,
+and subunits can be inserted, moved, deleted and/or replaced).</p>
+<p>Moltemplate is extremely flexible. It supports all LAMMPS force-field
+styles and nearly all atom-styles (now and in the future).</p>
+<p>Moltemplate requires the Bourne-shell, and a recent version of python
+(2.7 or 3.0 or higher), and can run on OS X, linux, or windows (if a
+suitable shell environment has been installed). <strong>A substantial amount
+of memory is needed</strong> to run moltemplate. For example, building a system
+of 1000000 atoms typically requires between 3 and 12 GB of <em>available</em>
+memory. (This depends on the number of bonds, molecules, and angular
+interactions. See section <a class="reference internal" href="main/limitations.html#sec-limitations"><span class="std std-ref">Known bugs and limitations</span></a> for details.)</p>
+<div class="section" id="converting-lt-files-to-lammps-input-data-files">
+<h2><span class="section-number">1.1. </span>Converting <em>LT files</em> to LAMMPS input/data files<a class="headerlink" href="#converting-lt-files-to-lammps-input-data-files" title="Permalink to this headline">¶</a></h2>
+<p>The moltemplate.sh program converts LT-files (which contain molecule
+definitions) into complete LAMMPS input-scripts and data-files:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">moltemplate</span><span class="o">.</span><span class="n">sh</span> <span class="o">-</span><span class="n">atomstyle</span> <span class="s2">&quot;full&quot;</span> <span class="n">system</span><span class="o">.</span><span class="n">lt</span>
+</pre></div>
+</div>
+<p>or</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">moltemplate</span><span class="o">.</span><span class="n">sh</span> <span class="o">-</span><span class="n">xyz</span> <span class="n">coords</span><span class="o">.</span><span class="n">xyz</span> <span class="o">-</span><span class="n">atomstyle</span> <span class="s2">&quot;full&quot;</span> <span class="o">-</span><span class="n">vmd</span> <span class="n">system</span><span class="o">.</span><span class="n">lt</span>
+</pre></div>
+</div>
+<p>In the first example, the coordinates of the atoms in the system are
+built from commands inside the “system.lt” file. In the second example
+coordinates for the atoms are read from an XYZ-file, and then invokes
+VMD to visualize the system just created. (PDB-files and other
+coordinate formats are also supported. Note: The “full” atom style was
+used in this example, but other LAMMPS atom styles are supported,
+including hybrid styles.)</p>
+<p>Either of these commands will construct a LAMMPS data file and a LAMMPS
+input script (and possibly one or more auxiliary input files), which can
+be directly run in LAMMPS with minimal editing.</p>
+</div>
+<div class="section" id="converting-lammps-input-data-files-to-lt-files">
+<h2><span class="section-number">1.2. </span>Converting LAMMPS input/data files to <em>LT files</em><a class="headerlink" href="#converting-lammps-input-data-files-to-lt-files" title="Permalink to this headline">¶</a></h2>
+<p>Existing LAMMPS input/data files can be converted into “.LT” files using
+the “ltemplify.py” utility.
+( <em>Some additional manual editing may be required. See appendix</em>
+<a class="reference internal" href="appendix/ltemplify.html#sec-ltemplify"><span class="std std-ref">Using ltemplify.py to create an LT file</span></a> ).</p>
+<div class="section" id="warning-all-atom-force-fields">
+<h3><span class="section-number">1.2.1. </span>Warning: All-atom force fields<a class="headerlink" href="#warning-all-atom-force-fields" title="Permalink to this headline">¶</a></h3>
+<p>Although moltemplate was designed for building coarse-grained molecules,
+popular all-atom force-fields such as AMBER GAFF and OPLS-AA have been
+converted into LT format, and more are planned. Moltemplate users can
+build molecules, using these force-field rules to generate angles,
+dihedrals, and impropers interactions for their molecules automatically
+(and lookup their corresponding force field parameters). Unfortunately,
+as of 2019-9-03, moltemplate does <em>not</em> assign partial charges, <em>or</em>
+infer the atom-types which are needed to lookup this information.
+<em>(Force-field-specific atom types are typically inferred from PDB files,
+CIF files, SMILES strings, or read directly from PSF files or other
+files.)</em> In practice, the lack of automatic atom-type determination can
+be a huge limitation. Currently, users must carefully choose the name of
+the atom type associated with every atom in their molecules. For small
+molecules, this can sometimes be done by reading the force-field file
+carefully and choosing from among the types in the list whose
+description in the comments seems to match the context where the atom
+appears in their molecule. However this is risky because the accuracy of
+the simulation depends on selecting the correct atom type from this
+list. For large, complex molecules, manually selecting atom types this
+way is not feasible. In that case, users can try using an external tool
+(like AmberTools or PSFGEN) to generate atom type names and partial
+charges, and (manually) copy that information into the moltemplate file
+(LT file). (Unfortunately, the atom type names in different versions of
+the same force field do not always match, so this also must be done
+carefully. For example, as of 2019-9-03, the OPLSAA atom types created
+by PSFGEN <em>do not match</em> the OPLSAA atom types used by moltemplate.
+Efforts are underway to make these various tools work better together.)</p>
+<p>Fortunately, external web-servers such as ATB or LibParGen can be used
+to generate files moltemplate or LAMMPS or format which internally
+contain all of the force-field information (so that using an external
+force field is unnecessary).</p>
+</div>
+</div>
+<div class="section" id="additional-tools">
+<h2><span class="section-number">1.3. </span>Additional tools<a class="headerlink" href="#additional-tools" title="Permalink to this headline">¶</a></h2>
+<p>The VMD topotools plugin <a class="bibtex reference internal" href="#topotools" id="id1">[Koh]</a> is useful for
+converting PDB files into LAMMPS format. These files can then be
+converted to “LT” format using the “ltemplify.py” utility. VMD
+<a class="bibtex reference internal" href="main/tutorial.html#vmd" id="id2">[HDS96]</a> and topotools are also useful for visualizing
+the data files created by moltemplate.sh (See section
+<a class="reference internal" href="main/tutorial.html#sec-vmd-topotools"><span class="std std-ref">Visualization using VMD &amp; topotools</span></a>.)</p>
+<p>The PACKMOL <a class="bibtex reference internal" href="#packmol" id="id3">[MABM09]</a> program is useful for generating
+coordinates of dense heterogeneous mixtures of molecules, which can be
+read by moltemplate. (The VMD “solvate” plugin may also be helpful.)</p>
+</div>
+<div class="section" id="examples">
+<h2><span class="section-number">1.4. </span>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
+<p>This manual explains in detail how to use moltemplate.sh to build LAMMPS
+files from scratch. You will also need to learn how to <em>run</em> LAMMPS and
+visualize your results. Section :ref:<a href="#id4"><span class="problematic" id="id5">`</span></a>sec:tutorial`contains a brief
+tutorial which explains how to build a box of water using moltemplate
+and visualize initial conformation, run LAMMPS, and then visualize the
+trajectory. Several complete working examples (with images and readme
+files) which can be downloaded and modified are available online at:
+<a class="reference external" href="http://moltemplate.org/visual_examples.html">http://moltemplate.org/visual_examples.html</a> A more comprehensive list of
+examples is included in the “examples/” subdirectory distributed with
+moltemplate. These examples are a good starting point for learning
+LAMMPS and moltemplate.</p>
+</div>
+<div class="section" id="license">
+<h2><span class="section-number">1.5. </span>License<a class="headerlink" href="#license" title="Permalink to this headline">¶</a></h2>
+<p>Moltemplate is open source and publicly available at
+<a class="reference external" href="http://moltemplate.org">http://moltemplate.org</a>. With the exception of one file (<em>ttree_lex.py</em>)
+moltemplate is available under the terms of the <em>MIT license</em>. The
+remaining file, (<em>ttree_lex.py</em>) is a modified version of (<em>shlex.py</em>)
+which is available under the <em>PSF license</em>
+(<a class="reference external" href="https://docs.python.org/3/license.html">https://docs.python.org/3/license.html</a>).</p>
+<p id="bibtex-bibliography-introduction-0"><dl class="citation">
+<dt class="bibtex label" id="vmd"><span class="brackets"><a class="fn-backref" href="#id2">HDS96</a></span></dt>
+<dd><p>William Humphrey, Andrew Dalke, and Klaus Schulten. VMD – Visual Molecular Dynamics. <em>Journal of Molecular Graphics</em>, 14:33–38, 1996. <span><a class="reference external" href="#"></a></span>http://www.ks.uiuc.edu/Research/vmd.</p>
+</dd>
+<dt class="bibtex label" id="topotools"><span class="brackets"><a class="fn-backref" href="#id1">Koh</a></span></dt>
+<dd><p>Axel Kohlmeyer. The TopoTools VMD plugin. <span><a class="reference external" href="#"></a></span>http://sites.google.com/site/akohlmey/software/topotools/.</p>
+</dd>
+<dt class="bibtex label" id="packmol"><span class="brackets"><a class="fn-backref" href="#id3">MABM09</a></span></dt>
+<dd><p>L. Martínez, R. Andrade, E. G. Brigin, and J. M. Martínez. Packmol: a package for building initial configurations for molecular dynamics simulations. <em>J. Comp. Chem.</em>, 30(13):2157–2164, 2009. <span><a class="reference external" href="#"></a></span>http://www.ime.unicamp.br/ martinez/packmol/.</p>
+</dd>
+</dl>
+</p>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">moltemplate</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">1. Introduction</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#converting-lt-files-to-lammps-input-data-files">1.1. Converting <em>LT files</em> to LAMMPS input/data files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#converting-lammps-input-data-files-to-lt-files">1.2. Converting LAMMPS input/data files to <em>LT files</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#additional-tools">1.3. Additional tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#examples">1.4. Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#license">1.5. License</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="main/installation.html">2. Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="main/quick_reference.html">3. Quick reference <em>(skip on first reading)</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="main/tutorial.html">4. Introductory tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="main/overview.html">5. Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="main/coordinates.html">6. Object composition and coordinate generation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="main/arrays.html">7. Arrays, slices, and coordinate transformations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="main/custom_xform.html">8. Customizing molecule position and topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="appendix/spce_example_robust.html">9. Portability: Using <em>LT files</em> for force-field storage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="main/limitations.html">10. Known bugs and limitations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="appendix/nbody_by_type.html">11. Bonded interactions “By Type”</a></li>
+<li class="toctree-l1"><a class="reference internal" href="appendix/ltemplify.html">12. Using ltemplify.py to create an <em>LT file</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="appendix/vmd_advanced.html">13. Visualization in VMD</a></li>
+<li class="toctree-l1"><a class="reference internal" href="appendix/ttree_man_page.html">14. Advanced moltemplate.sh Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="appendix/ttree.html">15. Using <em>lttree.py</em> or <em>ttree.py</em> directly</a></li>
+<li class="toctree-l1"><a class="reference internal" href="appendix/nbody_by_type_utility.html">16. Using the <em>nbody_by_type.py</em> utility</a></li>
+<li class="toctree-l1"><a class="reference internal" href="appendix/adv_variable_syntax.html">17. Variable syntax details</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils/dump2data.html">18. dump2data.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils/extract_lammps_data.html">19. extract_lammps_data.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils/genpoly_lt.html">20. genpoly_lt.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils/interpolate_curve.html">21. interpolate_curve.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils/ltemplify.html">22. ltemplify.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils/raw2data.html">23. raw2data.py</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="index.html" title="previous chapter">Welcome to moltemplate’s documentation!</a></li>
+      <li>Next: <a href="main/installation.html" title="next chapter"><span class="section-number">2. </span>Installation</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Andrew Jewett.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/introduction.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

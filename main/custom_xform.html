@@ -1,0 +1,386 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>8. Customizing molecule position and topology &#8212; moltemplate 2.1 documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="9. Portability: Using LT files for force-field storage" href="../appendix/spce_example_robust.html" />
+    <link rel="prev" title="7. Arrays, slices, and coordinate transformations" href="arrays.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="customizing-molecule-position-and-topology">
+<span id="sec-custom-xform"></span><h1><span class="section-number">8. </span>Customizing molecule position and topology<a class="headerlink" href="#customizing-molecule-position-and-topology" title="Permalink to this headline">¶</a></h1>
+<p>By default, each copy of a molecule created using the <em>new</em> command is
+identical. This need not be the case.</p>
+<p>As discussed in section <a class="reference external" href="#sec:xform_after_instance">7.2</a>, individual
+molecules which were recently created can be moved, rotated, and scaled.
+You can also overwrite or delete individual atoms, bonds, and other
+interactions within a molecule, or their subunits. (See sections
+<a class="reference external" href="#sec:delete_atoms_bonds">8.3.2</a>, <a class="reference external" href="#sec:custom_atom">8.1.1</a>,
+<a class="reference external" href="#sec:custom_bond">8.1.2</a>, and <a class="reference external" href="#sec:adding_atoms_bonds">8.2</a>.)
+You make any of these modifications to <em>some</em> copies of the molecule
+without effecting other copies. Furthermore, if those molecules are
+compound objects (if they contain individual molecular subunits within
+them), then you can rearrange the positions of their subunits as well.
+And all of this can be done from anywhere else in the LT file.</p>
+<p>For example, suppose we used the “Polymer” molecule we defined above to
+create a larger, more complicated “MolecularComplex” molecule.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">MolecularComplex</span> <span class="n">inherits</span> <span class="n">ForceField</span> <span class="p">{</span>
+  <span class="n">polymers</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">new</span> <span class="n">Polymer</span>
+  <span class="n">polymers</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">new</span> <span class="n">Polymer</span><span class="o">.</span><span class="n">rot</span><span class="p">(</span><span class="mi">180</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">12.4</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="p">}</span>
+<span class="n">mol_complex</span> <span class="o">=</span> <span class="n">new</span> <span class="n">MolecularComplex</span>
+</pre></div>
+</div>
+<p>The <em>MolecularComplex</em> molecule is shown in figure
+<a class="reference external" href="#fig:mol_complex">[fig:mol_complex]</a>a). <em>Optional: If you want all
+the atoms in a “MolecularComplex” to share the same molecule-ID, then
+define “MolecularComplex” this way:</em></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>MolecularComplex inherits ForceField {
+  create_var { $mol }
+  polymers[0] = new Polymer
+  polymers[1] = new Polymer.rot(180,1,0,0).move(0, 12.4, 0)
+}
+</pre></div>
+</div>
+<p><em>For this to work, you must also delete the line from the definition of
+the Polymer molecule. See section</em><a class="reference internal" href="coordinates.html#sec-2bead"><span class="std std-ref">Building a large molecule from smaller pieces</span></a><em>.</em></p>
+<p>We can subsquently customize the position of the 3rd monomer
+(“monomers[2]”) of the second polymer (“polymers[1]”), this way:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">mol_complex</span><span class="o">/</span><span class="n">polymers</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">/</span><span class="n">monomers</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mf">0.2</span><span class="p">,</span><span class="mf">0.6</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This does not effect the position of <em>monomers[2]</em> in <em>polymers[0]</em>. (or
+in any other <em>“Polymer”</em> or <em>“MolecularComplex”</em> molecule.) If you want
+to do the same thing for both polymers, you could use a wildcard
+character “*”</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">mol_complex</span><span class="o">/</span><span class="n">polymers</span><span class="p">[</span><span class="o">*</span><span class="p">]</span><span class="o">/</span><span class="n">monomers</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mf">0.2</span><span class="p">,</span><span class="mf">0.6</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>If you want to move both polymers, you can use:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">mol_complex</span><span class="o">/</span><span class="n">polymers</span><span class="p">[</span><span class="o">*</span><span class="p">]</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mf">0.2</span><span class="p">,</span><span class="mf">0.6</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>you could use a wildcard character “*” (You can also use ranged (slice)
+notation, such as “polymers[0-1]”, as an alternative to “polymers[*]”.
+See section <a class="reference external" href="#sec:array_wildcards_intro">7.5</a>.</p>
+<p>To make changes that apply to every subsequently created <em>“Polymer”</em> or
+<em>“MolecularComplex”</em> molecule, see section
+<a class="reference external" href="#sec:molecule_customization">8.4</a>.)</p>
+<div class="section" id="customizing-individual-atoms-or-bonds">
+<h2><span class="section-number">8.1. </span>Customizing individual atoms or bonds<a class="headerlink" href="#customizing-individual-atoms-or-bonds" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="customizing-individual-atom-locations">
+<span id="sec-custom-atom"></span><h3><span class="section-number">8.1.1. </span>Customizing individual atom locations<a class="headerlink" href="#customizing-individual-atom-locations" title="Permalink to this headline">¶</a></h3>
+<p>The “move” or “rot” commands can not be used to control the positions of
+<em>individual atoms</em>. Instead simply overwrite their coordinates this way:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>write(&quot;Data Atoms&quot;) {
+  $atom:mol_complex/polymers[0]/monomers[2]/ca $mol:mol_complex @atom:R 0 6.4 8.2 0.6
+}
+</pre></div>
+</div>
+<p>This is an case where we must use the <em>full</em> variable name of the atom
+(“$atom:mol_complex/polymers[0]/monomers[2]/ca”) to indicate <em>which</em>
+“ca” atom we want to overwrite (In this case, we want to modify the “ca”
+atom belonging to “monomers[2]” in “polymers[0]” in “mol_complex”).</p>
+</div>
+<div class="section" id="customizing-individual-bonds-angles-dihedrals">
+<span id="sec-custom-bond"></span><h3><span class="section-number">8.1.2. </span>Customizing individual bonds, angles, dihedrals,…<a class="headerlink" href="#customizing-individual-bonds-angles-dihedrals" title="Permalink to this headline">¶</a></h3>
+<p>Similarly, you can customize existing bonds, angles, etc… by
+overwriting the line containing a reference to that particular bond (or
+angle, …). For example, you can increase the rest length of the spring
+representing the 3rd backbone bond in the first polymer, by changing it
+from type “&#64;bond:Backbone” to “&#64;bond:LongBond”</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>write(&quot;Data Bonds&quot;) {
+  $bond:mol_complex/polymers[0]/backbone3 @bond:ForceField/LongBond &amp;
+      $atom:mol_complex/polymers[0]/monomers[2]/ca &amp;
+      $atom:mol_complex/polymers[0]/monomers[3]/ca
+}
+</pre></div>
+</div>
+<p>Note: The optional “&amp;” character is used in LAMMPS to split a long
+command into multiple lines. This command is quite long since we are
+outside the definition of the polymer molecule, and we must provide the
+full-path for every variable (for example “mol_complex/polymers[0]”, and
+“ForceField”).</p>
+<p>Alternatively, if you prefer, you can <em>delete</em> the bond and define a new
+bond connecting the same pair of atoms (see section
+<a class="reference internal" href="#sec-delete"><span class="std std-ref">The delete command</span></a>).</p>
+<p>Of course, at some point you must also create a new “bond_coeff” command
+defining the properties of this new type of bond (for example to
+increase the length of the new spring). You can either edit the
+“forcefield.lt” file, <em>or</em> simply add the following lines of text
+somewhere in one of your .LT files (for example “system.lt”)</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Note: This will augment the &quot;ForceField&quot; object, not overwrite it:</span>
+<span class="n">ForceField</span> <span class="p">{</span>
+  <span class="n">write_once</span><span class="p">(</span><span class="s2">&quot;In Settings&quot;</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">#             new bond-type   k    r0</span>
+    <span class="n">bond_coeff</span>  <span class="nd">@bond</span><span class="p">:</span><span class="n">LongBond</span>   <span class="mf">10.0</span>  <span class="mf">4.8</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="adding-bonds-and-angles-to-individual-molecules">
+<span id="sec-adding-atoms-bonds"></span><h2><span class="section-number">8.2. </span>Adding bonds and angles to individual molecules<a class="headerlink" href="#adding-bonds-and-angles-to-individual-molecules" title="Permalink to this headline">¶</a></h2>
+<p>Adding additional bonds within a molecule can be accomplished by writing
+additional lines of text to the “Data Bonds” section. (This is what we
+did when we added bonds between monomers to create a polymer in section
+<a class="reference internal" href="coordinates.html#sec-twobead-polymer"><span class="std std-ref">Building a simple polymer</span></a>.) Again, bonds and atom names
+must be referred to by their <em>full</em> names. Bonds and bonded interactions
+can be deleted using the “delete” command. (See section
+<a class="reference internal" href="#sec-delete"><span class="std std-ref">The delete command</span></a>.)</p>
+</div>
+<div class="section" id="the-delete-command">
+<span id="sec-delete"></span><h2><span class="section-number">8.3. </span>The <strong>delete</strong> command<a class="headerlink" href="#the-delete-command" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="deleting-molecules-or-molecular-subunits">
+<h3><span class="section-number">8.3.1. </span>Deleting molecules or molecular subunits<a class="headerlink" href="#deleting-molecules-or-molecular-subunits" title="Permalink to this headline">¶</a></h3>
+<p>Molecules can be further customized by deleting individual atoms, bonds,
+bonded-interactions, and entire subunits. We can <strong>delete</strong> the 3rd
+monomer of the second polymer, use the “delete” command:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">delete</span> <span class="n">mol_complex</span><span class="o">/</span><span class="n">polymers</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">/</span><span class="n">monomers</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="deleting-atoms-bonds-angles-dihedrals-and-impropers">
+<span id="sec-delete-atoms-bonds"></span><h3><span class="section-number">8.3.2. </span>Deleting atoms, bonds, angles, dihedrals, and impropers<a class="headerlink" href="#deleting-atoms-bonds-angles-dihedrals-and-impropers" title="Permalink to this headline">¶</a></h3>
+<p>Individual atoms or bonds can be deleted in a similar way:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">delete</span> <span class="n">mol_complex</span><span class="o">/</span><span class="n">polymers</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">/</span><span class="n">monomers</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">/</span><span class="n">ca</span>   <span class="c1">#&lt;-- deletes the &quot;ca&quot; atom</span>
+<span class="n">delete</span> <span class="n">mol_complex</span><span class="o">/</span><span class="n">polymers</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">/</span><span class="n">monomers</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="o">/</span><span class="n">cr</span>   <span class="c1">#&lt;-- deletes the &quot;cr&quot; bond</span>
+</pre></div>
+</div>
+<p>Whenever an atom or a molecule is deleted, the bonds, angles, dihedrals,
+and improper interactions involving those atoms are deleted as well.
+<em>Note: You must omit the “$” character when deleting atoms, bonds, or
+angles, as we did in the two lines above).</em></p>
+<p>When a bond is deleted, any angular, dihedral, or improper interactions
+which were <em>automatically</em> generated by moltemplate are removed as well.
+(However other bonded interactions explicitly listed by the user in
+their “Data Angles”, “Data Dihedrals”, or “Data Impropers” sections are
+not removed. These need to be deleted manually.)</p>
+<p>Multiple molecules can moved or deleted in a single command. For
+example, the following command deletes the third, fourth, and fifth
+monomers from both polymers[0] and polymers[1]:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">delete</span> <span class="n">mol_complex</span><span class="o">/</span><span class="n">polymers</span><span class="p">[</span><span class="o">*</span><span class="p">]</span><span class="o">/</span><span class="n">monomers</span><span class="p">[</span><span class="mi">2</span><span class="o">-</span><span class="mi">4</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>See section <a class="reference external" href="#sec:array_wildcards_intro">7.5</a> for an explanation of
+ranged (“[2-4]”) array notation, and wildcard characters (“*”).</p>
+<p><em>Minor bug notice: Deleting atoms or molecules may cause inaccuracies in
+the $atoms, $bonds, $angles, $dihedrals, and $impropers sections of the
+“ttree_assignments.txt” file. (If this is a problem, please email me.
+-Andrew 2019-9-03.) Fortunately, this should not harm the resulting
+LAMMPS data files or input scripts generated by moltemplate. They should
+still work with LAMMPS.</em></p>
+<p><em>WARNING: The</em><strong>delete</strong><em>feature is experimental. There have been a
+few bugs in the</em><strong>delete</strong><em>command, but by 2019-9-03 these should be
+fixed. Please report any problems you find. As always, be sure to
+visualize your structures to make sure they look reasonable. (…by
+running moltemplate.sh using the “-vmd” command line option, for
+example. See
+sections</em><a class="reference internal" href="tutorial.html#sec-vmd-topotools"><span class="std std-ref">Visualization using VMD &amp; topotools</span></a><em>,</em><a class="reference internal" href="../appendix/vmd_advanced.html#sec-vmd-advanced"><span class="std std-ref">Visualization in VMD</span></a><em>for
+details.)</em></p>
+</div>
+</div>
+<div class="section" id="customizing-molecule-types">
+<span id="sec-molecule-customization"></span><h2><span class="section-number">8.4. </span>Customizing molecule <em>types</em><a class="headerlink" href="#customizing-molecule-types" title="Permalink to this headline">¶</a></h2>
+<p>You can create modified versions of existing molecule <em>types</em>, without
+having to redefine the entire molecule. For example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">MolecularComplex0</span> <span class="o">=</span> <span class="n">MolecularComplex</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="o">-</span><span class="mf">9.6</span><span class="p">,</span><span class="o">-</span><span class="mf">6.2</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">scale</span><span class="p">(</span><span class="mf">0.3125</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>or equivalently:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">MolecularComplex0</span> <span class="o">=</span> <span class="n">MolecularComplex</span>
+<span class="n">MolecularComplex0</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="o">-</span><span class="mf">9.6</span><span class="p">,</span><span class="o">-</span><span class="mf">6.2</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">scale</span><span class="p">(</span><span class="mf">0.3125</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This creates a new type of molecule named “MolecularComplex0” whose
+coordinates have been centered and rescaled. (Note that the “scale()”
+command only effects the atomic coordinates. (You will have to override
+earlier force field settings, such as atomic radii and bond-lengths in
+order for this to work properly.) If we want to make additional
+customizations (such as adding atoms, bonds, or molecular subunits), we
+could use this syntax:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>MolecularComplex0 = MolecularComplex
+
+# Add some new atoms connecting the two polymers in the mol_complex
+
+MolecularComplex0 inherits ForceField {
+  write(&quot;Data Atoms&quot;) {
+    $atom:t1 $mol:. @atom:CA   0.0   23.0   0.0     0.0
+    $atom:t2 $mol:. @atom:CA   0.0   24.7   4.0     0.0
+    $atom:t3 $mol:. @atom:CA   0.0   24.7   8.4     0.0
+    $atom:t4 $mol:. @atom:CA   0.0   23.0   12.4    0.0
+  }
+  write(&quot;Data Bonds&quot;) {
+    $bond:b1 @bond:Backbone $atom:polymers[0]/res7/CA $atom:t1
+    $bond:b2 @bond:Backbone $atom:t1 $atom:t2
+    $bond:b3 @bond:Backbone $atom:t2 $atom:t3
+    $bond:b4 @bond:Backbone $atom:t3 $atom:t4
+    $bond:b5 @bond:Backbone $atom:t4 $atom:polymers[1]/res7/ca
+  }
+}
+
+# Center and rescale the atoms in all &quot;MolecularComplex0&quot;
+MolecularComplex0.move(-9.6,-6.2, 0).scale(0.3125)
+</pre></div>
+</div>
+<p>The result of these modifications is shown in figure
+<a class="reference external" href="#fig:mol_complex">[fig:mol_complex]</a>b).</p>
+<p><strong>a)</strong> <a class="reference internal" href="../_images/mol_complex+mol_complex0_transparent_LR.jpg"><img alt="[fig:mol_complex] a) The “MolecularComplex” molecule. This is a contrived example consisting of two “Polymers”. See section" src="../_images/mol_complex+mol_complex0_transparent_LR.jpg" style="height: 3cm;" /></a><a class="reference internal" href="coordinates.html#sec-twobead-polymer"><span class="std std-ref">Building a simple polymer</span></a><a href="#id1"><span class="problematic" id="id2">|b) A customized
+version of the “MolecularComplex” molecule. (The original
+“MolecularComplex” is shown faded in the background for comparison.)|</span></a>
+<strong>b)</strong> <a class="reference internal" href="../_images/mol_complex+mol_complex0_transparent_LR.jpg"><img alt="[fig:mol_complex] a) The “MolecularComplex” molecule. This is a contrived example consisting of two “Polymers”. See section" src="../_images/mol_complex+mol_complex0_transparent_LR.jpg" style="height: 3cm;" /></a><a class="reference internal" href="coordinates.html#sec-twobead-polymer"><span class="std std-ref">Building a simple polymer</span></a><a href="#id3"><span class="problematic" id="id4">|b) A customized
+version of the “MolecularComplex” molecule. (The original
+“MolecularComplex” is shown faded in the background for comparison.)|</span></a></p>
+<p><em>Note: These coordinate transformations will be
+applied</em><strong>after</strong><em>the molecule is constructed. (If you add atoms to
+the molecule, these will be added before the coordinate transformations
+are applied, even if you issue the command later.) Consequently, to make
+things clear, I recommend placing the coordinate transforms applied to
+an entire molecule type</em><strong>after</strong><em>all of its internal details
+(bonds, atoms, subunits) have been declared, as we did here.</em></p>
+<div class="section" id="advanced-inheritance">
+<span id="sec-inheritance-intro"></span><h3><span class="section-number">8.4.1. </span><em>(Advanced)</em> Inheritance<a class="headerlink" href="#advanced-inheritance" title="Permalink to this headline">¶</a></h3>
+<p>The <em>MolecularComplex0</em> molecule is a type of <em>MolecularComplex</em>
+molecule. For those who are familiar with programming, relationships
+like this are analogous to the relationship between parent and child
+objects in an object-oriented programming language. More general kinds
+of inheritance are supported by moltemplate and are discussed in section
+<a class="reference internal" href="../appendix/spce_example_robust.html#sec-inheritance"><span class="std std-ref">Inheritance</span></a>.</p>
+</div>
+<div class="section" id="advanced-multiple-inheritance">
+<h3><span class="section-number">8.4.2. </span><em>(Advanced)</em> Multiple Inheritance<a class="headerlink" href="#advanced-multiple-inheritance" title="Permalink to this headline">¶</a></h3>
+<p>If we wanted, we could have created a new molecule type (like
+<em>“MolecularComplex0”</em>) which includes atom types and features from
+<em>multiple</em> different types of molecules. Section
+<a class="reference internal" href="../appendix/spce_example_robust.html#sec-inheritance"><span class="std std-ref">Inheritance</span></a> mentions one way to do this and section
+<a class="reference external" href="#sec:inheritance_vs_object_composition">9.8.3</a> discusses alternate
+approaches.</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">moltemplate</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html">1. Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">2. Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quick_reference.html">3. Quick reference <em>(skip on first reading)</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">4. Introductory tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="overview.html">5. Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="coordinates.html">6. Object composition and coordinate generation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="arrays.html">7. Arrays, slices, and coordinate transformations</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">8. Customizing molecule position and topology</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#customizing-individual-atoms-or-bonds">8.1. Customizing individual atoms or bonds</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#adding-bonds-and-angles-to-individual-molecules">8.2. Adding bonds and angles to individual molecules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#the-delete-command">8.3. The <strong>delete</strong> command</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#customizing-molecule-types">8.4. Customizing molecule <em>types</em></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../appendix/spce_example_robust.html">9. Portability: Using <em>LT files</em> for force-field storage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="limitations.html">10. Known bugs and limitations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../appendix/nbody_by_type.html">11. Bonded interactions “By Type”</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../appendix/ltemplify.html">12. Using ltemplify.py to create an <em>LT file</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../appendix/vmd_advanced.html">13. Visualization in VMD</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../appendix/ttree_man_page.html">14. Advanced moltemplate.sh Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../appendix/ttree.html">15. Using <em>lttree.py</em> or <em>ttree.py</em> directly</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../appendix/nbody_by_type_utility.html">16. Using the <em>nbody_by_type.py</em> utility</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../appendix/adv_variable_syntax.html">17. Variable syntax details</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utils/dump2data.html">18. dump2data.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utils/extract_lammps_data.html">19. extract_lammps_data.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utils/genpoly_lt.html">20. genpoly_lt.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utils/interpolate_curve.html">21. interpolate_curve.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utils/ltemplify.html">22. ltemplify.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utils/raw2data.html">23. raw2data.py</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="arrays.html" title="previous chapter"><span class="section-number">7. </span>Arrays, slices, and coordinate transformations</a></li>
+      <li>Next: <a href="../appendix/spce_example_robust.html" title="next chapter"><span class="section-number">9. </span>Portability: Using <em>LT files</em> for force-field storage</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Andrew Jewett.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/main/custom_xform.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

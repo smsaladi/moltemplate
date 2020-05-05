@@ -1,0 +1,231 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>13. Visualization in VMD &#8212; moltemplate 2.1 documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="14. Advanced moltemplate.sh Usage" href="ttree_man_page.html" />
+    <link rel="prev" title="12. Using ltemplify.py to create an LT file" href="ltemplify.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="visualization-in-vmd">
+<span id="sec-vmd-advanced"></span><h1><span class="section-number">13. </span>Visualization in VMD<a class="headerlink" href="#visualization-in-vmd" title="Permalink to this headline">¶</a></h1>
+<p>This appendix is only intended to give you a quick, minimal list of
+features you need to know to display your molecules using VMD. These
+instructions were written for VMD 1.9 and topotools 1.2. For advanced
+VMD features, analysis, and rendering options, consult the official VMD
+documentation at <a class="reference external" href="http://www.ks.uiuc.edu/Research/vmd/current/docs.html">http://www.ks.uiuc.edu/Research/vmd/current/docs.html</a></p>
+<div class="section" id="customizing-the-appearance-in-vmd">
+<span id="sec-vmd-representation"></span><h2><span class="section-number">13.1. </span>Customizing the appearance in VMD<a class="headerlink" href="#customizing-the-appearance-in-vmd" title="Permalink to this headline">¶</a></h2>
+<p>By default, VMD is likely to display your molecules with points and
+lines, which can be ugly and difficult to see. To alter the appearance
+of your molecules, select the
+<strong>Graphics</strong><span class="math notranslate nohighlight">\(\rightarrow\)</span><strong>Representations…</strong> menu, and then
+select an option from the pull-down menu. Atoms are colored by atom-type
+by default. You can customize the color of each atom type by
+<span class="math notranslate nohighlight">\(\rightarrow\)</span> As of 2019-9-03, VMD arbitrarily allows you to
+assign colors to <em>only</em> the first 9 atom types. However you can get
+around this limitation using multiple <em>representations</em> customize the
+appearance of the remaining atom types (as explained below).</p>
+<p>You may wish to use different representations for different molecules or
+atom types. To do this, select the
+<strong>Graphics</strong><span class="math notranslate nohighlight">\(\rightarrow\)</span><strong>Representations…</strong> menu and click
+on then tab. Then click on the button to create multiple
+“<em>representations</em>” of your system. For each <em>representation</em>, you can
+select different sets atoms, and use different draw-styles, for those
+atoms. For example, you can customize the color of these atoms manually
+by choosing <strong>ColorID</strong> from the pull-down menu. Then, to the right of
+this menu, you can select the color (which is represented by a number).
+This will effect all of atoms in the current <em>representation</em>. You can
+also select a different and alter the atom and bond radii.</p>
+<p>You can select from the the list of <em>representations</em> you have already
+created by clicking on the list under the button. (Double-clicking
+temporarily hides a <em>representation</em> from view.)</p>
+<p>Again, each <em>representation</em> is usually assigned to a different subset
+of atoms from the system. To specify the atoms in each <em>representation</em>,
+click on the tab. By default “all” atoms are selected, however you can
+select atoms according to atom <strong>type</strong>, <strong>index</strong>, <strong>molid</strong>,
+<strong>charge</strong>, <strong>mass</strong>, <strong>x</strong>, <strong>y</strong>, <strong>z</strong>. This will limit the current
+display settings to a subset of the atoms/bonds present in your system.
+When selecting atoms, you can use complex boolean expressions
+(containing one or more <em>and</em> and <em>or</em> operators and parenthesis). For
+more information and some examples, see
+<a class="reference external" href="http://www.ks.uiuc.edu/Research/vmd/vmd-1.9/ug/node19.html">http://www.ks.uiuc.edu/Research/vmd/vmd-1.9/ug/node19.html</a> and
+<a class="reference external" href="http://www.ks.uiuc.edu/Research/vmd/vmd-1.9/ug/node87.html#ug:topic:selections">http://www.ks.uiuc.edu/Research/vmd/vmd-1.9/ug/node87.html#ug:topic:selections</a>.</p>
+<p><strong>Note:</strong> In VMD/topotools, the <strong>type</strong>, <strong>index</strong>, and <strong>molid</strong>
+properties of each atom correspond to the <em>&#64;atom</em>, <em>$atom</em>, and <em>$mol</em>
+variables for each atom in moltemplate. Unfortunately, VMD does not
+understand moltemplate variable naming syntax (discussed in section
+<a class="reference internal" href="../main/overview.html#sec-variables"><span class="std std-ref">Basics: counter variables</span></a>). Instead, in VMD, variables must be specified
+by their numeric equivalents. You can determine these numbers by reading
+the <em>output_ttree/ttree_assignments.txt</em> file. (See section
+<a class="reference external" href="#sec:ttree_assignments">[sec:ttree_assignments]</a> for details.) That
+file contains a table containing a list of the numbers assigned to each
+<em>&#64;atom</em> (type), <em>$atom</em> (id), and <em>$mol</em> (molecule-id) variable.</p>
+</div>
+<div class="section" id="visualizing-periodic-boundaries">
+<span id="sec-vmd-pbc"></span><h2><span class="section-number">13.2. </span>Visualizing periodic boundaries<a class="headerlink" href="#visualizing-periodic-boundaries" title="Permalink to this headline">¶</a></h2>
+<p>To view the periodic box boundaries, select the
+<strong>Extensions</strong><span class="math notranslate nohighlight">\(\rightarrow\)</span> menu, and in the <em>Tk Console</em>
+window, enter:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pbc</span> <span class="n">box</span>
+</pre></div>
+</div>
+<p>Note that the molecules in your system might not lie inside this box.
+You can <em>wrap</em> them inside the box using this command:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pbc</span> <span class="n">wrap</span> <span class="o">-</span><span class="n">compound</span> <span class="n">res</span> <span class="o">-</span><span class="nb">all</span>
+</pre></div>
+</div>
+<p>You may wish to center the box around a molecule. There are several ways
+to do this. You can move the box manually this way:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pbc</span> <span class="n">wrap</span> <span class="o">-</span><span class="n">compound</span> <span class="n">res</span> <span class="o">-</span><span class="nb">all</span> <span class="o">-</span><span class="n">shiftcenterrel</span> <span class="p">{</span><span class="mf">0.0</span> <span class="mf">0.15</span> <span class="mf">0.0</span><span class="p">}</span>
+<span class="n">pbc</span> <span class="n">box</span> <span class="o">-</span><span class="n">shiftcenterrel</span> <span class="p">{</span><span class="mf">0.0</span> <span class="mf">0.15</span> <span class="mf">0.0</span><span class="p">}</span>
+</pre></div>
+</div>
+<p>This will shift the position of the box by 15% in the Y direction.
+(Distances are measured in units of box-length fractions, not
+Angstroms.)</p>
+<p><em>(Advanced usage: if you have a solute whose atoms are all of type “1”,
+surrounded by a solvent of atoms of type “2” then you can also try this
+to center the box around it using: “pbc wrap -sel type=1 -all -centersel
+type=2 -center com”. The “1” and “2” are the &#64;atom type numbers assigned
+by moltemplate. This can be found in the
+output_ttree/ttree_assignments.txt file. If you are viewing a
+trajectory, then this will modify the appearance of every step in the
+trajectory, centering the box around the solute atoms.)</em></p>
+<p>For more details visualizing periodic-boundaries, visit:
+<a class="reference external" href="http://www.ks.uiuc.edu/Research/vmd/plugins/pbctools">http://www.ks.uiuc.edu/Research/vmd/plugins/pbctools</a></p>
+<p>To prevent atom overlap, you should also check if your periodic boundary
+conditions are too small. To do that:</p>
+<ol class="loweralpha simple">
+<li><p>select menu option</p></li>
+<li><p>click on the “Periodic” tab, and</p></li>
+</ol>
+<p>c) click on the <strong>+x</strong>, <strong>-x</strong>, <strong>+y</strong>, <strong>-y</strong>, <strong>+z</strong>, <strong>-z</strong>, and
+<strong>self</strong> checkboxes.</p>
+<p>When doing so, inspect the system to make sure the atoms which appear
+occupy non-overlapping volumes in space.</p>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">moltemplate</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html">1. Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main/installation.html">2. Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main/quick_reference.html">3. Quick reference <em>(skip on first reading)</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main/tutorial.html">4. Introductory tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main/overview.html">5. Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main/coordinates.html">6. Object composition and coordinate generation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main/arrays.html">7. Arrays, slices, and coordinate transformations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main/custom_xform.html">8. Customizing molecule position and topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="spce_example_robust.html">9. Portability: Using <em>LT files</em> for force-field storage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main/limitations.html">10. Known bugs and limitations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="nbody_by_type.html">11. Bonded interactions “By Type”</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ltemplify.html">12. Using ltemplify.py to create an <em>LT file</em></a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">13. Visualization in VMD</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#customizing-the-appearance-in-vmd">13.1. Customizing the appearance in VMD</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#visualizing-periodic-boundaries">13.2. Visualizing periodic boundaries</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ttree_man_page.html">14. Advanced moltemplate.sh Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ttree.html">15. Using <em>lttree.py</em> or <em>ttree.py</em> directly</a></li>
+<li class="toctree-l1"><a class="reference internal" href="nbody_by_type_utility.html">16. Using the <em>nbody_by_type.py</em> utility</a></li>
+<li class="toctree-l1"><a class="reference internal" href="adv_variable_syntax.html">17. Variable syntax details</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utils/dump2data.html">18. dump2data.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utils/extract_lammps_data.html">19. extract_lammps_data.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utils/genpoly_lt.html">20. genpoly_lt.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utils/interpolate_curve.html">21. interpolate_curve.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utils/ltemplify.html">22. ltemplify.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utils/raw2data.html">23. raw2data.py</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="ltemplify.html" title="previous chapter"><span class="section-number">12. </span>Using ltemplify.py to create an <em>LT file</em></a></li>
+      <li>Next: <a href="ttree_man_page.html" title="next chapter"><span class="section-number">14. </span>Advanced moltemplate.sh Usage</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Andrew Jewett.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/appendix/vmd_advanced.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

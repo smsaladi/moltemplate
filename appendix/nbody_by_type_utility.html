@@ -1,0 +1,337 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>16. Using the nbody_by_type.py utility &#8212; moltemplate 2.1 documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="17. Variable syntax details" href="adv_variable_syntax.html" />
+    <link rel="prev" title="15. Using lttree.py or ttree.py directly" href="ttree.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="using-the-nbody-by-type-py-utility">
+<span id="sec-nbody-by-type-utility"></span><h1><span class="section-number">16. </span>Using the <em>nbody_by_type.py</em> utility<a class="headerlink" href="#using-the-nbody-by-type-py-utility" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="bypassing-moltemplate-sh">
+<h2><span class="section-number">16.1. </span>(bypassing moltemplate.sh)<a class="headerlink" href="#bypassing-moltemplate-sh" title="Permalink to this headline">¶</a></h2>
+<p>moltemplate.sh uses the “nbody_by_type.py” utility to generate many-body
+interactions between bonded atoms by atom type. In the event that
+moltemplate.sh crashes or is not up-to-date with LAMMPS, you can assign
+interactions by type by manually invoking nbody_by_type.py yourself.</p>
+<p>As an example, the following command will generate a file “Angles”
+containing lines of text which should eventually be pasted into the
+“Angles” section of a LAMMPS data file:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">nbody_by_type</span> <span class="n">Angles</span> \
+    <span class="o">-</span><span class="n">atoms</span> <span class="s2">&quot;Data Atoms&quot;</span> \
+    <span class="o">-</span><span class="n">bonds</span> <span class="s2">&quot;Data Bonds&quot;</span> \
+    <span class="o">-</span><span class="n">subgraph</span> <span class="s2">&quot;nbody_Angles.py&quot;</span> \
+    <span class="o">-</span><span class="n">nbodybytype</span> <span class="s2">&quot;Data Angles By Type&quot;</span> \
+    <span class="o">&gt;</span> <span class="s2">&quot;Data Angles&quot;</span>
+</pre></div>
+</div>
+<p>For dihedral or improper interactions, repeat the command above, and
+replace “Angles” with “Dihedrals”, or “Impropers” everywhere.</p>
+<p><em>Note: The above instructions work assuming that you do not use any
+wildcard characters (“*” or “?”) or regular expressions in your “Angles
+By Type” section. If you use wildcards or regular expressions, then you
+must run the program this way:</em></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">nbody_by_type</span> <span class="n">Angles</span> \
+    <span class="o">-</span><span class="n">atoms</span> <span class="s2">&quot;Data Atoms.template&quot;</span> \
+    <span class="o">-</span><span class="n">bonds</span> <span class="s2">&quot;Data Bonds.template&quot;</span> \
+    <span class="o">-</span><span class="n">subgraph</span> <span class="s2">&quot;nbody_Angles.py&quot;</span> \
+    <span class="o">-</span><span class="n">nbodybytype</span> <span class="s2">&quot;Data Angles By Type.template&quot;</span> \
+    <span class="o">&gt;</span> <span class="s2">&quot;Data Angles.template&quot;</span>
+</pre></div>
+</div>
+<p><em>Afterwards, you must then replace each variable in the
+“Angles.template” file with the appropriate integer before you copy the
+contents into the LAMMPS data file. (The ttree_render.py program may be
+useful for this. Open the moltemplate.sh file with a text editor to see
+how this was done.)</em></p>
+<p>Note that “Data Atoms”, and “Data Bonds” refer to files which are
+normally created by “ttree.py” or “lttree.py” which contain atom and
+bond data in LAMMPS data file format, respectively. Similarly “Data
+Angles By Type” refers to a file containing instructions for how to
+automatically generate angles by atom type. (Again, this would typically
+be generated by running “ttree.py” or “lttree.py” on an LT file
+containing a block of text wrapped inside a “write_once(’Data Angles By
+Type’)” command.)</p>
+<p>Note: if you already have existing “Data Angles”, you can add them to
+the list of angle interactions created by nbody_by_type.py.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">nbody_by_type</span> <span class="n">Angles</span> \
+    <span class="o">-</span><span class="n">atoms</span> <span class="s2">&quot;Data Atoms&quot;</span> \
+    <span class="o">-</span><span class="n">bonds</span> <span class="s2">&quot;Data Bonds&quot;</span> \
+    <span class="o">-</span><span class="n">subgraph</span> <span class="s2">&quot;nbody_Angles.py&quot;</span> \
+    <span class="o">-</span><span class="n">nbodyfile</span> <span class="s2">&quot;Data Angles&quot;</span> \
+    <span class="o">-</span><span class="n">nbodybytype</span> <span class="s2">&quot;Data Angles By Type&quot;</span> \
+    <span class="o">&gt;</span> <span class="n">extra_Angles</span><span class="o">.</span><span class="n">tmp</span>
+<span class="n">cat</span> <span class="n">extra_Angles</span><span class="o">.</span><span class="n">tmp</span> <span class="s2">&quot;Data Angles&quot;</span> <span class="o">&gt;</span> <span class="n">new_Angles</span>
+<span class="n">mv</span> <span class="o">-</span><span class="n">f</span> <span class="n">new_Angles</span> <span class="s2">&quot;Data Angles&quot;</span>
+<span class="n">rm</span> <span class="o">-</span><span class="n">f</span> <span class="n">extra_Angles</span><span class="o">.</span><span class="n">tmp</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="usage">
+<h2><span class="section-number">16.2. </span>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
+<p>For reference, the complete man page for the “nbody_by_type.py” command
+is included below.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>    <span class="n">nbody_by_type</span><span class="o">.</span><span class="n">py</span> <span class="n">reads</span> <span class="n">a</span> <span class="n">LAMMPS</span> <span class="n">data</span> <span class="n">file</span> <span class="p">(</span><span class="ow">or</span> <span class="n">an</span> <span class="n">excerpt</span> <span class="n">of</span> <span class="n">a</span> <span class="n">LAMMPS</span><span class="p">)</span>
+    <span class="n">data</span> <span class="n">file</span> <span class="n">containing</span> <span class="n">bonded</span> <span class="n">many</span><span class="o">-</span><span class="n">body</span> <span class="n">interactions</span> <span class="n">by</span> <span class="n">atom</span> <span class="nb">type</span>
+    <span class="p">(</span><span class="ow">and</span> <span class="n">bond</span> <span class="nb">type</span><span class="p">),</span> <span class="ow">and</span> <span class="n">generates</span> <span class="n">a</span> <span class="nb">list</span> <span class="n">of</span> <span class="n">additional</span> <span class="n">interactions</span>
+    <span class="ow">in</span> <span class="n">LAMMPS</span> <span class="nb">format</span> <span class="n">consistent</span> <span class="k">with</span> <span class="n">those</span> <span class="nb">type</span> <span class="p">(</span><span class="n">to</span> <span class="n">the</span> <span class="n">standard</span> <span class="n">out</span><span class="p">)</span><span class="o">.</span>
+
+    <span class="n">Typical</span> <span class="n">Usage</span><span class="p">:</span>
+
+    <span class="n">nbody_by_type</span><span class="o">.</span><span class="n">py</span> <span class="n">X</span> <span class="o">&lt;</span> <span class="n">old</span><span class="o">.</span><span class="n">data</span> <span class="o">&gt;</span> <span class="n">new</span><span class="o">.</span><span class="n">data</span>
+
+    <span class="o">--</span><span class="ow">or</span><span class="o">--</span>
+
+    <span class="n">nbody_by_type</span><span class="o">.</span><span class="n">py</span> <span class="n">X</span> \
+                     <span class="o">-</span><span class="n">atoms</span> <span class="n">atoms</span><span class="o">.</span><span class="n">data</span> \
+                     <span class="o">-</span><span class="n">bonds</span> <span class="n">bonds</span><span class="o">.</span><span class="n">data</span> \
+                     <span class="o">-</span><span class="n">subgraph</span> <span class="s2">&quot;nbody_X.py&quot;</span> \
+                     <span class="o">-</span><span class="n">nbody</span> <span class="n">X</span><span class="o">.</span><span class="n">data</span> \
+                     <span class="o">-</span><span class="n">nbodybytype</span> <span class="n">X_by_type</span><span class="o">.</span><span class="n">data</span>
+                     <span class="o">&gt;</span> <span class="n">new_X</span><span class="o">.</span><span class="n">data</span>
+
+    <span class="n">In</span> <span class="n">both</span> <span class="n">cases</span> <span class="s2">&quot;X&quot;</span> <span class="n">denotes</span> <span class="n">the</span> <span class="n">interaction</span> <span class="nb">type</span><span class="p">,</span> <span class="n">which</span>
+    <span class="ow">is</span> <span class="n">either</span> <span class="s2">&quot;Angles&quot;</span><span class="p">,</span> <span class="s2">&quot;Dihedrals&quot;</span><span class="p">,</span> <span class="ow">or</span> <span class="s2">&quot;Impropers&quot;</span><span class="o">.</span>
+    <span class="n">Support</span> <span class="k">for</span> <span class="n">other</span> <span class="n">interaction</span> <span class="n">types</span> <span class="n">can</span> <span class="n">be</span> <span class="n">added</span> <span class="n">by</span> <span class="n">the</span> <span class="n">user</span><span class="o">.</span> <span class="n">See</span> <span class="n">below</span><span class="o">.</span>
+
+    <span class="n">Note</span><span class="p">:</span> <span class="n">The</span> <span class="n">optional</span> <span class="s2">&quot;-subgraph&quot;</span> <span class="n">argument</span> <span class="n">allows</span> <span class="n">you</span> <span class="n">to</span> <span class="n">customize</span> <span class="n">the</span>
+          <span class="n">rules</span> <span class="n">used</span> <span class="n">to</span> <span class="n">match</span> <span class="ow">and</span> <span class="n">generate</span> <span class="n">interactions</span> <span class="n">of</span> <span class="n">that</span> <span class="nb">type</span><span class="o">.</span>
+          <span class="n">It</span> <span class="ow">is</span> <span class="n">optional</span><span class="p">,</span> <span class="ow">and</span> <span class="ow">is</span> <span class="n">only</span> <span class="n">useful</span> <span class="k">for</span> <span class="n">forcefields</span> <span class="n">which</span>
+          <span class="n">use</span> <span class="n">non</span><span class="o">-</span><span class="n">standard</span> <span class="n">dihedral</span> <span class="ow">or</span> <span class="n">improper</span> <span class="n">atom</span><span class="o">-</span><span class="n">order</span> <span class="n">convetions</span><span class="o">.</span><span class="p">)</span>
+
+    <span class="o">--------</span> <span class="n">Example</span> <span class="mi">1</span> <span class="o">-------</span>
+
+    <span class="n">nbody_by_type</span><span class="o">.</span><span class="n">py</span> <span class="n">X</span> <span class="o">&lt;</span> <span class="n">old</span><span class="o">.</span><span class="n">data</span> <span class="o">&gt;</span> <span class="n">new</span><span class="o">.</span><span class="n">data</span>
+
+    <span class="n">In</span> <span class="n">this</span> <span class="n">example</span><span class="p">,</span> <span class="n">nbody_by_type</span><span class="o">.</span><span class="n">py</span> <span class="n">reads</span> <span class="n">a</span> <span class="n">LAMMPS</span> <span class="n">data</span> <span class="n">file</span>
+    <span class="s2">&quot;orig.data&quot;</span><span class="p">,</span> <span class="ow">and</span> <span class="n">extracts</span> <span class="n">the</span> <span class="n">relevant</span> <span class="n">section</span> <span class="p">(</span><span class="s2">&quot;Angles&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Dihedrals&quot;</span><span class="p">,</span> <span class="ow">or</span> <span class="s2">&quot;Impropers&quot;</span><span class="p">)</span><span class="o">.</span>  <span class="n">It</span> <span class="n">also</span> <span class="n">looks</span> <span class="n">a</span> <span class="n">section</span> <span class="n">named</span> <span class="s2">&quot;X By Type&quot;</span><span class="p">,</span>
+       <span class="p">(</span><span class="n">eg</span><span class="o">.</span> <span class="s2">&quot;Angles By type&quot;</span><span class="p">,</span> <span class="s2">&quot;Impropers By type&quot;</span><span class="p">,</span> <span class="s2">&quot;Impropers By type&quot;</span><span class="p">)</span>
+    <span class="n">which</span> <span class="n">contains</span> <span class="n">a</span> <span class="nb">list</span> <span class="n">of</span> <span class="n">criteria</span> <span class="k">for</span> <span class="n">automatically</span> <span class="n">defining</span> <span class="n">additional</span>
+    <span class="n">interactions</span> <span class="n">of</span> <span class="n">that</span> <span class="nb">type</span><span class="o">.</span>  <span class="n">For</span> <span class="n">example</span><span class="p">,</span> <span class="n">this</span> <span class="n">file</span> <span class="n">might</span> <span class="n">contain</span><span class="p">:</span>
+
+    <span class="n">Angle</span> <span class="n">By</span> <span class="n">Type</span>
+
+    <span class="mi">7</span> <span class="mi">1</span> <span class="mi">2</span> <span class="mi">1</span> <span class="o">*</span> <span class="o">*</span>
+    <span class="mi">8</span> <span class="mi">2</span> <span class="mi">2</span> <span class="o">*</span> <span class="o">*</span> <span class="o">*</span>
+    <span class="mi">9</span> <span class="mi">3</span> <span class="mi">4</span> <span class="mi">3</span> <span class="o">*</span> <span class="o">*</span>
+
+    <span class="n">The</span> <span class="n">first</span> <span class="n">column</span> <span class="ow">is</span> <span class="n">an</span> <span class="n">interaction</span> <span class="nb">type</span> <span class="n">ID</span><span class="o">.</span>
+    <span class="n">The</span> <span class="nb">next</span> <span class="mi">3</span> <span class="n">columns</span> <span class="n">are</span> <span class="n">atom</span> <span class="nb">type</span> <span class="n">identifiers</span><span class="o">.</span>
+    <span class="n">The</span> <span class="n">final</span> <span class="mi">2</span> <span class="n">columns</span> <span class="n">are</span> <span class="n">bond</span> <span class="nb">type</span> <span class="n">identifiers</span><span class="o">.</span>
+    <span class="n">The</span> <span class="o">*</span> <span class="ow">is</span> <span class="n">a</span> <span class="n">wildcard</span> <span class="n">symbol</span> <span class="n">indicating</span> <span class="n">there</span> <span class="ow">is</span> <span class="n">no</span> <span class="n">preference</span> <span class="k">for</span> <span class="n">bond</span> <span class="n">types</span>
+    <span class="ow">in</span> <span class="n">this</span> <span class="n">example</span><span class="o">.</span>  <span class="p">(</span><span class="n">Optionally</span><span class="p">,</span> <span class="n">regular</span> <span class="n">expressions</span> <span class="n">can</span> <span class="n">also</span> <span class="n">be</span> <span class="n">used</span> <span class="n">to</span>
+    <span class="n">define</span> <span class="n">a</span> <span class="nb">type</span> <span class="n">match</span><span class="p">,</span> <span class="n">by</span> <span class="n">enclosing</span> <span class="n">the</span> <span class="n">atom</span> <span class="ow">or</span> <span class="n">bond</span> <span class="nb">type</span> <span class="ow">in</span> <span class="o">/</span> <span class="n">slashes</span><span class="o">.</span><span class="p">)</span>
+
+        <span class="n">The</span> <span class="n">first</span> <span class="n">line</span> <span class="n">tells</span> <span class="n">us</span> <span class="n">to</span> <span class="n">that</span> <span class="n">there</span> <span class="n">should</span> <span class="n">be</span> <span class="n">a</span> <span class="mi">3</span><span class="o">-</span><span class="n">body</span> <span class="s2">&quot;Angle&quot;</span>
+    <span class="n">interaction</span> <span class="n">of</span> <span class="nb">type</span> <span class="s2">&quot;7&quot;</span> <span class="n">whenever</span> <span class="n">an</span> <span class="n">atom</span> <span class="n">of</span> <span class="nb">type</span> <span class="mi">1</span> <span class="ow">is</span> <span class="n">bonded</span> <span class="n">to</span> <span class="n">an</span> <span class="n">atom</span>
+    <span class="n">of</span> <span class="nb">type</span> <span class="s2">&quot;2&quot;</span><span class="p">,</span> <span class="n">which</span> <span class="ow">is</span> <span class="n">bonded</span> <span class="n">to</span> <span class="n">another</span> <span class="n">atom</span> <span class="n">of</span> <span class="nb">type</span> <span class="s2">&quot;1&quot;</span> <span class="n">again</span><span class="o">.</span>
+    <span class="n">The</span> <span class="n">second</span> <span class="n">line</span> <span class="n">tells</span> <span class="n">us</span> <span class="n">that</span> <span class="n">an</span> <span class="n">angle</span> <span class="ow">is</span> <span class="n">defined</span> <span class="n">whenever</span> <span class="n">three</span> <span class="n">atoms</span>
+    <span class="n">are</span> <span class="n">bonded</span> <span class="n">together</span> <span class="ow">and</span> <span class="n">the</span> <span class="n">first</span> <span class="n">two</span> <span class="n">are</span> <span class="n">of</span> <span class="nb">type</span> <span class="s2">&quot;2&quot;</span><span class="o">.</span>
+    <span class="p">(</span><span class="n">Redundant</span> <span class="n">angle</span> <span class="n">interactions</span> <span class="n">are</span> <span class="n">filtered</span><span class="o">.</span><span class="p">)</span>
+
+        <span class="n">New</span> <span class="n">interactions</span> <span class="n">are</span> <span class="n">created</span> <span class="k">for</span> <span class="n">every</span> <span class="n">group</span> <span class="n">of</span> <span class="n">bonded</span>
+    <span class="n">atoms</span> <span class="n">which</span> <span class="n">match</span> <span class="n">these</span> <span class="n">criteria</span> <span class="k">if</span> <span class="n">they</span> <span class="n">are</span> <span class="n">bonded</span> <span class="n">together</span>
+    <span class="ow">in</span> <span class="n">the</span> <span class="n">relevant</span> <span class="n">way</span> <span class="k">for</span> <span class="n">that</span> <span class="n">interaction</span> <span class="nb">type</span> <span class="p">(</span><span class="k">as</span> <span class="n">determined</span> <span class="n">by</span>
+    <span class="n">nbody_X</span><span class="o">.</span><span class="n">py</span><span class="p">),</span> <span class="ow">and</span> <span class="n">printed</span> <span class="n">to</span> <span class="n">the</span> <span class="n">standard</span> <span class="n">output</span><span class="o">.</span>  <span class="n">For</span> <span class="n">example</span><span class="p">,</span>
+    <span class="n">suppose</span> <span class="n">you</span> <span class="n">are</span> <span class="n">automatically</span> <span class="n">generating</span> <span class="mi">3</span><span class="o">-</span><span class="n">body</span> <span class="s2">&quot;Angle&quot;</span> <span class="n">interactions</span> <span class="n">using</span><span class="p">:</span>
+
+    <span class="n">nbody_by_type</span> <span class="n">Angles</span> <span class="o">&lt;</span> <span class="n">old</span><span class="o">.</span><span class="n">data</span> <span class="o">&gt;</span> <span class="n">new</span><span class="o">.</span><span class="n">data</span>
+
+    <span class="n">The</span> <span class="n">file</span> <span class="s2">&quot;new.data&quot;</span> <span class="n">will</span> <span class="n">be</span> <span class="n">identical</span> <span class="n">to</span> <span class="s2">&quot;old.data&quot;</span><span class="p">,</span> <span class="n">however</span> <span class="n">the</span>
+    <span class="s2">&quot;Angles By Type&quot;</span> <span class="n">section</span> <span class="n">will</span> <span class="n">be</span> <span class="n">deleted</span><span class="p">,</span> <span class="ow">and</span> <span class="n">the</span> <span class="n">following</span> <span class="n">lines</span> <span class="n">of</span>
+    <span class="n">text</span> <span class="n">will</span> <span class="n">be</span> <span class="n">added</span> <span class="n">to</span> <span class="n">the</span> <span class="s2">&quot;Angles&quot;</span> <span class="n">section</span><span class="p">:</span>
+
+    <span class="mi">394</span> <span class="mi">7</span> <span class="mi">5983</span> <span class="mi">5894</span> <span class="mi">5895</span>
+    <span class="mi">395</span> <span class="mi">7</span> <span class="mi">5984</span> <span class="mi">5895</span> <span class="mi">5896</span>
+    <span class="mi">396</span> <span class="mi">7</span> <span class="mi">5985</span> <span class="mi">5896</span> <span class="mi">5897</span>
+     <span class="p">:</span>  <span class="p">:</span>   <span class="p">:</span>    <span class="p">:</span>    <span class="p">:</span>
+    <span class="mi">847</span> <span class="mi">9</span> <span class="mi">14827</span> <span class="mi">14848</span> <span class="mi">14849</span>
+
+    <span class="n">The</span> <span class="n">numbers</span> <span class="ow">in</span> <span class="n">the</span> <span class="n">first</span> <span class="n">column</span> <span class="n">are</span> <span class="n">counters</span> <span class="n">which</span> <span class="n">assign</span> <span class="n">a</span> <span class="n">ID</span> <span class="n">to</span>
+    <span class="n">every</span> <span class="n">interaction</span> <span class="n">of</span> <span class="n">that</span> <span class="nb">type</span><span class="p">,</span> <span class="ow">and</span> <span class="n">start</span> <span class="n">where</span> <span class="n">the</span> <span class="n">original</span> <span class="s2">&quot;Angles&quot;</span>
+    <span class="n">data</span> <span class="n">left</span> <span class="n">off</span> <span class="p">(</span><span class="n">New</span> <span class="n">angle</span> <span class="n">ID</span> <span class="n">numbers</span> <span class="n">do</span> <span class="ow">not</span> <span class="n">overlap</span> <span class="k">with</span> <span class="n">old</span> <span class="n">ID</span> <span class="n">numbers</span><span class="p">)</span><span class="o">.</span>
+    <span class="n">The</span> <span class="n">text</span> <span class="ow">in</span> <span class="n">the</span> <span class="n">second</span> <span class="n">column</span> <span class="p">(</span><span class="s2">&quot;7&quot;</span><span class="p">,</span> <span class="s2">&quot;9&quot;</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span> <span class="n">matches</span> <span class="n">the</span> <span class="n">text</span> <span class="kn">from</span> <span class="nn">the</span>
+    <span class="n">first</span> <span class="n">column</span> <span class="n">of</span> <span class="n">the</span> <span class="s2">&quot;Angle By Type&quot;</span> <span class="n">section</span> <span class="n">of</span> <span class="n">the</span> <span class="nb">input</span> <span class="n">file</span><span class="o">.</span>
+
+    <span class="o">--------</span> <span class="n">Example</span> <span class="mi">2</span> <span class="o">-------</span>
+
+    <span class="n">nbody_by_type</span><span class="o">.</span><span class="n">py</span> <span class="n">X</span> \
+                     <span class="o">-</span><span class="n">atoms</span> <span class="n">atoms</span><span class="o">.</span><span class="n">data</span> \
+                     <span class="o">-</span><span class="n">bonds</span> <span class="n">bonds</span><span class="o">.</span><span class="n">data</span> \
+                     <span class="o">-</span><span class="n">subgraph</span> <span class="s2">&quot;nbody_X.py&quot;</span> \
+                     <span class="o">-</span><span class="n">nbody</span> <span class="n">X</span><span class="o">.</span><span class="n">data</span> \
+                     <span class="o">-</span><span class="n">nbodybytype</span> <span class="n">X_by_type</span><span class="o">.</span><span class="n">data</span> \
+                     <span class="o">&gt;</span> <span class="n">new_X</span><span class="o">.</span><span class="n">data</span>
+
+    <span class="n">In</span> <span class="n">particular</span><span class="p">,</span> <span class="k">for</span> <span class="n">Angle</span> <span class="n">interactions</span><span class="p">:</span>
+
+    <span class="n">nbody_by_type</span><span class="o">.</span><span class="n">py</span> <span class="n">Angles</span> \
+                     <span class="o">-</span><span class="n">atoms</span> <span class="n">atoms</span><span class="o">.</span><span class="n">data</span> \
+                     <span class="o">-</span><span class="n">bonds</span> <span class="n">bonds</span><span class="o">.</span><span class="n">data</span> \
+                     <span class="o">-</span><span class="n">subgraph</span> <span class="s2">&quot;nbody_Angles.py&quot;</span> \
+                     <span class="o">-</span><span class="n">nbody</span> <span class="n">angles</span><span class="o">.</span><span class="n">data</span> \
+                     <span class="o">-</span><span class="n">nbodybytype</span> <span class="n">angles_by_type</span><span class="o">.</span><span class="n">data</span> \
+                     <span class="o">&gt;</span> <span class="n">new_Angles</span><span class="o">.</span><span class="n">data</span>
+
+    <span class="n">When</span> <span class="n">run</span> <span class="n">this</span> <span class="n">way</span><span class="p">,</span> <span class="n">nbody_by_type</span><span class="o">.</span><span class="n">py</span> <span class="n">behaves</span> <span class="n">exactly</span> <span class="n">the</span> <span class="n">same</span> <span class="n">way</span>
+    <span class="k">as</span> <span class="ow">in</span> <span class="n">Example</span> <span class="mi">1</span><span class="p">,</span> <span class="n">however</span> <span class="n">only</span> <span class="n">the</span> <span class="n">lines</span> <span class="n">of</span> <span class="n">text</span> <span class="n">corresponding</span> <span class="n">to</span>
+    <span class="n">the</span> <span class="n">new</span> <span class="n">generated</span> <span class="n">interactions</span> <span class="n">are</span> <span class="n">printed</span><span class="p">,</span> <span class="p">(</span><span class="ow">not</span> <span class="n">the</span> <span class="n">entire</span> <span class="n">data</span> <span class="n">file</span><span class="p">)</span><span class="o">.</span>
+    <span class="n">Also</span> <span class="n">note</span><span class="p">,</span> <span class="n">that</span> <span class="n">when</span> <span class="n">run</span> <span class="n">this</span> <span class="n">way</span><span class="p">,</span> <span class="n">nbody_by_type</span><span class="o">.</span><span class="n">py</span> <span class="n">does</span> <span class="ow">not</span> <span class="n">read</span> <span class="n">the</span>
+    <span class="n">LAMMPS</span> <span class="n">data</span> <span class="kn">from</span> <span class="nn">the</span> <span class="n">standard</span> <span class="nb">input</span><span class="o">.</span>  <span class="n">Instead</span><span class="p">,</span> <span class="n">it</span> <span class="n">reads</span> <span class="n">each</span> <span class="n">section</span> <span class="n">of</span>
+    <span class="n">the</span> <span class="n">data</span> <span class="n">file</span> <span class="kn">from</span> <span class="nn">a</span> <span class="n">different</span> <span class="n">file</span> <span class="n">indicated</span> <span class="n">by</span> <span class="n">the</span> <span class="n">arguments</span> <span class="n">following</span>
+    <span class="n">the</span> <span class="s2">&quot;-atoms&quot;</span><span class="p">,</span> <span class="s2">&quot;-bonds&quot;</span><span class="p">,</span> <span class="s2">&quot;-nbody&quot;</span><span class="p">,</span> <span class="ow">and</span> <span class="s2">&quot;-nbodybytype&quot;</span> <span class="n">flags</span><span class="o">.</span>
+
+    <span class="s2">&quot;Angles&quot;</span> <span class="ow">is</span> <span class="n">a</span> <span class="mi">3</span><span class="o">-</span><span class="n">body</span> <span class="n">interaction</span> <span class="n">style</span><span class="o">.</span>  <span class="n">So</span> <span class="n">when</span> <span class="n">run</span> <span class="n">this</span> <span class="n">way</span><span class="p">,</span>
+    <span class="n">nbody_by_type</span><span class="o">.</span><span class="n">py</span> <span class="n">will</span> <span class="n">create</span> <span class="n">a</span> <span class="mi">5</span> <span class="p">(</span><span class="o">=</span><span class="mi">3</span><span class="o">+</span><span class="mi">2</span><span class="p">)</span> <span class="n">column</span> <span class="n">file</span> <span class="p">(</span><span class="n">new_Angles</span><span class="o">.</span><span class="n">data</span><span class="p">)</span><span class="o">.</span>
+
+<span class="n">Note</span><span class="p">:</span> <span class="n">the</span> <span class="n">atom</span><span class="p">,</span> <span class="n">bond</span> <span class="ow">and</span> <span class="n">other</span> <span class="n">IDs</span><span class="o">/</span><span class="n">types</span> <span class="ow">in</span> <span class="n">need</span> <span class="ow">not</span> <span class="n">be</span> <span class="n">integers</span><span class="o">.</span>
+
+<span class="n">Note</span><span class="p">:</span> <span class="n">This</span> <span class="n">program</span> <span class="n">must</span> <span class="n">be</span> <span class="n">distributed</span> <span class="k">with</span> <span class="n">several</span> <span class="n">python</span> <span class="n">modules</span><span class="p">,</span> <span class="n">including</span><span class="p">:</span>
+        <span class="n">nbody_Angles</span><span class="o">.</span><span class="n">py</span><span class="p">,</span> <span class="n">nbody_Dihedrals</span><span class="o">.</span><span class="n">py</span><span class="p">,</span> <span class="ow">and</span> <span class="n">nbody_Impropers</span><span class="o">.</span><span class="n">py</span><span class="o">.</span>  <span class="n">These</span>
+      <span class="n">contain</span> <span class="n">bond</span> <span class="n">definitions</span> <span class="k">for</span> <span class="n">angular</span><span class="p">,</span> <span class="n">dihedral</span><span class="p">,</span> <span class="ow">and</span> <span class="n">improper</span> <span class="n">interactions</span><span class="o">.</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="custom-bond-topologies">
+<span id="sec-nbody-by-type-custom"></span><h2><span class="section-number">16.3. </span>Custom bond topologies<a class="headerlink" href="#custom-bond-topologies" title="Permalink to this headline">¶</a></h2>
+<p>Currently nbody_by_type.py can detect and generate “Angle” and
+“Dihedral” interactions between 3 and 4 consecutively bonded atoms. It
+can also generate “Improper” interactions between 4 atoms bonded with a
+T-shaped topology (one central atom with 3 branches). The
+nbody_by_type.py script imports external modules named
+“nbody_Angles.py”, “nbody_Dihedrals.py”, and “nbody_Impropers.py” to
+help it detect angles, dihedrals, and improper interactions
+automatically. In case any new interaction types are ever added to
+LAMMPS, it is easy to define new bonded interaction types by supplying a
+new “nbody_X.py” python modules. These python files are usually only a
+few lines long. Copy one of the existing modules “nbody_Angles.py”,
+“nbody_Dihedrals.py”, or “nbody_Impropers.py”) and modify it to the
+subgraph inside to match the bonded network that you want to search for.</p>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">moltemplate</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html">1. Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main/installation.html">2. Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main/quick_reference.html">3. Quick reference <em>(skip on first reading)</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main/tutorial.html">4. Introductory tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main/overview.html">5. Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main/coordinates.html">6. Object composition and coordinate generation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main/arrays.html">7. Arrays, slices, and coordinate transformations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main/custom_xform.html">8. Customizing molecule position and topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="spce_example_robust.html">9. Portability: Using <em>LT files</em> for force-field storage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main/limitations.html">10. Known bugs and limitations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="nbody_by_type.html">11. Bonded interactions “By Type”</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ltemplify.html">12. Using ltemplify.py to create an <em>LT file</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="vmd_advanced.html">13. Visualization in VMD</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ttree_man_page.html">14. Advanced moltemplate.sh Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ttree.html">15. Using <em>lttree.py</em> or <em>ttree.py</em> directly</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">16. Using the <em>nbody_by_type.py</em> utility</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#bypassing-moltemplate-sh">16.1. (bypassing moltemplate.sh)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#usage">16.2. Usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#custom-bond-topologies">16.3. Custom bond topologies</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="adv_variable_syntax.html">17. Variable syntax details</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utils/dump2data.html">18. dump2data.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utils/extract_lammps_data.html">19. extract_lammps_data.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utils/genpoly_lt.html">20. genpoly_lt.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utils/interpolate_curve.html">21. interpolate_curve.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utils/ltemplify.html">22. ltemplify.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utils/raw2data.html">23. raw2data.py</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="ttree.html" title="previous chapter"><span class="section-number">15. </span>Using <em>lttree.py</em> or <em>ttree.py</em> directly</a></li>
+      <li>Next: <a href="adv_variable_syntax.html" title="next chapter"><span class="section-number">17. </span>Variable syntax details</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Andrew Jewett.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/appendix/nbody_by_type_utility.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

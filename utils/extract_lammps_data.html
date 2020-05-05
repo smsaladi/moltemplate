@@ -1,0 +1,205 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>19. extract_lammps_data.py &#8212; moltemplate 2.1 documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="20. genpoly_lt.py" href="genpoly_lt.html" />
+    <link rel="prev" title="18. dump2data.py" href="dump2data.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="extract-lammps-data-py">
+<h1><span class="section-number">19. </span>extract_lammps_data.py<a class="headerlink" href="#extract-lammps-data-py" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="description">
+<h2><span class="section-number">19.1. </span>Description<a class="headerlink" href="#description" title="Permalink to this headline">¶</a></h2>
+<p><strong>extract_lammps_data.py</strong> is a simple script which extracts sections of
+text from a LAMMPS data file. (Of course, you can accomplish the same
+thing with a text editor, but this script turns it into a one-line
+command.) Although it was written in python, <strong>extract_lammps_data.py</strong>
+is a stand-alone executable intended to be run from the terminal
+(shell).</p>
+</div>
+<div class="section" id="typical-usage">
+<h2><span class="section-number">19.2. </span>Typical usage<a class="headerlink" href="#typical-usage" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">extract_lammps_data</span><span class="o">.</span><span class="n">py</span> <span class="n">SECTION_NAME</span> <span class="o">&lt;</span> <span class="n">FILE</span><span class="o">.</span><span class="n">DATA</span> <span class="o">&gt;</span> <span class="n">EXCERPT</span><span class="o">.</span><span class="n">TXT</span>
+</pre></div>
+</div>
+<p>This extracts a section from a LAMMPS data file and saves it in
+EXCERPT.TXT.</p>
+</div>
+<div class="section" id="more-general-usage">
+<h2><span class="section-number">19.3. </span>More general usage<a class="headerlink" href="#more-general-usage" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">extract_lammps_data</span><span class="o">.</span><span class="n">py</span> <span class="p">[</span><span class="o">-</span><span class="n">n</span><span class="p">]</span> <span class="n">SECTION_LIST</span> <span class="o">&lt;</span> <span class="n">FILE</span><span class="o">.</span><span class="n">DATA</span> <span class="o">&gt;</span> <span class="n">EXCERPT</span><span class="o">.</span><span class="n">TXT</span>
+</pre></div>
+</div>
+<p>The SECTION_LIST is a list of sections you want in your output file (eg
+“EXCERPT.TXT”). Each section must be a quoted-string, and spaces (not
+commas) should separate each section name.</p>
+<p>The optional “-n” flag negates the selection. (Selecting instead,
+everything except the sections you listed.)</p>
+</div>
+<div class="section" id="examples">
+<h2><span class="section-number">19.4. </span>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">extract_lammps_data</span><span class="o">.</span><span class="n">py</span> <span class="s2">&quot;Atoms&quot;</span> <span class="o">&lt;</span> <span class="n">FILE</span><span class="o">.</span><span class="n">DATA</span> <span class="o">&gt;</span> <span class="n">Atoms</span><span class="o">.</span><span class="n">txt</span>
+<span class="n">extract_lammps_data</span><span class="o">.</span><span class="n">py</span> <span class="s2">&quot;Header&quot;</span> <span class="o">&lt;</span> <span class="n">FILE</span><span class="o">.</span><span class="n">DATA</span> <span class="o">&gt;</span> <span class="n">Header</span><span class="o">.</span><span class="n">txt</span>
+<span class="n">extract_lammps_data</span><span class="o">.</span><span class="n">py</span> <span class="o">-</span><span class="n">n</span> <span class="s2">&quot;Header&quot;</span> <span class="o">&lt;</span> <span class="n">FILE</span><span class="o">.</span><span class="n">DATA</span> <span class="o">&gt;</span> <span class="n">everything_except_Header</span><span class="o">.</span><span class="n">txt</span>
+
+<span class="n">extract_lammps_data</span><span class="o">.</span><span class="n">py</span> <span class="s2">&quot;Bonds&quot;</span> <span class="s2">&quot;Angles&quot;</span> <span class="s2">&quot;Dihedrals&quot;</span> <span class="s2">&quot;Impropers&quot;</span> \
+                       <span class="o">&lt;</span> <span class="n">FILE</span><span class="o">.</span><span class="n">DATA</span> <span class="o">&gt;</span> <span class="n">topology</span><span class="o">.</span><span class="n">txt</span>
+
+<span class="n">extract_lammps_data</span><span class="o">.</span><span class="n">py</span> <span class="s2">&quot;Pair Coeffs&quot;</span> <span class="s2">&quot;Bond Coeffs&quot;</span> <span class="s2">&quot;Angle Coeffs&quot;</span> \
+                       <span class="s2">&quot;Dihedral Coeffs&quot;</span> <span class="s2">&quot;Improper Coeffs&quot;</span> \
+                       <span class="o">&lt;</span> <span class="n">FILE</span><span class="o">.</span><span class="n">DATA</span> <span class="o">&gt;</span> <span class="n">force_field</span><span class="o">.</span><span class="n">txt</span>
+</pre></div>
+</div>
+<p>The following section names are allowed:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;Header&quot;</span>                   <span class="c1"># The header section at the beginning of the file.</span>
+<span class="s2">&quot;Atoms&quot;</span>
+<span class="s2">&quot;Masses&quot;</span>
+<span class="s2">&quot;Bonds&quot;</span>
+<span class="s2">&quot;Bond Coeffs&quot;</span>
+<span class="s2">&quot;Angles&quot;</span>
+<span class="s2">&quot;Angle Coeffs&quot;</span>
+<span class="s2">&quot;Dihedrals&quot;</span>
+<span class="s2">&quot;Dihedral Coeffs&quot;</span>
+<span class="s2">&quot;Impropers&quot;</span>
+<span class="s2">&quot;Improper Coeffs&quot;</span>
+<span class="s2">&quot;BondBond Coeffs&quot;</span>          <span class="c1"># class2 angles</span>
+<span class="s2">&quot;BondAngle Coeffs&quot;</span>         <span class="c1"># class2 angles</span>
+<span class="s2">&quot;MiddleBondTorsion Coeffs&quot;</span> <span class="c1"># class2 dihedrals</span>
+<span class="s2">&quot;EndBondTorsion Coeffs&quot;</span>    <span class="c1"># class2 dihedrals</span>
+<span class="s2">&quot;AngleTorsion Coeffs&quot;</span>      <span class="c1"># class2 dihedrals</span>
+<span class="s2">&quot;AngleAngleTorsion Coeffs&quot;</span> <span class="c1"># class2 dihedrals</span>
+<span class="s2">&quot;BondBond13 Coeffs&quot;</span>        <span class="c1"># class2 dihedrals</span>
+<span class="s2">&quot;AngleAngle Coeffs&quot;</span>        <span class="c1"># class2 impropers</span>
+<span class="s2">&quot;Angles By Type&quot;</span>           <span class="c1"># moltemplate-specific. (not standard LAMMPS)</span>
+<span class="s2">&quot;Dihedrals By Type&quot;</span>        <span class="c1"># moltemplate-specific. (not standard LAMMPS)</span>
+<span class="s2">&quot;Angles By Type&#39;           # moltemplate-specific. (not standard LAMMPS)</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">moltemplate</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html">1. Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main/installation.html">2. Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main/quick_reference.html">3. Quick reference <em>(skip on first reading)</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main/tutorial.html">4. Introductory tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main/overview.html">5. Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main/coordinates.html">6. Object composition and coordinate generation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main/arrays.html">7. Arrays, slices, and coordinate transformations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main/custom_xform.html">8. Customizing molecule position and topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../appendix/spce_example_robust.html">9. Portability: Using <em>LT files</em> for force-field storage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main/limitations.html">10. Known bugs and limitations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../appendix/nbody_by_type.html">11. Bonded interactions “By Type”</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../appendix/ltemplify.html">12. Using ltemplify.py to create an <em>LT file</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../appendix/vmd_advanced.html">13. Visualization in VMD</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../appendix/ttree_man_page.html">14. Advanced moltemplate.sh Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../appendix/ttree.html">15. Using <em>lttree.py</em> or <em>ttree.py</em> directly</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../appendix/nbody_by_type_utility.html">16. Using the <em>nbody_by_type.py</em> utility</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../appendix/adv_variable_syntax.html">17. Variable syntax details</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dump2data.html">18. dump2data.py</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">19. extract_lammps_data.py</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#description">19.1. Description</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#typical-usage">19.2. Typical usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#more-general-usage">19.3. More general usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#examples">19.4. Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="genpoly_lt.html">20. genpoly_lt.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="interpolate_curve.html">21. interpolate_curve.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ltemplify.html">22. ltemplify.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raw2data.html">23. raw2data.py</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="dump2data.html" title="previous chapter"><span class="section-number">18. </span>dump2data.py</a></li>
+      <li>Next: <a href="genpoly_lt.html" title="next chapter"><span class="section-number">20. </span>genpoly_lt.py</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Andrew Jewett.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/utils/extract_lammps_data.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

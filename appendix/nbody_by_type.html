@@ -1,0 +1,182 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>11. Bonded interactions “By Type” &#8212; moltemplate 2.1 documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="12. Using ltemplify.py to create an LT file" href="ltemplify.html" />
+    <link rel="prev" title="10. Known bugs and limitations" href="../main/limitations.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="bonded-interactions-by-type">
+<span id="sec-nbody-by-type"></span><h1><span class="section-number">11. </span>Bonded interactions “By Type”<a class="headerlink" href="#bonded-interactions-by-type" title="Permalink to this headline">¶</a></h1>
+<p>Interactions between atoms in LAMMPS which are not bonded together (ie
+“non-bonded” or “pair” interactions) are specified <em>by atom type</em>.
+<em>Bonded interactions</em> in LAMMPS, (including 3-body angle, and 4-body
+dihedral and improper interactions), are specified by unique <em>atom ID
+number</em>. (There are typically a large number of angles and bonds in a
+typical molecule, and this information occupies the majority of in a
+typical LAMMPS data file.)</p>
+<p>This has changed in moltemplate.sh. moltemplate.sh contains a utility
+which can generate angles, dihedrals, and impropers automatically by
+atom and bond <em>type</em>. (This utility is described in section
+<a class="reference external" href="#sec:nbody_by_type_utility">[sec:nbody_by_type_utility]</a>.)
+moltemplate.sh will inspect the network of bonds present in your system,
+detect all 3-body, and 4-body interactions, and determine their type.
+(Higher n-body interactions can also be defined by the user.) Specifying
+interactions this way can eliminate significant redundancy since many
+atoms share the same type.</p>
+<p>To make use of this feature, you would create a new section named , , or
+whose syntax mimics the , , and sections of a LAMMPS data file. The
+syntax is best explained by example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;Data Angles By Type&quot;</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nd">@angle</span><span class="p">:</span><span class="n">XCXgeneral</span>       <span class="o">*</span>      <span class="o">*</span><span class="n">C</span><span class="o">*</span>      <span class="o">*</span>
+  <span class="nd">@angle</span><span class="p">:</span><span class="n">CCCgeneral</span>    <span class="nd">@atom</span><span class="p">:</span><span class="n">C</span> <span class="nd">@atom</span><span class="p">:</span><span class="n">C</span> <span class="nd">@atom</span><span class="p">:</span><span class="n">C</span>    <span class="o">*</span>         <span class="o">*</span>
+  <span class="nd">@angle</span><span class="p">:</span><span class="n">CCCsaturated</span>  <span class="nd">@atom</span><span class="p">:</span><span class="n">C</span> <span class="nd">@atom</span><span class="p">:</span><span class="n">C</span> <span class="nd">@atom</span><span class="p">:</span><span class="n">C</span> <span class="nd">@bond</span><span class="p">:</span><span class="n">SAT</span> <span class="nd">@bond</span><span class="p">:</span><span class="n">SAT</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>The first line will generate a 3-body angle interaction (of type )
+between any 3 consecutively bonded atoms as long as the second atom’s
+type-name contains the letter “C”. (Atom and bond type-names can contain
+wildcard characters *)</p>
+<p>The second line will generate a 3-body interaction of type between any 3
+atoms of type , regardless of the type of bonds connecting them. (The
+last two columns, which are both wildcard characters, *, tell
+moltemplate.sh to ignore the two bond types. Since this is the default
+behavior these two columns are optional and can be omitted.)</p>
+<p>The third line will generate a 3-body interaction of type between any 3
+atoms of type , if they are connected by bonds of type .</p>
+<p>Note: The 2nd and 3rd lines in this example will generate new
+interactions which may override any angle interactions assigned earlier.</p>
+<div class="section" id="regular-expressions">
+<h2><span class="section-number">11.1. </span>Regular expressions<a class="headerlink" href="#regular-expressions" title="Permalink to this headline">¶</a></h2>
+<p>Regular-expressions can also be used to match potential atom and bond
+types. (To use regular expressions, surround the atom and bond types on
+either side by slashes. For example: , should match through .) <em>Note:
+This feature has not been tested as of 2019-9-03.</em></p>
+<p>In a similar way, one can define “Dihedrals By Type” and “Impropers By
+Type”.</p>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">moltemplate</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html">1. Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main/installation.html">2. Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main/quick_reference.html">3. Quick reference <em>(skip on first reading)</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main/tutorial.html">4. Introductory tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main/overview.html">5. Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main/coordinates.html">6. Object composition and coordinate generation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main/arrays.html">7. Arrays, slices, and coordinate transformations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main/custom_xform.html">8. Customizing molecule position and topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="spce_example_robust.html">9. Portability: Using <em>LT files</em> for force-field storage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main/limitations.html">10. Known bugs and limitations</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">11. Bonded interactions “By Type”</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#regular-expressions">11.1. Regular expressions</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ltemplify.html">12. Using ltemplify.py to create an <em>LT file</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="vmd_advanced.html">13. Visualization in VMD</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ttree_man_page.html">14. Advanced moltemplate.sh Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ttree.html">15. Using <em>lttree.py</em> or <em>ttree.py</em> directly</a></li>
+<li class="toctree-l1"><a class="reference internal" href="nbody_by_type_utility.html">16. Using the <em>nbody_by_type.py</em> utility</a></li>
+<li class="toctree-l1"><a class="reference internal" href="adv_variable_syntax.html">17. Variable syntax details</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utils/dump2data.html">18. dump2data.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utils/extract_lammps_data.html">19. extract_lammps_data.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utils/genpoly_lt.html">20. genpoly_lt.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utils/interpolate_curve.html">21. interpolate_curve.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utils/ltemplify.html">22. ltemplify.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utils/raw2data.html">23. raw2data.py</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="../main/limitations.html" title="previous chapter"><span class="section-number">10. </span>Known bugs and limitations</a></li>
+      <li>Next: <a href="ltemplify.html" title="next chapter"><span class="section-number">12. </span>Using ltemplify.py to create an <em>LT file</em></a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Andrew Jewett.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/appendix/nbody_by_type.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

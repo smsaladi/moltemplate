@@ -1,0 +1,527 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>7. Arrays, slices, and coordinate transformations &#8212; moltemplate 2.1 documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="8. Customizing molecule position and topology" href="custom_xform.html" />
+    <link rel="prev" title="6. Object composition and coordinate generation" href="coordinates.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="arrays-slices-and-coordinate-transformations">
+<span id="sec-arrays"></span><h1><span class="section-number">7. </span>Arrays, slices, and coordinate transformations<a class="headerlink" href="#arrays-slices-and-coordinate-transformations" title="Permalink to this headline">¶</a></h1>
+<p>Moltemplate supports 1-dimensional, and multi-dimensional arrays. These
+can be used to create straight (or helical) polymers sheets, tubes,
+tori. They are also to fill solid 3-dimensional volumes with molecules
+or atoms. (See sections <a class="reference internal" href="tutorial.html#sec-coords-intro"><span class="std std-ref">Coordinate generation</span></a> and
+<a class="reference internal" href="#sec-multidimensional-arrays"><span class="std std-ref">Multidimensional arrays</span></a>.)</p>
+<p>Here we show an easier way to create the short polymer shown in section
+<a class="reference internal" href="coordinates.html#sec-twobead-polymer"><span class="std std-ref">Building a simple polymer</span></a>. You can make 7 copies of the
+<em>Monomer</em> molecule this way:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">monomers</span> <span class="o">=</span> <span class="n">new</span> <span class="n">Monomer</span><span class="p">[</span><span class="mi">7</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>This creates 7 new <em>Monomer</em> molecules (named , , , , … ). You can
+connect them with bonds in the same way we did earlier:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>write(&quot;Data Bonds&quot;) {
+  $bond:backbone1  @bond:Backbone  $atom:monomers[0]/ca  $atom:monomers[1]/ca
+  $bond:backbone2  @bond:Backbone  $atom:monomers[1]/ca  $atom:monomers[2]/ca
+  $bond:backbone3  @bond:Backbone  $atom:monomers[2]/ca  $atom:monomers[3]/ca
+       :                :               :                     :
+}
+</pre></div>
+</div>
+<p>Unfortunately, by default, the coordinates of each molecule are
+identical. To prevent the atom coordinates from overlapping, you have
+several choices:</p>
+<div class="section" id="transformations-following-brackets-in-a-new-statement">
+<span id="sec-xform-arrays"></span><h2><span class="section-number">7.1. </span>Transformations following brackets [] in a new statement<a class="headerlink" href="#transformations-following-brackets-in-a-new-statement" title="Permalink to this headline">¶</a></h2>
+<p>After every square-bracket [] in a new command, you can specify a list
+of transformations to apply. For example, we could have generated atomic
+coordinates for the the short polymer in section
+<a class="reference internal" href="coordinates.html#sec-twobead-polymer"><span class="std std-ref">Building a simple polymer</span></a> using this command:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">monomers</span> <span class="o">=</span> <span class="n">new</span> <span class="n">Monomer</span> <span class="p">[</span><span class="mi">7</span><span class="p">]</span><span class="o">.</span><span class="n">rot</span><span class="p">(</span><span class="mi">180</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="mf">3.2</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This will create 7 molecules. The coordinates of the first molecule
+<em>monomers[0]</em> are will be unmodified. However each successive molecule
+will have its coordinates cumulatively modified by the commands
+“rot(180, 1,0,0)” followed by “move(3.2,0,0)”.</p>
+<div class="section" id="optional-initial-customizations-preceding-brackets">
+<span id="sec-xform-arrays-xform"></span><h3><span class="section-number">7.1.1. </span>optional: initial customizations (preceding [] brackets)<a class="headerlink" href="#optional-initial-customizations-preceding-brackets" title="Permalink to this headline">¶</a></h3>
+<p>You can also make adjustments to the initial coordinates of the molecule
+before it is copied, and before any of the array transformations are
+applied. For example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">monomers</span> <span class="o">=</span> <span class="n">new</span> <span class="n">Monomer</span><span class="o">.</span><span class="n">scale</span><span class="p">(</span><span class="mf">1.5</span><span class="p">)</span> <span class="p">[</span><span class="mi">7</span><span class="p">]</span><span class="o">.</span><span class="n">rot</span><span class="p">(</span><span class="mi">180</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="mf">3.2</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>In this example, the “scale(1.5)” transformation is applied once to
+enlarge every <em>Monomer</em> object initially. This will happen before any of
+the rotation and move commands are applied to build the polymer (so the
+3.2 Angstrom spacings between each monomer will not be effected).</p>
+</div>
+</div>
+<div class="section" id="transformations-following-instantiation">
+<span id="sec-xform-after-instance"></span><h2><span class="section-number">7.2. </span>Transformations following instantiation<a class="headerlink" href="#transformations-following-instantiation" title="Permalink to this headline">¶</a></h2>
+<p>Alternately you apply transformations to a molecule after they have been
+created (even if they are part of an array).</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">monomers</span> <span class="o">=</span> <span class="n">new</span> <span class="n">Monomer</span> <span class="p">[</span><span class="mi">7</span><span class="p">]</span>
+
+<span class="c1"># Again, the first line creates the molecules named</span>
+<span class="c1"># &quot;monomers[0]&quot;, &quot;monomers[1]&quot;, &quot;monomers[2]&quot;, ... &quot;monomers[6]&quot;.</span>
+<span class="c1"># The following lines move them into position.</span>
+<span class="n">monomers</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">rot</span><span class="p">(</span><span class="mf">180.0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="mf">3.2</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">monomers</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">rot</span><span class="p">(</span><span class="mf">360.0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="mf">6.4</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">monomers</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">rot</span><span class="p">(</span><span class="mf">540.0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="mf">9.6</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">monomers</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="o">.</span><span class="n">rot</span><span class="p">(</span><span class="mf">720.0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="mf">12.8</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">monomers</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span><span class="o">.</span><span class="n">rot</span><span class="p">(</span><span class="mf">900.0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="mf">16.0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">monomers</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span><span class="o">.</span><span class="n">rot</span><span class="p">(</span><span class="mf">1080.0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="mf">19.2</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="transformation-order-general-case">
+<span id="sec-xform-order"></span><h2><span class="section-number">7.3. </span>Transformation order (general case)<a class="headerlink" href="#transformation-order-general-case" title="Permalink to this headline">¶</a></h2>
+<p>A typical array of molecules might be instantiated this way:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">mols</span> <span class="o">=</span> <span class="n">new</span> <span class="n">Molecule</span><span class="o">.</span><span class="n">XFORMS1</span><span class="p">()</span> <span class="p">[</span><span class="n">N</span><span class="p">]</span><span class="o">.</span><span class="n">XFORMS2</span><span class="p">()</span>
+<span class="n">mols</span><span class="p">[</span><span class="o">*</span><span class="p">]</span><span class="o">.</span><span class="n">XFORMS3</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>The list of transformations denoted by “XFORMS1” in this example are
+applied to the molecule first. Then the transformations in “XFORMS2” are
+then applied to each copy of the molecule multiple times. (For the
+molecule with index “<span class="math notranslate nohighlight">\(i\)</span>”, named “Molecule[<span class="math notranslate nohighlight">\(i\)</span>]”, XFORMS2
+will be applied <span class="math notranslate nohighlight">\(i\)</span> times.) Finally after all the molecules have
+been created, the list of transformations in XFORMS3 will be applied.
+For example, to create a ring of 10 polymers of radius 30.0, centered at
+position (0,25,0), use this notation:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">polymer_ring</span> <span class="o">=</span> <span class="n">new</span> <span class="n">Polymer</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">30</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span> <span class="p">[</span><span class="mi">10</span><span class="p">]</span><span class="o">.</span><span class="n">rot</span><span class="p">(</span><span class="mi">36</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+  <span class="c1"># After creating it, we can move the entire ring</span>
+  <span class="c1"># (These commands are applied last.)</span>
+<span class="n">polymer_ring</span><span class="p">[</span><span class="o">*</span><span class="p">]</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">25</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="random-arrays">
+<span id="sec-random-arrays"></span><h2><span class="section-number">7.4. </span>Random arrays<a class="headerlink" href="#random-arrays" title="Permalink to this headline">¶</a></h2>
+<p><strong>a)</strong> <a href="#id4"><span class="problematic" id="id5">|[fig:random_heteropolymer] A random heteropolymer (c), composed
+of of Monomer and Monomer3 monomer subunits (a and b) with (target)
+probabilities 0.6 and 0.4. (However, due to random fluctuations, the
+actual ratio in this case was 68% and 32%. To avoid this problem, see
+section|</span></a><a class="reference external" href="#sec:random_exact">7.4.1</a><a href="#id6"><span class="problematic" id="id7">|.)|</span></a> <strong>b)</strong>
+<a href="#id8"><span class="problematic" id="id9">|[fig:random_heteropolymer] A random heteropolymer (c), composed of of
+Monomer and Monomer3 monomer subunits (a and b) with (target)
+probabilities 0.6 and 0.4. (However, due to random fluctuations, the
+actual ratio in this case was 68% and 32%. To avoid this problem, see
+section|</span></a><a class="reference external" href="#sec:random_exact">7.4.1</a><a href="#id10"><span class="problematic" id="id11">|.)|</span></a> <strong>c)</strong>
+<a href="#id12"><span class="problematic" id="id13">|[fig:random_heteropolymer] A random heteropolymer (c), composed of of
+Monomer and Monomer3 monomer subunits (a and b) with (target)
+probabilities 0.6 and 0.4. (However, due to random fluctuations, the
+actual ratio in this case was 68% and 32%. To avoid this problem, see
+section|</span></a><a class="reference external" href="#sec:random_exact">7.4.1</a><a href="#id14"><span class="problematic" id="id15">|.)|</span></a></p>
+<p>Arrays of random molecules can be generated using the syntax. For
+example, below we define a random polymer composed of 50 <em>Monomer</em> and
+<em>Monomer3</em> monomer subunits. (See figure
+<a class="reference external" href="#fig:random_heteropolymer">[fig:random_heteropolymer]</a>.)</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>RandPoly50 inherits ForceField {
+  # Make a chain of randomly chosen monomers:
+
+  monomers = new random([Monomer, Monomer3], [0.6, 0.4], 123456)
+                 [50].rot(180,1,0,0).move(2.95, 0, 0)
+
+  # Now, link the monomers together this way:
+  write(&quot;Data Bonds&quot;) {
+    $bond:bb1 @bond:Backbone $atom:monomers[0]/ca $atom:monomers[1]/ca
+    $bond:bb2 @bond:Backbone $atom:monomers[1]/ca $atom:monomers[2]/ca
+    $bond:bb3 @bond:Backbone $atom:monomers[2]/ca $atom:monomers[3]/ca
+    $bond:bb4 @bond:Backbone $atom:monomers[3]/ca $atom:monomers[4]/ca
+</pre></div>
+</div>
+<p><span class="math notranslate nohighlight">\(\quad \quad \quad \vdots\)</span></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>    $bond:bb50 @bond:Backbone $atom:monomers[48]/ca $atom:monomers[49]/ca
+  }
+  #(Note: Both the &quot;Monomer&quot; and &quot;Monomer3&quot; subunits contain atoms
+  #       named &quot;$atom:ca&quot;.
+} #RandPoly50
+</pre></div>
+</div>
+<p>It is also possible to fill a 2 or 3-dimensional volume with molecules
+randomly. This is discussed in section <a class="reference internal" href="#sec-random-advanced"><span class="std std-ref">Creating random mixtures using multidimensional arrays</span></a>.</p>
+<p>The function takes 2 or 3 arguments: a list of molecule types ( and in
+this example), and a list of probabilities (<em>0.6</em> and <em>0.4</em>) both
+enclosed in square-brackets [].</p>
+<div class="section" id="random-arrays-with-exact-molecule-type-counts">
+<span id="sec-random-exact"></span><h3><span class="section-number">7.4.1. </span>Random arrays with exact molecule type counts<a class="headerlink" href="#random-arrays-with-exact-molecule-type-counts" title="Permalink to this headline">¶</a></h3>
+<p>Recall that we requested that 60% of the molecules be of type “Monomer”
+and 40% type “Monomer3” (corresponding to 30 and 20, respectively).
+However, the resulting polymer (shown in figure
+<a class="reference external" href="#fig:random_heteropolymer">[fig:random_heteropolymer]</a>) contains 34
+“Monomer” and 16 “Monomer3” monomers (68% and 34%, respectively). This
+is because each time a monomer is created, a random number is generated
+to decide which type of monomer will be created. There is no guarantee
+that the total final fraction of monomers will match the target
+probabilities exactly (60% and 40%, respectively). To specify the number
+of molecule types precisely, you can replace the list of probabilities
+“[0.6,0.4]” with a list of integers “[30,20]”.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">monomers</span> <span class="o">=</span> <span class="n">new</span> <span class="n">random</span><span class="p">([</span><span class="n">Monomer</span><span class="p">,</span> <span class="n">Monomer3</span><span class="p">],</span> <span class="p">[</span><span class="mi">30</span><span class="p">,</span> <span class="mi">20</span><span class="p">],</span> <span class="mi">123456</span><span class="p">)</span>
+               <span class="p">[</span><span class="mi">50</span><span class="p">]</span><span class="o">.</span><span class="n">rot</span><span class="p">(</span><span class="mi">180</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="mf">2.95</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This will create exactly 30 “Monomer” and 20 “Monomer3” monomers. (You
+can do this with multidimensional arrays as well. See section
+<a class="reference internal" href="#sec-random-multidim-exact"><span class="std std-ref">Random multidimensional arrays with exact type counts</span></a>.)</p>
+</div>
+<div class="section" id="details-regarding-the-new-random-command">
+<h3><span class="section-number">7.4.2. </span>Details regarding the <em>new random</em> command:<a class="headerlink" href="#details-regarding-the-new-random-command" title="Permalink to this headline">¶</a></h3>
+<p><em>Note:</em> You can tell moltemplate to customize the bond-types and angles,
+depending on the (types of) monomers are connected by each bond. The
+“random_heteropolymer” example downloadable at
+<a class="reference external" href="www.moltemplate.org">www.moltemplate.org</a> demonstrates how to do
+this.</p>
+<p><em>Note:</em> Although this example, there are only two monomer types
+(“Monomer” and “Monomer3”), there is no limit to the number of molecule
+types which appear in these lists (eg “[Monomer, Monomer3,
+4bead],[0.2,0.3,0.2]”)</p>
+<p><em>Note:</em> An optional random-seed argument can also be included. (For
+example the shown above. If you omit this number, then you will get
+different results each time you run moltemplate.)</p>
+<p><em>Note:</em> These lists can also contain vacancies/blanks. See section
+<a class="reference external" href="#sec:random_vacancies">7.9</a>.)</p>
+<p><em>Note:</em> Once a molecule containing random monomers is defined, ( in this
+example), each copy of that molecule (created using the <em>new</em> command)
+is identical.</p>
+</div>
+<div class="section" id="optional-customizing-molecule-positions-in-a-random-array">
+<h3><span class="section-number">7.4.3. </span>Optional: Customizing molecule positions in a <em>random()</em> array<a class="headerlink" href="#optional-customizing-molecule-positions-in-a-random-array" title="Permalink to this headline">¶</a></h3>
+<p>You can customize the position of each type of molecule in the array,
+before the array is constructed. To do this, you can add additional
+movement commands after each molecule’s type name in the list (eg
+“Monomer” and “Monomer3”):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">monomers</span> <span class="o">=</span> <span class="n">new</span> <span class="n">random</span><span class="p">([</span><span class="n">Monomer</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mf">0.01</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span>
+                       <span class="n">Monomer3</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="o">-</span><span class="mf">0.01</span><span class="p">,</span><span class="mi">0</span><span class="p">)],</span>
+                      <span class="p">[</span><span class="mi">30</span><span class="p">,</span><span class="mi">20</span><span class="p">],</span>
+                      <span class="mi">123456</span><span class="p">)</span>
+               <span class="p">[</span><span class="mi">50</span><span class="p">]</span><span class="o">.</span><span class="n">rot</span><span class="p">(</span><span class="mi">180</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="mf">2.95</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The and suffixes moves these monomers closer or further away from the
+polymer axis (the x axis in this example). This is not restricted to
+commands. (You can also use , and commands as well.) These moves will be
+applied (in order from left to right), <em>before</em> any of the and commands
+appearing later (following “[50]”) are carried out.</p>
+</div>
+</div>
+<div class="section" id="and-i-j-slice-notation">
+<span id="sec-array-wildcards-intro"></span><h2><span class="section-number">7.5. </span>[*] and [i-j] slice notation<a class="headerlink" href="#and-i-j-slice-notation" title="Permalink to this headline">¶</a></h2>
+<p>You can move the entire array of molecules using “[*]” notation:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">monomers</span><span class="p">[</span><span class="o">*</span><span class="p">]</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">40</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>(Note that “monomers.move(0,0,40)” does not work. You must include the
+“[*]”.) You can also use range limits to move only some of the monomers:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">monomers</span><span class="p">[</span><span class="mi">2</span><span class="o">-</span><span class="mi">4</span><span class="p">]</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">40</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This will move only the third, fourth, and fifth monomers. If you are
+more familiar with python’s slice notation, you can accomplish the same
+thing using:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">monomers</span><span class="p">[</span><span class="mi">2</span><span class="p">:</span><span class="mi">5</span><span class="p">]</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">40</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>(In this case, the second integer (eg “5”) is interpreted as a strict
+upper bound.)</p>
+<p>(If these customizations are not enough for your needs, you can also
+always load atom coordinates from an external PDB or XYZ file. Such
+files can be generated by PACKMOL, or a variety of advanced graphical
+molecular modeling programs. For complex systems, this may be the best
+choice.)</p>
+<div class="section" id="building-arrays-one-interval-at-a-time-using-slice-notation">
+<h3><span class="section-number">7.5.1. </span>Building arrays one interval at a time (using slice notation)<a class="headerlink" href="#building-arrays-one-interval-at-a-time-using-slice-notation" title="Permalink to this headline">¶</a></h3>
+<p>For a more complicated example, you can build polymers using slice
+notation. The example below demonstrates how to build a polymer,
+specifying which part is random, and and which part is not:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">monomers</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>    <span class="o">=</span> <span class="n">new</span> <span class="n">Monomer3</span>
+<span class="n">monomers</span><span class="p">[</span><span class="mi">1</span><span class="o">-</span><span class="mi">48</span><span class="p">]</span> <span class="o">=</span> <span class="n">new</span> <span class="n">random</span><span class="p">([</span><span class="n">Monomer</span><span class="p">,</span> <span class="n">Monomer3</span><span class="p">],</span> <span class="p">[</span><span class="mi">30</span><span class="p">,</span> <span class="mi">18</span><span class="p">],</span> <span class="mi">123456</span><span class="p">)</span>
+                     <span class="p">[</span><span class="mi">48</span><span class="p">]</span><span class="o">.</span><span class="n">rot</span><span class="p">(</span><span class="mi">180</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="mf">2.95</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="n">monomers</span><span class="p">[</span><span class="mi">49</span><span class="p">]</span>   <span class="o">=</span> <span class="n">new</span> <span class="n">Monomer3</span>
+<span class="c1"># It&#39;s a good idea to move these monomers to keep them from overlapping</span>
+<span class="n">monomers</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">rot</span><span class="p">(</span><span class="mi">180</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">monomers</span><span class="p">[</span><span class="mi">1</span><span class="o">-</span><span class="mi">48</span><span class="p">]</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="mf">2.95</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">monomers</span><span class="p">[</span><span class="mi">49</span><span class="p">]</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="mf">144.55</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>    <span class="c1">#(note: 144.55=49*2.95)</span>
+</pre></div>
+</div>
+<p>In this example, we insure that monomers[0] and monomers[49] are both of
+type “Monomer3” (while keeping the total number of “Monomer” and
+“Monomer3” monomers at 30 and 20, respectively).</p>
+<p><em>(Note: You can replace “monomers[1-48]” with “monomers[1:49]”, or
+“monomers[1*48]”, if you prefer that syntax style. You can build
+multidimensional arrays using slice notation as well, for example
+“molecules[3][10-19][4-6] = new Molecule[10][3]”)</em></p>
+</div>
+</div>
+<div class="section" id="multidimensional-arrays">
+<span id="sec-multidimensional-arrays"></span><h2><span class="section-number">7.6. </span>Multidimensional arrays<a class="headerlink" href="#multidimensional-arrays" title="Permalink to this headline">¶</a></h2>
+<p>The same techniques work with multidimensional arrays. Coordinate
+transformations can be applied to each layer in a multi-dimensional
+array. For example, to create a cubic lattice of 3x3x3 polymers: you
+would use this syntax:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">molecules</span> <span class="o">=</span> <span class="n">new</span> <span class="n">Polymer</span> <span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="mf">30.0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+                        <span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">30.0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+                        <span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">30.0</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>(Similar commands can be used with rotations to generate objects with
+cylindrical, helical, conical, or toroidal symmetry.)</p>
+</div>
+<div class="section" id="customizing-individual-rows-columns-or-layers">
+<h2><span class="section-number">7.7. </span>Customizing individual rows, columns, or layers<a class="headerlink" href="#customizing-individual-rows-columns-or-layers" title="Permalink to this headline">¶</a></h2>
+<p>Similarly, you can customize the position of individual polymers, or
+layers or columns using the methods above:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">molecules</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="o">*</span><span class="p">][</span><span class="o">*</span><span class="p">]</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">20</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">molecules</span><span class="p">[</span><span class="o">*</span><span class="p">][</span><span class="mi">1</span><span class="p">][</span><span class="o">*</span><span class="p">]</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">20</span><span class="p">)</span>
+<span class="n">molecules</span><span class="p">[</span><span class="o">*</span><span class="p">][</span><span class="o">*</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>See figure <a class="reference external" href="#fig:2bead_polymer">[fig:2bead_polymer]</a>c) <em>(You can
+also use slice notation, eg “molecules[1][0-2][0-1].move(20,0,0)”)</em></p>
+<p>You can delete part of an array and replace it with something else (eg
+<em>“Lipid”</em>) using slice notation:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">delete</span> <span class="n">molecules</span><span class="p">[</span><span class="mi">0</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="c1"># (shorthand for delete molecules[0][1][1]</span>
+                              <span class="c1">#                delete molecules[0][1][2]</span>
+                              <span class="c1">#                delete molecules[1][1][1]</span>
+                              <span class="c1">#                delete molecules[1][1][2])</span>
+
+<span class="c1"># Now replace the array elements we deleted:</span>
+<span class="n">molecules</span><span class="p">[</span><span class="mi">0</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">new</span> <span class="n">Lipid</span> <span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="mi">30</span><span class="p">,</span>  <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+                                   <span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">30.0</span><span class="p">)</span>
+
+<span class="c1"># ...and move them back to the location of the vacancies we created</span>
+<span class="n">molecules</span><span class="p">[</span><span class="mi">0</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">30.0</span><span class="p">,</span> <span class="mf">30.0</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><em>The word “Lipid” in this example is not important. It is the name of
+some other molecule type.</em></p>
+</div>
+<div class="section" id="creating-random-mixtures-using-multidimensional-arrays">
+<span id="sec-random-advanced"></span><h2><span class="section-number">7.8. </span>Creating random mixtures using multidimensional arrays<a class="headerlink" href="#creating-random-mixtures-using-multidimensional-arrays" title="Permalink to this headline">¶</a></h2>
+<p>You can use to fill space with a random mixture of molecules. The
+following 2-dimensional example creates a lipid bilayer (shown in figure
+<a class="reference internal" href="#fig-bilayer-mixture"><span class="std std-numref">Fig. 7.1</span></a>) composed of an equal
+mixture of DPPC and DLPC lipids. (…Whose definition we omit here. See
+the online examples for details.)</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="s2">&quot;lipids&quot;</span>                                     <span class="c1"># define DPPC &amp; DLPC</span>
+<span class="n">lipids</span> <span class="o">=</span> <span class="n">new</span> <span class="n">random</span><span class="p">([</span><span class="n">DPPC</span><span class="p">,</span><span class="n">DLPC</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span><span class="mf">0.5</span><span class="p">],</span> <span class="mi">123</span><span class="p">)</span>    <span class="c1"># &quot;123&quot;=random_seed</span>
+                    <span class="p">[</span><span class="mi">19</span><span class="p">]</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="mf">7.5</span><span class="p">,</span>    <span class="mi">0</span><span class="p">,</span>     <span class="mi">0</span><span class="p">)</span>     <span class="c1"># lattice spacing 7.5</span>
+                    <span class="p">[</span><span class="mi">22</span><span class="p">]</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="mf">3.75</span><span class="p">,</span> <span class="mf">6.49519</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>     <span class="c1"># hexagonal lattice</span>
+                     <span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">rot</span><span class="p">(</span><span class="mi">180</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>          <span class="c1"># 2 monolayers</span>
+</pre></div>
+</div>
+<div class="figure align-center" id="id1">
+<span id="fig-bilayer-mixture"></span><a class="reference internal image-reference" href="../_images/lipid_bilayer_mixture.jpg"><img alt="lipid bilayer mixture" src="../_images/lipid_bilayer_mixture.jpg" style="width: 5cm;" /></a>
+<p class="caption"><span class="caption-number">Fig. 7.1 </span><span class="caption-text">A lipid bilayer membrane composed of a
+random equal mixture of two different lipid types in a 1:1 ratio.
+See section <a class="reference internal" href="#sec-random-advanced"><span class="std std-ref">Creating random mixtures using multidimensional arrays</span></a>.</span><a class="headerlink" href="#id1" title="Permalink to this image">¶</a></p>
+</div>
+<div class="figure align-center" id="id2">
+<span id="fig-bilayer-vacancies"></span><a class="reference internal image-reference" href="../_images/lipid_bilayer_vacancies.jpg"><img alt="lipid bilayer mixture with vacancies" src="../_images/lipid_bilayer_vacancies.jpg" style="width: 5cm;" /></a>
+<p class="caption"><span class="caption-number">Fig. 7.2 </span><span class="caption-text">A lipid bilayer membrane composed of a random
+equal mixture of two different lipid types in a 1:1 ratio
+with one of the molecule types left blank leaving vacancies behind.
+See section <a class="reference internal" href="#sec-random-vacancies"><span class="std std-ref">Inserting random vacancies</span></a>.</span><a class="headerlink" href="#id2" title="Permalink to this image">¶</a></p>
+</div>
+</div>
+<div class="section" id="inserting-random-vacancies">
+<span id="sec-random-vacancies"></span><h2><span class="section-number">7.9. </span>Inserting random vacancies<a class="headerlink" href="#inserting-random-vacancies" title="Permalink to this headline">¶</a></h2>
+<p>The list of molecule types passed to the function may contain blanks. In
+the next example, 30% of the lipids are missing:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">lipids</span> <span class="o">=</span> <span class="n">new</span> <span class="n">random</span><span class="p">([</span><span class="n">DPPC</span><span class="p">,</span> <span class="p">,</span><span class="n">DLPC</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.35</span><span class="p">,</span><span class="mf">0.3</span><span class="p">,</span><span class="mf">0.35</span><span class="p">],</span> <span class="mi">123</span><span class="p">)</span> <span class="c1"># 2nd element is blank</span>
+                    <span class="p">[</span><span class="mi">19</span><span class="p">]</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="mf">7.5</span><span class="p">,</span>    <span class="mi">0</span><span class="p">,</span>     <span class="mi">0</span><span class="p">)</span>
+                    <span class="p">[</span><span class="mi">22</span><span class="p">]</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="mf">3.75</span><span class="p">,</span> <span class="mf">6.49519</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+                     <span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">rot</span><span class="p">(</span><span class="mi">180</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The results are shown in figure
+<a class="reference external" href="#fig:random_bilayer">[fig:random_bilayer]</a>b). <em>(Note: When this
+happens, the array will contain missing elements. Any attempt to access
+the atoms inside these missing molecules will generate an error message,
+however moving or deleting array entries using [</em>] or [i-j] notation
+should be safe.)*</p>
+<div class="section" id="random-multidimensional-arrays-with-exact-type-counts">
+<span id="sec-random-multidim-exact"></span><h3><span class="section-number">7.9.1. </span>Random multidimensional arrays with exact type counts<a class="headerlink" href="#random-multidimensional-arrays-with-exact-type-counts" title="Permalink to this headline">¶</a></h3>
+<p>Due to random fluctuations the number of DPPC and DLPC lipids created
+may not equal exactly 0.35 <span class="math notranslate nohighlight">\(\times\)</span> of the number of entries in
+the array,</p>
+<p>Alternately, you can specify the exact number of DPPC and DLPC molecules
+you desire (as opposed to a list of probabilities). To do this, replace
+the list of probabilities with integers:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">lipids</span> <span class="o">=</span> <span class="n">new</span> <span class="n">random</span><span class="p">([</span><span class="n">DPPC</span><span class="p">,</span> <span class="p">,</span><span class="n">DLPC</span><span class="p">],</span> <span class="p">[</span><span class="mi">293</span><span class="p">,</span><span class="mi">250</span><span class="p">,</span><span class="mi">293</span><span class="p">],</span> <span class="mi">123</span><span class="p">)</span>
+                    <span class="p">[</span><span class="mi">19</span><span class="p">]</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="mf">7.5</span><span class="p">,</span>    <span class="mi">0</span><span class="p">,</span>     <span class="mi">0</span><span class="p">)</span>
+                    <span class="p">[</span><span class="mi">22</span><span class="p">]</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="mf">3.75</span><span class="p">,</span> <span class="mf">6.49519</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+                     <span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">rot</span><span class="p">(</span><span class="mi">180</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This will generate exactly 293 DPPC and DLPC molecules (and 250 <em>blank</em>
+entries, since the second molecule type was unspecified). The sum (ie
+293+250+293) must equal the number of entries in the array you are
+creating (ie 19x22x2).</p>
+</div>
+</div>
+<div class="section" id="cutting-rectangular-holes-using-delete">
+<span id="sec-delete-holes"></span><h2><span class="section-number">7.10. </span>Cutting rectangular holes using <strong>delete</strong><a class="headerlink" href="#cutting-rectangular-holes-using-delete" title="Permalink to this headline">¶</a></h2>
+<p>The delete command can be used to cut large holes in 1, 2, and
+3-dimensional objects. For example, consider a simple 3-dimensional
+12x12x12 cube of molecules. (For simplicity, each “molecule” in this
+example contains only one atom. These atoms appear as blue spheres in
+figure <a class="reference internal" href="#fig-delete-holes"><span class="std std-numref">Fig. 7.3</span></a>.)</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">molecules</span> <span class="o">=</span> <span class="n">new</span> <span class="n">OneAtomMolecule</span> <span class="p">[</span><span class="mi">12</span><span class="p">]</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="mf">3.0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+                                <span class="p">[</span><span class="mi">12</span><span class="p">]</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mf">3.0</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+                                <span class="p">[</span><span class="mi">12</span><span class="p">]</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mf">3.0</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Then, we cut out some rectangular vacancies:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">delete</span> <span class="n">molecules</span><span class="p">[</span><span class="o">*</span><span class="p">][</span><span class="o">*</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span>
+<span class="n">delete</span> <span class="n">molecules</span><span class="p">[</span><span class="o">*</span><span class="p">][</span><span class="o">*</span><span class="p">][</span><span class="mi">8</span><span class="p">]</span>
+<span class="n">delete</span> <span class="n">molecules</span><span class="p">[</span><span class="mi">6</span><span class="o">-</span><span class="mi">7</span><span class="p">][</span><span class="mi">0</span><span class="o">-</span><span class="mi">8</span><span class="p">][</span><span class="mi">5</span><span class="o">-</span><span class="mi">6</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>The result of these operations is shown in figure <a class="reference internal" href="#fig-delete-holes"><span class="std std-numref">Fig. 7.3</span></a>.
+<em>(Note: You may move or delete previously deleted array elements more than once, and/or deleting
+overlapping rectangular regions without error.)</em></p>
+<div class="figure align-center" id="id3">
+<span id="fig-delete-holes"></span><a class="reference internal image-reference" href="../_images/delete_holes1.jpg"><img alt="rectangular holes" src="../_images/delete_holes1.jpg" style="width: 4.0cm;" /></a>
+<p class="caption"><span class="caption-number">Fig. 7.3 </span><span class="caption-text">Rectangular holes can be carved out of an array
+of molecules (represented here by blue spheres) using the “delete”
+command. Three delete commands were used to remove the two planar
+regions and the rectangular hole in the center.</span><a class="headerlink" href="#id3" title="Permalink to this image">¶</a></p>
+</div>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">moltemplate</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html">1. Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">2. Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quick_reference.html">3. Quick reference <em>(skip on first reading)</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">4. Introductory tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="overview.html">5. Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="coordinates.html">6. Object composition and coordinate generation</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">7. Arrays, slices, and coordinate transformations</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#transformations-following-brackets-in-a-new-statement">7.1. Transformations following brackets [] in a new statement</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#transformations-following-instantiation">7.2. Transformations following instantiation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#transformation-order-general-case">7.3. Transformation order (general case)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#random-arrays">7.4. Random arrays</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#and-i-j-slice-notation">7.5. [*] and [i-j] slice notation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#multidimensional-arrays">7.6. Multidimensional arrays</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#customizing-individual-rows-columns-or-layers">7.7. Customizing individual rows, columns, or layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#creating-random-mixtures-using-multidimensional-arrays">7.8. Creating random mixtures using multidimensional arrays</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#inserting-random-vacancies">7.9. Inserting random vacancies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#cutting-rectangular-holes-using-delete">7.10. Cutting rectangular holes using <strong>delete</strong></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="custom_xform.html">8. Customizing molecule position and topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../appendix/spce_example_robust.html">9. Portability: Using <em>LT files</em> for force-field storage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="limitations.html">10. Known bugs and limitations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../appendix/nbody_by_type.html">11. Bonded interactions “By Type”</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../appendix/ltemplify.html">12. Using ltemplify.py to create an <em>LT file</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../appendix/vmd_advanced.html">13. Visualization in VMD</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../appendix/ttree_man_page.html">14. Advanced moltemplate.sh Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../appendix/ttree.html">15. Using <em>lttree.py</em> or <em>ttree.py</em> directly</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../appendix/nbody_by_type_utility.html">16. Using the <em>nbody_by_type.py</em> utility</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../appendix/adv_variable_syntax.html">17. Variable syntax details</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utils/dump2data.html">18. dump2data.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utils/extract_lammps_data.html">19. extract_lammps_data.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utils/genpoly_lt.html">20. genpoly_lt.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utils/interpolate_curve.html">21. interpolate_curve.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utils/ltemplify.html">22. ltemplify.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utils/raw2data.html">23. raw2data.py</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="coordinates.html" title="previous chapter"><span class="section-number">6. </span>Object composition and coordinate generation</a></li>
+      <li>Next: <a href="custom_xform.html" title="next chapter"><span class="section-number">8. </span>Customizing molecule position and topology</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Andrew Jewett.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/main/arrays.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

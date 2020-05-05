@@ -1,0 +1,198 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>10. Known bugs and limitations &#8212; moltemplate 2.1 documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="11. Bonded interactions “By Type”" href="../appendix/nbody_by_type.html" />
+    <link rel="prev" title="9. Portability: Using LT files for force-field storage" href="../appendix/spce_example_robust.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="known-bugs-and-limitations">
+<span id="sec-limitations"></span><h1><span class="section-number">10. </span>Known bugs and limitations<a class="headerlink" href="#known-bugs-and-limitations" title="Permalink to this headline">¶</a></h1>
+<p>Please report any bugs you find by email to <a class="reference internal" href="../_images/author_email.png"><img alt="Author email address" src="../_images/author_email.png" style="height: 0.3cm;" /></a>, or to the
+lammps-users mailing list.</p>
+<p><strong>1)</strong> LAMMPS-style molecule-templates are <em>not</em> supported. The DATA
+files created by moltemplate are not in the correct format to be read by
+the LAMMPS <em>molecule</em> command. (This is because this command was added
+after moltemplate was written.) However the formats are similar, and the
+relevant information can be extracted using a text-editor and converted
+to the other format. (Using a text-editor and awk, or a spreadsheet
+program. For more information on these file formats,
+<a class="reference external" href="http://lammps.sandia.gov/doc/read_data.html">http://lammps.sandia.gov/doc/read_data.html</a>
+<a class="reference external" href="http://lammps.sandia.gov/doc/molecule.html">http://lammps.sandia.gov/doc/molecule.html</a>.) Again, feel free to contact
+<a class="reference internal" href="../_images/author_email.png"><img alt="Author email address" src="../_images/author_email.png" style="height: 0.3cm;" /></a> to request support for LAMMPS-style molecule templates.</p>
+<p><strong>2)</strong> <strong>Moltemplate consumes a large amount of memory (RAM)</strong></p>
+<p>Memory use grows proportional to system size. As of 2019-9-03, setting
+up a system of 1000000 atoms using moltemplate currently requires
+between 2.7 and 12 GB of <em>available</em> memory. (Systems with many bonds
+and angles consume more memory, as well as systems with a high molecule
+count.) Unfortunately this code was not carefully written to minimize
+memory usage. (In addition, python programs can require more than 10
+times as much memory as similar programs written in C/C++.)</p>
+<p>This problem might be alleviated by using other python interpreters with
+a lower memory footprint. Alternately, it may be necessary to split a
+large system into pieces, run moltemplate on each piece, and combine the
+resulting data files into one large data file later.</p>
+<p>Also, computers with a moderate amount of RAM can be rented very
+cheaply. (For example, see <a class="reference external" href="https://cloud.google.com/compute/">https://cloud.google.com/compute/</a>.)</p>
+<p><em>When setting up large simulations with moltemplate, consider using the
+command</em> to prevent system crashes. (If you are on a shared computer,
+ask an administrator to do this.) If these options are not available,
+you can always run a resource monitor (like “top”) before starting
+moltemplate and kill the process if it’s memory usage exceeds 80%.</p>
+<p><strong>3)</strong> Limited support for non-point-like atoms:</p>
+<p>As of 2019-9-03, only the “full”, “angle”, “atomic”, “charge”, “sphere”,
+“dipole”, “ellipsoid”, and “molecular” styles have been tested. Other
+non-point-like atoms like “tri”, “line” <em>should</em> also work with
+moltemplate. However these objects are <em>not rotated correctly</em> by the
+“.rot()” command (or scaled correctly by the “.scale()” command). More
+exotic exotic atom styles, such as “wavepacket”, “electron”, “sphere”
+and “peri” have not been tested. In addition, atom_style <strong>body</strong> and
+atom_style <strong>template</strong> are <em>not</em> supported. Feel free to contact
+<a class="reference internal" href="../_images/author_email.png"><img alt="Author email address" src="../_images/author_email.png" style="height: 0.3cm;" /></a> to request support for exotic atom styles.</p>
+<p><strong>4)</strong> When placed at the end of a line, LAMMPS interprets <strong>the “&amp;”
+character</strong> as a request to merge two lines together. <em>It is usually
+safe to use this character inside moltemplate write() or write_once()
+commands.</em> However in some rare cases, joining two lines together using
+the “&amp;” character can confuse moltemplate. For example, in a lammps
+input script command, (like “pair_coeff” or “dihedral_coeff”), <strong>the “&amp;”
+character should not appear before the last “&#64;” or “$” variable is
+referenced.</strong> Also avoid using the “&amp;” character anywhere in the “Data
+Atoms”, “Data Bonds”, “Data Angles”, “Data Dihedrals”, “Data Impropers”,
+“Data Angles By Type”, “Data Dihedrals By Type”, and “Data Impropers By
+Type” sections.</p>
+<p><strong>5)</strong> Triclinic boundary conditions have not been tested:</p>
+<p>As of 2019-9-03, support for PDB files with triclinic cells is
+experimental. Please let me know if it is not working.</p>
+<p><strong>6)</strong> Inconsistent support for wildcard characters (“*” and “?”)
+[sec:wildcard_bug] The wildcard character “*” is interpreted
+differently in different parts of an LT file. Wildcard characters work
+reliably and are used for <em>string</em> pattern matching when inside
+“bond_coeff”, “angle_coeff”, “dihedral_coeff”, “improper_coeff”, and
+most “pair_coeff” commands, as well as any of the <em>“By Type”</em> sections
+in an LT file (such as <em>“Data Angles By Type”</em>, <em>“Data Dihedrals By
+Type”</em>, and <em>“Data Impropers By Type”</em>). However these wildcard
+characters <em>do not</em> within pair_coeff commands that require <em>more</em> than
+2 atom types as arguments. (such as “pair_style hbond/dreiding/lj”.
+However manybody pair_styles which use “pair_coeff * *” notation work
+fine.)</p>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">moltemplate</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html">1. Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">2. Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quick_reference.html">3. Quick reference <em>(skip on first reading)</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">4. Introductory tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="overview.html">5. Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="coordinates.html">6. Object composition and coordinate generation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="arrays.html">7. Arrays, slices, and coordinate transformations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="custom_xform.html">8. Customizing molecule position and topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../appendix/spce_example_robust.html">9. Portability: Using <em>LT files</em> for force-field storage</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">10. Known bugs and limitations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../appendix/nbody_by_type.html">11. Bonded interactions “By Type”</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../appendix/ltemplify.html">12. Using ltemplify.py to create an <em>LT file</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../appendix/vmd_advanced.html">13. Visualization in VMD</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../appendix/ttree_man_page.html">14. Advanced moltemplate.sh Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../appendix/ttree.html">15. Using <em>lttree.py</em> or <em>ttree.py</em> directly</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../appendix/nbody_by_type_utility.html">16. Using the <em>nbody_by_type.py</em> utility</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../appendix/adv_variable_syntax.html">17. Variable syntax details</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utils/dump2data.html">18. dump2data.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utils/extract_lammps_data.html">19. extract_lammps_data.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utils/genpoly_lt.html">20. genpoly_lt.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utils/interpolate_curve.html">21. interpolate_curve.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utils/ltemplify.html">22. ltemplify.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utils/raw2data.html">23. raw2data.py</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="../appendix/spce_example_robust.html" title="previous chapter"><span class="section-number">9. </span>Portability: Using <em>LT files</em> for force-field storage</a></li>
+      <li>Next: <a href="../appendix/nbody_by_type.html" title="next chapter"><span class="section-number">11. </span>Bonded interactions “By Type”</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Andrew Jewett.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/main/limitations.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

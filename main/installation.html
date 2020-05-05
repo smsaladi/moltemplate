@@ -1,0 +1,266 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>2. Installation &#8212; moltemplate 2.1 documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="3. Quick reference (skip on first reading)" href="quick_reference.html" />
+    <link rel="prev" title="1. Introduction" href="../introduction.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="installation">
+<span id="sec-installation"></span><h1><span class="section-number">2. </span>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
+<p>There are three ways to install moltemplate:</p>
+<div class="section" id="installation-method-1-pip">
+<h2><span class="section-number">2.1. </span>Installation Method 1 (pip)<a class="headerlink" href="#installation-method-1-pip" title="Permalink to this headline">¶</a></h2>
+<p><em>If you are familiar with pip</em>, you can install moltemplate by typing
+following command in the terminal/shell:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">moltemplate</span>
+</pre></div>
+</div>
+<p>If you receive an error regarding permissions, then run pip this way
+instead:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">moltemplate</span> <span class="o">--</span><span class="n">user</span>
+</pre></div>
+</div>
+<p>Make sure that your default pip install bin directory is in your <em>PATH</em>.
+(This is usually something like /.local/bin/ or /anaconda3/bin/. If you
+have installed anaconda, your PATH should have been updated for you
+automatically.) Later, you can uninstall moltemplate using:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">uninstall</span> <span class="n">moltemplate</span>
+</pre></div>
+</div>
+<p><em>Note: There are a large variety of detailed moltemplate examples which
+will be omitted if you install moltemplate this way.</em><strong>Downloading the
+examples is strongly recommended.</strong> You can do this either by using
+<em>git</em>, or by downloading them from the web page. (See below.) (The
+examples are located in the <em>examples/</em> subdirectory included with the
+download.)</p>
+</div>
+<div class="section" id="installation-method-2-git-webpage-pip">
+<h2><span class="section-number">2.2. </span>Installation Method 2 (git/webpage + pip)<a class="headerlink" href="#installation-method-2-git-webpage-pip" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="obtaining-moltemplate">
+<h2><span class="section-number">2.3. </span>Obtaining Moltemplate<a class="headerlink" href="#obtaining-moltemplate" title="Permalink to this headline">¶</a></h2>
+<p>The most up-to-date version of moltemplate can be downloaded using
+<strong>git</strong>.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">clone</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">jewettaij</span><span class="o">/</span><span class="n">moltemplate</span> <span class="o">~/</span><span class="n">moltemplate</span>
+</pre></div>
+</div>
+<p>Later, you can update the download to the latest version of moltemplate
+using:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">pull</span>
+</pre></div>
+</div>
+<p>(This is the recommended way to download moltemplate.)</p>
+<p>Alternatively, if you don’t have <strong>git</strong> installed, you can download
+moltemplate as a .tar.gz archive from <a class="reference external" href="http://www.moltemplate.org">http://www.moltemplate.org</a> and
+then unpack it using:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">tar</span> <span class="o">-</span><span class="n">xzvf</span> <span class="n">moltemplate_2020</span><span class="o">-</span><span class="mi">2</span><span class="o">-</span><span class="mf">22.</span><span class="n">tar</span><span class="o">.</span><span class="n">gz</span>
+</pre></div>
+</div>
+<p>(The date will vary from version to version.)</p>
+<p>Then move the unpacked moltemplate directory to your home directory (/)
+and run:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cd</span>  <span class="o">~/</span><span class="n">moltemplate</span>
+<span class="n">pip</span> <span class="n">install</span> <span class="o">.</span>  <span class="c1"># (or &quot;pip install --user&quot;, if that fails)</span>
+</pre></div>
+</div>
+<p><em>If you run into difficulty with pip</em>, then try installing moltemplate
+into a temporary virtual environment by installing “virtualenv”, and
+running these commands:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cd</span> <span class="o">~/</span><span class="n">moltemplate</span>
+<span class="n">python</span> <span class="o">-</span><span class="n">m</span> <span class="n">venv</span> <span class="n">venv</span>     <span class="c1">#(or &quot;virtualenv venv&quot; if using python2)</span>
+<span class="n">source</span> <span class="n">venv</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">activate</span>
+<span class="n">pip</span> <span class="n">install</span> <span class="o">.</span>
+<span class="c1">#(now do something useful with moltemplate...)</span>
+</pre></div>
+</div>
+<p>(You will have to enter “source /moltemplate/venv/bin/activate” into a
+terminal beforehand every time you want to run moltemplate.) If all this
+fails, then try installing moltemplate by manually updating your $PATH
+environment variable. Instructions for doing that are included below.</p>
+</div>
+<div class="section" id="installation-method-3-updating-your-path">
+<h2><span class="section-number">2.4. </span>Installation Method 3 (updating your PATH)<a class="headerlink" href="#installation-method-3-updating-your-path" title="Permalink to this headline">¶</a></h2>
+<p>Alternatively, you can download the moltemplate files (as explained
+above) and edit your <em>PATH</em> variable. The <em>PATH</em> variable helps the
+shell (eg. <em>BASH</em>) find the programs you type into the terminal. You
+must edit the PATH variable to include the subdirectory where the
+moltemplate.sh script is located (eg.
+“/moltemplate/moltemplate/scripts/”), as well as the directory
+containing the most of the python scripts (eg.
+“/moltemplate/moltemplate/”).</p>
+<p>If you use the <strong>BASH</strong> shell, typically you would edit your file (or
+your , or file) and append the following lines to that file:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">export</span> <span class="n">PATH</span><span class="o">=</span><span class="s2">&quot;$PATH:$HOME/moltemplate/moltemplate&quot;</span>
+<span class="n">export</span> <span class="n">PATH</span><span class="o">=</span><span class="s2">&quot;$PATH:$HOME/moltemplate/moltemplate/scripts&quot;</span>
+</pre></div>
+</div>
+<p>If instead you use the <strong>TCSH</strong> shell, typically you would edit your , ,
+or files and append the following lines:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">setenv</span> <span class="n">PATH</span> <span class="s2">&quot;$PATH:$HOME/moltemplate/moltemplate&quot;</span>
+<span class="n">setenv</span> <span class="n">PATH</span> <span class="s2">&quot;$PATH:$HOME/moltemplate/moltemplate/scripts&quot;</span>
+</pre></div>
+</div>
+<p><em>Note: You may need to log out and then log back in again for the
+changes to take effect.</em></p>
+<p><em>Warning: Do not install moltemplate this way if you you plan to invoke
+moltemplate from within the python environment,</em><strong>or</strong><em>if you are
+using “vipster”, “cellpack2moltemplate” or other software that has a
+moltemplate python dependency. In order to be able to be able to run
+“import moltemplate”, as these programs do, moltemplate must be
+installed using pip (or setuptools).</em></p>
+</div>
+<div class="section" id="windows-installation-suggestions">
+<h2><span class="section-number">2.5. </span>WINDOWS installation suggestions<a class="headerlink" href="#windows-installation-suggestions" title="Permalink to this headline">¶</a></h2>
+<p>You can install both moltemplate and LAMMPS in windows, but you will
+first need to install the <em>BASH</em> shell environment on your computer. I
+recommend installing <strong>virtualbox</strong>(<a class="reference external" href="https://www.virtualbox.org">https://www.virtualbox.org</a>) in
+windows together with a (debian-based) linux distribution with a
+lightweight desktop such as <strong>xubuntu</strong>(<a class="reference external" href="https://xubuntu.org">https://xubuntu.org</a>).
+Alternatively, if you are using Windows 10 or later, you can try
+installing the <strong>Windows Subsystem for Linux (WSL)</strong> (<em>which is text
+only</em>, <a class="reference external" href="https://docs.microsoft.com/en-us/windows/wsl">https://docs.microsoft.com/en-us/windows/wsl</a>) or <strong>Hyper-V</strong>
+(<a class="reference external" href="https://www.nakivo.com/blog/run-linux-hyper-v/">https://www.nakivo.com/blog/run-linux-hyper-v/</a>). Otherwise, if you are
+using an older version of windows, try installing <strong>CYGWIN</strong>
+(<a class="reference external" href="https://www.cygwin.com/">https://www.cygwin.com/</a>) instead.</p>
+<p>To use LAMMPS and moltemplate, you will also need to install (and learn
+how to use) a text editor. (Word, Wordpad, and Notepad will not work.)
+If you are <em>NOT using WSL</em>, then you can use popular graphical text
+editors such as <em>Atom</em>, <em>Sublime</em>, <em>Notepad++</em>, <em>VSCode</em>, and the
+graphical versions of <em>emacs</em> and <em>vim</em>. (<em>Note:</em> Don’t use these
+editors if you are using the WSL environment. Under WSL, these editors
+may cause file system corruption. Avoid them for now.
+(<a class="reference external" href="https://www.reddit.com/r/bashonubuntuonwindows/comments/6bu1d1/since_we_shouldnt_edit_files_stored_in_wsl_with/">https://www.reddit.com/r/bashonubuntuonwindows/comments/6bu1d1/since_we_shouldnt_edit_files_stored_in_wsl_with/</a>)
+If you <em>ARE using WSL</em> then you are restricted to using non-graphical
+text editors which you can safely install and run from within the WSL
+terminal. These include: <em>nano</em>, <em>ne</em>, <em>emacs</em> (text version), <em>vim</em>
+(text version), and <em>jove</em>.</p>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">moltemplate</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html">1. Introduction</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">2. Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#installation-method-1-pip">2.1. Installation Method 1 (pip)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#installation-method-2-git-webpage-pip">2.2. Installation Method 2 (git/webpage + pip)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#obtaining-moltemplate">2.3. Obtaining Moltemplate</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#installation-method-3-updating-your-path">2.4. Installation Method 3 (updating your PATH)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#windows-installation-suggestions">2.5. WINDOWS installation suggestions</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="quick_reference.html">3. Quick reference <em>(skip on first reading)</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">4. Introductory tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="overview.html">5. Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="coordinates.html">6. Object composition and coordinate generation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="arrays.html">7. Arrays, slices, and coordinate transformations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="custom_xform.html">8. Customizing molecule position and topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../appendix/spce_example_robust.html">9. Portability: Using <em>LT files</em> for force-field storage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="limitations.html">10. Known bugs and limitations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../appendix/nbody_by_type.html">11. Bonded interactions “By Type”</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../appendix/ltemplify.html">12. Using ltemplify.py to create an <em>LT file</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../appendix/vmd_advanced.html">13. Visualization in VMD</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../appendix/ttree_man_page.html">14. Advanced moltemplate.sh Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../appendix/ttree.html">15. Using <em>lttree.py</em> or <em>ttree.py</em> directly</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../appendix/nbody_by_type_utility.html">16. Using the <em>nbody_by_type.py</em> utility</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../appendix/adv_variable_syntax.html">17. Variable syntax details</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utils/dump2data.html">18. dump2data.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utils/extract_lammps_data.html">19. extract_lammps_data.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utils/genpoly_lt.html">20. genpoly_lt.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utils/interpolate_curve.html">21. interpolate_curve.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utils/ltemplify.html">22. ltemplify.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utils/raw2data.html">23. raw2data.py</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="../introduction.html" title="previous chapter"><span class="section-number">1. </span>Introduction</a></li>
+      <li>Next: <a href="quick_reference.html" title="next chapter"><span class="section-number">3. </span>Quick reference <em>(skip on first reading)</em></a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Andrew Jewett.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/main/installation.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

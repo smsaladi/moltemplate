@@ -1,0 +1,199 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>23. raw2data.py &#8212; moltemplate 2.1 documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="22. ltemplify.py" href="ltemplify.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="raw2data-py">
+<h1><span class="section-number">23. </span>raw2data.py<a class="headerlink" href="#raw2data-py" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="description">
+<h2><span class="section-number">23.1. </span>Description<a class="headerlink" href="#description" title="Permalink to this headline">¶</a></h2>
+<p><strong>raw2data.py</strong> replaces the coordinates of a LAMMPS data file with new
+coordinates.</p>
+</div>
+<div class="section" id="typical-usage">
+<h2><span class="section-number">23.2. </span>Typical usage<a class="headerlink" href="#typical-usage" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">raw2data</span><span class="o">.</span><span class="n">py</span> <span class="o">-</span><span class="n">atomstyle</span> <span class="n">ATOMSTYLE</span> <span class="n">FILE_OLD</span><span class="o">.</span><span class="n">data</span> <span class="o">&lt;</span> <span class="n">COORDS</span><span class="o">.</span><span class="n">raw</span> <span class="o">&gt;</span> <span class="n">FILE_NEW</span><span class="o">.</span><span class="n">data</span>
+</pre></div>
+</div>
+<p>This will create a new LAMMPS DATA file named “FILE_NEW.data” whose atom
+coordinates are copied from the COORDS.raw file, but is otherwise
+identical to the original DATA file (eg, “FILE_OLD.data”). The optional
+-atomstyle ATOMSTYLE argument tells raw2data.py about the format of the
+DATA file. If not specified, the atom style is “full” by default.</p>
+</div>
+<div class="section" id="arguments">
+<h2><span class="section-number">23.3. </span>Arguments<a class="headerlink" href="#arguments" title="Permalink to this headline">¶</a></h2>
+<p>ATOMSTYLE is a quoted string, such as “full” or “hybrid sphere dipole”
+indicating the format of the data file. It can be any of the <a class="reference external" href="http://lammps.sandia.gov/doc/atom_style.html">LAMMPS
+atom styles</a> such as
+“angle”, “bond”, “charge”, “full”, “molecular”, “dipole”, “ellipsoid” or
+any hybrid combination of these styles. (See caveats below.)</p>
+<p>FILE_OLD.data The second argument to raw2data.py is the name of a DATA
+file you want to read. raw2data.py will replace the coordinates in the
+“Atoms” section of this file, while preserving the rest of the data
+file.</p>
+<p>COORDS.raw is a simple 3-column ASCII file containing the coordinates of
+the atoms in your system. It has a very simple format:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="mf">122.28</span> <span class="o">-</span><span class="mf">19.2293</span> <span class="o">-</span><span class="mf">7.93705</span>
+<span class="o">-</span><span class="mf">121.89</span> <span class="o">-</span><span class="mf">19.2417</span> <span class="o">-</span><span class="mf">8.85591</span>
+<span class="o">-</span><span class="mf">121.6</span> <span class="o">-</span><span class="mf">19.2954</span> <span class="o">-</span><span class="mf">7.20586</span>
+<span class="o">-</span><span class="mf">121.59</span> <span class="o">-</span><span class="mf">20.3273</span> <span class="o">-</span><span class="mf">2.0079</span>
+<span class="o">-</span><span class="mf">122.2</span> <span class="o">-</span><span class="mf">19.8527</span> <span class="o">-</span><span class="mf">2.64669</span>
+<span class="o">-</span><span class="mf">120.83</span> <span class="o">-</span><span class="mf">19.7342</span> <span class="o">-</span><span class="mf">2.2393</span>
+  <span class="p">:</span>        <span class="p">:</span>        <span class="p">:</span>
+</pre></div>
+</div>
+<p>The order of the atoms in this file should match the ATOM-ID number in
+the first column of the “Atoms” section of the FILE_OLD.data file. (…I
+THINK… To be on the safe side, use a DATA file with the atoms in sorted
+order.)</p>
+<div class="section" id="exotic-atom-styles">
+<h3><span class="section-number">23.3.1. </span>Exotic atom styles<a class="headerlink" href="#exotic-atom-styles" title="Permalink to this headline">¶</a></h3>
+<p>When using hybrid atom styles, you must enclose the argument in quotes,
+for example: “hybrid sphere dipole”</p>
+<div class="section" id="warning-1">
+<h4><span class="section-number">23.3.1.1. </span>Warning 1<a class="headerlink" href="#warning-1" title="Permalink to this headline">¶</a></h4>
+<p>I have not tested using raw2data.py with exotic (non-point-like) atom
+styles. (I suspect that the script will not crash, but dipole and
+ellipsoid orientations, and other internal degrees of freedom will not
+be updated remain in their initial state.)</p>
+<p>Try using <a class="reference external" href="http://pizza.sandia.gov/doc/Manual.html">pizza.py</a> instead
+if you are simulating systems with exotic data types.</p>
+</div>
+<div class="section" id="warning-2">
+<h4><span class="section-number">23.3.1.2. </span>Warning 2<a class="headerlink" href="#warning-2" title="Permalink to this headline">¶</a></h4>
+<p>“raw2data.py” is not a stand-alone script. Make sure dump2data.py is
+located in the same directory with raw2data.py.</p>
+<p>Note: Although I have not tested it, I suspect many of the other
+arguments that work with “dump2data.py”, such as “-scale”, and “-xyz”
+also work with raw2data.py.</p>
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">moltemplate</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html">1. Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main/installation.html">2. Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main/quick_reference.html">3. Quick reference <em>(skip on first reading)</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main/tutorial.html">4. Introductory tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main/overview.html">5. Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main/coordinates.html">6. Object composition and coordinate generation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main/arrays.html">7. Arrays, slices, and coordinate transformations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main/custom_xform.html">8. Customizing molecule position and topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../appendix/spce_example_robust.html">9. Portability: Using <em>LT files</em> for force-field storage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main/limitations.html">10. Known bugs and limitations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../appendix/nbody_by_type.html">11. Bonded interactions “By Type”</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../appendix/ltemplify.html">12. Using ltemplify.py to create an <em>LT file</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../appendix/vmd_advanced.html">13. Visualization in VMD</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../appendix/ttree_man_page.html">14. Advanced moltemplate.sh Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../appendix/ttree.html">15. Using <em>lttree.py</em> or <em>ttree.py</em> directly</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../appendix/nbody_by_type_utility.html">16. Using the <em>nbody_by_type.py</em> utility</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../appendix/adv_variable_syntax.html">17. Variable syntax details</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dump2data.html">18. dump2data.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="extract_lammps_data.html">19. extract_lammps_data.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="genpoly_lt.html">20. genpoly_lt.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="interpolate_curve.html">21. interpolate_curve.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ltemplify.html">22. ltemplify.py</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">23. raw2data.py</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#description">23.1. Description</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#typical-usage">23.2. Typical usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#arguments">23.3. Arguments</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="ltemplify.html" title="previous chapter"><span class="section-number">22. </span>ltemplify.py</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Andrew Jewett.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/utils/raw2data.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
