@@ -33,6 +33,12 @@ highly recommended. (See section :ref:`sec:installation`.)
    appendix/nbody_by_type_utility
    appendix/adv_variable_syntax
 
+   utils/dump2data
+   utils/extract_lammps_data
+   utils/genpoly_lt
+   utils/interpolate_curve
+   utils/ltemplify
+   utils/raw2data
 
 Indices and tables
 ------------------
