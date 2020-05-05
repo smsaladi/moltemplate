@@ -1,3 +1,17 @@
+.. |[fig:2bead_polymer] a)-b) Building a complex system from small pieces: Construction of a polymer (b) out of smaller (2-atom) subunits (a) using composition and rigid-body transformations. Bonds connecting different monomer together (blue) must be declared explicitly, but angle and dihedral interactions will be generated automatically. See section| image:: /_static/2bead_monomer.jpg
+   :height: 3cm
+
+.. |[fig:2bead_polymer] a)-b) Building a complex system from small pieces: Construction of a polymer (b) out of smaller (2-atom) subunits (a) using composition and rigid-body transformations. Bonds connecting different monomer together (blue) must be declared explicitly, but angle and dihedral interactions will be generated automatically. See section| image:: /_static/2bead_polymer.jpg
+   :height: 3cm
+
+.. |[fig:2bead_polymer] a)-b) Building a complex system from small pieces: Construction of a polymer (b) out of smaller (2-atom) subunits (a) using composition and rigid-body transformations. Bonds connecting different monomer together (blue) must be declared explicitly, but angle and dihedral interactions will be generated automatically. See section| image:: /_static/2bead_polymers_nopbc_t=0_LR.jpg
+   :width: 4cm
+
+.. |[fig:2bead_polymer] a)-b) Building a complex system from small pieces: Construction of a polymer (b) out of smaller (2-atom) subunits (a) using composition and rigid-body transformations. Bonds connecting different monomer together (blue) must be declared explicitly, but angle and dihedral interactions will be generated automatically. See section| image:: /_static/2bead_polymers_t=100ps_LR.jpg
+   :width: 4cm
+
+.. _sec:coordinates:
+
 Object composition and coordinate generation 
 ==============================================
 
@@ -15,53 +29,53 @@ pieces: Construction of a polymer (b) out of smaller (2-atom) subunits
 (a) using composition and rigid-body transformations. Bonds connecting
 different monomer together (blue) must be declared explicitly, but angle
 and dihedral interactions will be generated automatically. See
-section|\ `6.1 <#sec:2bead>`__\ |for details. c) An irregular lattice of
+section|\ :ref:`sec:2bead`\ |for details. c) An irregular lattice of
 short polymers. (See
-section|\ `7.6 <#sec:multidimensional_arrays>`__\ |.) d) The same system
+section|\ :ref:`sec:multidimensional_arrays`\ |.) d) The same system
 after 100000 time steps using Langevin dynamics. (The VMD console
 commands used for visualization were: “topo readlammpsdata system.data
 full”, “animate write psf system.psf”, “pbc wrap -compound res -all”,
-and “pbc box”. See sections|\ `4.3 <#sec:vmd_topotools>`__\ |,
-and|\ `13 <#sec:vmd_advanced>`__\ |for details.| **b)**
+and “pbc box”. See sections|\ :ref:`sec:vmd_topotools`\ |,
+and|\ :ref::ref:`sec:vmd_advanced`\ |for details.| **b)**
 |[fig:2bead_polymer] a)-b) Building a complex system from small pieces:
 Construction of a polymer (b) out of smaller (2-atom) subunits (a) using
 composition and rigid-body transformations. Bonds connecting different
 monomer together (blue) must be declared explicitly, but angle and
 dihedral interactions will be generated automatically. See
-section|\ `6.1 <#sec:2bead>`__\ |for details. c) An irregular lattice of
+section|\ :ref:`sec:2bead`\ |for details. c) An irregular lattice of
 short polymers. (See
-section|\ `7.6 <#sec:multidimensional_arrays>`__\ |.) d) The same system
+section|\ :ref:`sec:multidimensional_arrays`\ |.) d) The same system
 after 100000 time steps using Langevin dynamics. (The VMD console
 commands used for visualization were: “topo readlammpsdata system.data
 full”, “animate write psf system.psf”, “pbc wrap -compound res -all”,
-and “pbc box”. See sections|\ `4.3 <#sec:vmd_topotools>`__\ |,
-and|\ `13 <#sec:vmd_advanced>`__\ |for details.| **c)**
+and “pbc box”. See sections|\ :ref:`sec:vmd_topotools`\ |,
+and|\ :ref::ref:`sec:vmd_advanced`\ |for details.| **c)**
 |[fig:2bead_polymer] a)-b) Building a complex system from small pieces:
 Construction of a polymer (b) out of smaller (2-atom) subunits (a) using
 composition and rigid-body transformations. Bonds connecting different
 monomer together (blue) must be declared explicitly, but angle and
 dihedral interactions will be generated automatically. See
-section|\ `6.1 <#sec:2bead>`__\ |for details. c) An irregular lattice of
+section|\ :ref:`sec:2bead`\ |for details. c) An irregular lattice of
 short polymers. (See
-section|\ `7.6 <#sec:multidimensional_arrays>`__\ |.) d) The same system
+section|\ :ref:`sec:multidimensional_arrays`\ |.) d) The same system
 after 100000 time steps using Langevin dynamics. (The VMD console
 commands used for visualization were: “topo readlammpsdata system.data
 full”, “animate write psf system.psf”, “pbc wrap -compound res -all”,
-and “pbc box”. See sections|\ `4.3 <#sec:vmd_topotools>`__\ |,
-and|\ `13 <#sec:vmd_advanced>`__\ |for details.| **d)**
+and “pbc box”. See sections|\ :ref:`sec:vmd_topotools`\ |,
+and|\ :ref::ref:`sec:vmd_advanced`\ |for details.| **d)**
 |[fig:2bead_polymer] a)-b) Building a complex system from small pieces:
 Construction of a polymer (b) out of smaller (2-atom) subunits (a) using
 composition and rigid-body transformations. Bonds connecting different
 monomer together (blue) must be declared explicitly, but angle and
 dihedral interactions will be generated automatically. See
-section|\ `6.1 <#sec:2bead>`__\ |for details. c) An irregular lattice of
+section|\ :ref:`sec:2bead`\ |for details. c) An irregular lattice of
 short polymers. (See
-section|\ `7.6 <#sec:multidimensional_arrays>`__\ |.) d) The same system
+section|\ :ref:`sec:multidimensional_arrays`\ |.) d) The same system
 after 100000 time steps using Langevin dynamics. (The VMD console
 commands used for visualization were: “topo readlammpsdata system.data
 full”, “animate write psf system.psf”, “pbc wrap -compound res -all”,
-and “pbc box”. See sections|\ `4.3 <#sec:vmd_topotools>`__\ |,
-and|\ `13 <#sec:vmd_advanced>`__\ |for details.|
+and “pbc box”. See sections|\ :ref:`sec:vmd_topotools`\ |,
+and|\ :ref::ref:`sec:vmd_advanced`\ |for details.|
 
 .. raw:: latex
 
@@ -103,11 +117,13 @@ section*\ `6.2 <#sec:nbody_by_type_intro>`__\ *)*
 In this example we will define two kinds of molecule objects: “Monomer”,
 and “Polymer” (*defined later*).
 
+.. _sec:twobead_polymer:
+
 Building a simple polymer
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
 We construct a short polymer by making 7 copies of “Monomer”, rotating
-and moving each copy: [sec:2beadPolymer]
+and moving each copy: [sec:twobead_polymer]
 
 ::
 
@@ -150,11 +166,11 @@ dots). For example, “mon2” is a copy of “Monomer” which is first rotated
 in the (3.2,0,0) direction. (The last three arguments to the “rot()”
 command denote the axis of rotation, which does not have to be
 normalized.) (A list of available coordinate transformations is provided
-in section `3.3 <#sec:xforms_table>`__.)
+in section :ref:`sec:xforms_table`.)
 
 *(Note: Although we did not do this here, it is sometimes convenient to
 represent polymers as 1-dimensional arrays. See
-sections*\ `7 <#sec:arrays>`__\ *and*\ `7.4 <#sec:random_arrays>`__\ *for
+sections*\ `7 <#sec:arrays>`__\ *and*\ :ref:`sec:random_arrays`\ *for
 examples.)*
 
 To bond atoms in different molecules or molecular subunits together, we
@@ -169,7 +185,7 @@ Bonded interactions *by type*
 In this example we did *not* provide a list of all 3-body and 4-body
 angle forces between bonded atoms in the polymer. Moltemplate allows you
 to manually list all of these interactions (using the “write_once("Data
-Angles")” command from section `4.1 <#sec:spce_example>`__, *or* the
+Angles")” command from section :ref:`sec:spce_example`, *or* the
 “write_once("Data Dihedrals")”, or “write_once("Data Impropers")”
 commands). However there are usually many of them. For this reason, it
 is often more convenient to provide moltemplate with instructions to

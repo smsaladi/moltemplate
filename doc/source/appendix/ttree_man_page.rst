@@ -1,3 +1,5 @@
+.. _sec:tree_man_page:
+
 Advanced moltemplate.sh Usage
 =============================
 

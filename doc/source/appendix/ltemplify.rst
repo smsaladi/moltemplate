@@ -1,3 +1,5 @@
+.. _sec:ltemplify:
+
 Using ltemplify.py to create an *LT file*
 =========================================
 
@@ -35,14 +37,14 @@ Typical Usage
 *INPUT_SCRIPT* and *DATA_FILE* are the names of a LAMMPS input script
 and a data file containing the molecule of interest, and *FILE.lt* is
 the resulting MOLTEMPLATE file created by ltemplify.py. (See section
-`12.1 <#sec:ltemplify_args_table>`__ for more information.)
+:ref:`sec:ltemplify_args_table` for more information.)
 
 Note: Tiresome details to follow.
 ---------------------------------
 
 .. _first-time-readers-should-probably-skip-to-the-examples-in-sectionsecltemplify_examples.:
 
-First time readers should probably skip to the examples in section\ `12.4 <#sec:ltemplify_examples>`__.
+First time readers should probably skip to the examples in section\ :ref:`sec:ltemplify_examples`.
 -------------------------------------------------------------------------------------------------------
 
 Required arguments
@@ -70,8 +72,8 @@ argument list. (See examples below.)
 
 .. _sec:ltemplify_args_table:
 
- Optional arguments 
---------------------
+Optional arguments 
+------------------
 
 +-----------------------------------+-----------------------------------+
 | **argument**                      | **meaning**                       |
@@ -153,7 +155,7 @@ argument list. (See examples below.)
 
 .. _examples-showing-argument-usage-are-included-in-section-secltemplify_examples.:
 
-Examples showing argument usage are included in section `12.4 <#sec:ltemplify_examples>`__.
+Examples showing argument usage are included in section :ref:`sec:ltemplify_examples`.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. raw:: latex
@@ -213,7 +215,7 @@ improper, type names and id names automatically. This resultis in atoms
 with types like “@atom:type3”, and IDs like “$atom:type3_7” (I.e. the
 7th atom of type 3.)
 
- Inferring atom type names from comments 
+Inferring atom type names from comments 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 *However,* ltemplify.py uses comments in the “Masses” section of the
@@ -233,14 +235,14 @@ This means atoms of types 1, 2, 3, and 4 will be referred to as
 “@atom:c3”, “@atom:h3”, “@atom:ho” and “@atom:oh”, respectively in the
 moltemplate (LT) file created by ltemplify.py.
 
- Ignoring comments
+Ignoring comments
 ~~~~~~~~~~~~~~~~~~
 
 The “*-ignore-comments*” argument will disable this behavior and assign
 numeric names to the atom types in the usual way (eg “*@atom:type1*”,
 “*@atom:type2*”, “*@atom:type3*”, “*@atom:type4*”).
 
- Bond, Angle, Dihedral, and Improper type names 
+Bond, Angle, Dihedral, and Improper type names 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Similarly, by default, bonds and angles are automatically assigned to
@@ -284,7 +286,7 @@ meaningful, like “@atom:c3”, for example.
 
 .. _sec:ltemplify_force_fields:
 
- Force fields
+Force fields
 -------------
 
 Some data files contain a list of *angle, dihedral, or improper* bonded
@@ -300,7 +302,7 @@ contained in the force field they want to use. (They can do this using
 the “-ignore-coeffs”, “-ignore-angles”, and “-ignore-bond-types”
 arguments explained below.)
 
- Using the inherits keyword to specify force fields
+Using the inherits keyword to specify force fields
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Moltemplate provides several different force fields to choose from (such
@@ -487,7 +489,7 @@ before the data file (“FILE.data”) in the argument list.
 You can also use *ltemplify.py* to create molecules that use 3rd-party
 force fields such as OPLSAA, GAFF2, COMPASS, ....
 
- Example 6 
+Example 6 
 ~~~~~~~~~~~
 
 This example demonstrates how to build a molecule using the “GAFF2”
@@ -551,7 +553,7 @@ run moltemplate using the appropriate “-a” command line args to make
 sure the various atom types are assigned to the correct numbers. This is
 usually needed in order to keep them consistent with the order of
 parameters in the corresponding pair style’s input files. See section
-`14.1 <#sec:manual_assignment>`__.) In addition, auxiliary atom types
+:ref:`sec:manual_assignment`.) In addition, auxiliary atom types
 (such as the “hydrogen” atom type required by hbond/dreiding) will not
 even be parsed. If you are using the “hbond/dreiding” pair style, you
 will have to manually specify the atom type for the hydrogen-atom
@@ -560,7 +562,7 @@ mediator in every “pair_coeff” command after running ltemplify.py
 Wildcard characters (“\*”) expansion
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-As explained in section `10 <#sec:limitations>`__, moltemplate is often
+As explained in section :ref:`sec:limitations`, moltemplate is often
 confused whenever wildcard characters (“\*” characters) appear inside
 any of the the “coeff” commands (or “Coeff” sections of the data file).
 So ltemplify.py attempts to remove these characters and expand these

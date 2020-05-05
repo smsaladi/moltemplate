@@ -1,3 +1,5 @@
+.. _sec:overview:
+
 Overview
 ========
 
@@ -40,7 +42,7 @@ text preceding this colon is the *category name*. (For example:
 belonging to different categories are counted independently.
 
 Users can override these assignment rules and create custom categories.
-(See appendices `14.1 <#sec:manual_assignment>`__ and
+(See appendices :ref:`sec:manual_assignment` and
 `14.2 <#sec:custom_categories>`__ for details.)
 
 .. _sec:static_variables:
@@ -140,7 +142,7 @@ Sharing atom types or other variables between molecules
 There are several ways to share atom types between two molecules. The
 *recommended way* is to define them in a separate file and refer to them
 when needed. This approach is demonstrated in section
-`6.1 <#sec:2bead>`__.
+:ref:`sec:2bead`.
 
 *(Alternately, you can define them outside the current molecule
 definition, and use file-system-path-like syntax (“../”, or “../../” or
@@ -194,7 +196,7 @@ typically contain force-field styles, parameters and run settings *Data
 files* typically contain atom coordinates and bonded topology data.
 
 If you are familiar with LAMMPS, you may have noticed the file names
-above (in the example from section `4.1 <#sec:spce_example>`__) sound
+above (in the example from section :ref:`sec:spce_example`) sound
 suspiciously like sections from LAMMPS data files or input scripts, such
 as “Data Boundary”, “Data Atoms”, “Data Bonds”, “Data Masses”, “Data
 Angles”, “Data Dihedrals”, “Data Impropers”, “In Init”, “In Settings”).

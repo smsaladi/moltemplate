@@ -1,3 +1,5 @@
+.. _sec:adv_variable_syntax:
+
 Variable syntax details
 =======================
 
@@ -33,9 +35,9 @@ counter variable types: “@atom”, “$atom”, “$mol”, “@bond”, “$b
 this example: “$/atom:” (“/” denotes explicitly that the counter has
 global scope). Another example with an explicit **cpath** is the custom
 local counter variable named “$/proteins[5]/monomerid:.” (See section
-`14.3 <#sec:cpath_simple>`__.) In this example, the **cpath** is
+:ref:`sec:cpath_simple`.) In this example, the **cpath** is
 “$/proteins[5]”, the **catname** is “monomerid”, and the **lpath** is
-“.”. (In section `14.3 <#sec:cpath_simple>`__, we never explicitly
+“.”. (In section :ref:`sec:cpath_simple`, we never explicitly
 specified the **cpath**. This is a source of confusion. When **cpath**
 is omitted, then the program searches up the tree for an ancestor node
 containing a category with a matching **catname**. Consequently the
@@ -95,7 +97,7 @@ identifies it within a single protein chain. However because their
 category was defined locally at the protein level, these residue ID
 numbers are not global, and are not uniquely defined if there are
 multiple protein chains present.) (See section
-`14.3 <#sec:cpath_simple>`__ for details.)
+:ref:`sec:cpath_simple` for details.)
 
 $\ **cpath**/**catname**:**lpath**/...
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

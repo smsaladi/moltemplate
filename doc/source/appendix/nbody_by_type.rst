@@ -1,3 +1,5 @@
+.. _sec:nbody_by_type:
+
 Bonded interactions “By Type”
 =============================
 

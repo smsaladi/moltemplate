@@ -1,3 +1,5 @@
+.. _sec:vmd_advanced:
+
 Visualization in VMD
 ====================
 
@@ -55,7 +57,7 @@ http://www.ks.uiuc.edu/Research/vmd/vmd-1.9/ug/node87.html#ug:topic:selections.
 properties of each atom correspond to the *@atom*, *$atom*, and *$mol*
 variables for each atom in moltemplate. Unfortunately, VMD does not
 understand moltemplate variable naming syntax (discussed in section
-`5.2 <#sec:variables>`__). Instead, in VMD, variables must be specified
+:ref:`sec:variables`). Instead, in VMD, variables must be specified
 by their numeric equivalents. You can determine these numbers by reading
 the *output_ttree/ttree_assignments.txt* file. (See section
 `[sec:ttree_assignments] <#sec:ttree_assignments>`__ for details.) That

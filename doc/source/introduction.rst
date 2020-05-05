@@ -1,3 +1,5 @@
+.. _sec:introduction:
+
 Introduction
 ============
 
@@ -22,7 +24,7 @@ suitable shell environment has been installed). **A substantial amount
 of memory is needed** to run moltemplate. For example, building a system
 of 1000000 atoms typically requires between 3 and 12 GB of *available*
 memory. (This depends on the number of bonds, molecules, and angular
-interactions. See section `10 <#sec:limitations>`__ for details.)
+interactions. See section :ref:`sec:limitations` for details.)
 
 Converting *LT files* to LAMMPS input/data files
 ------------------------------------------------
@@ -55,9 +57,10 @@ be directly run in LAMMPS with minimal editing.
 Converting LAMMPS input/data files to *LT files*
 ------------------------------------------------
 
-Existing LAMMPS input/data files can be converted into “.LT” files using
-the “ltemplify.py” utility. (*Some additional manual editing may be
-required. See appendix*\ `12 <#sec:ltemplify>`__\ *.*)
+Existing LAMMPS input/data files can be converted into ".LT" files using
+the "ltemplify.py" utility.
+( *Some additional manual editing may be required. See appendix*
+:ref:`sec:ltemplify` ).
 
 Warning: All-atom force fields
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -103,7 +106,7 @@ converting PDB files into LAMMPS format. These files can then be
 converted to “LT” format using the “ltemplify.py” utility. VMD
 :raw-latex:`\cite{VMD}` and topotools are also useful for visualizing
 the data files created by moltemplate.sh (See section
-`4.3 <#sec:vmd_topotools>`__.)
+:ref:`sec:vmd_topotools`.)
 
 The PACKMOL :raw-latex:`\cite{packmol}` program is useful for generating
 coordinates of dense heterogeneous mixtures of molecules, which can be
@@ -114,7 +117,7 @@ Examples
 
 This manual explains in detail how to use moltemplate.sh to build LAMMPS
 files from scratch. You will also need to learn how to *run* LAMMPS and
-visualize your results. Section `4 <#sec:tutorial>`__ contains a brief
+visualize your results. Section :ref:`sec:tutorial`contains a brief
 tutorial which explains how to build a box of water using moltemplate
 and visualize initial conformation, run LAMMPS, and then visualize the
 trajectory. Several complete working examples (with images and readme

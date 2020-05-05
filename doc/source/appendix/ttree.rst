@@ -1,7 +1,7 @@
+.. _sec:ttree:
+
 Using *lttree.py* or *ttree.py* directly
 ========================================
-
-.. _sec:ttree:
 
 (bypassing moltemplate.sh)
 --------------------------

@@ -1,14 +1,16 @@
+.. _sec:arrays:
+
 Arrays, slices, and coordinate transformations
 ==============================================
 
 Moltemplate supports 1-dimensional, and multi-dimensional arrays. These
 can be used to create straight (or helical) polymers sheets, tubes,
 tori. They are also to fill solid 3-dimensional volumes with molecules
-or atoms. (See sections `4.2 <#sec:coords_intro>`__ and
-`7.6 <#sec:multidimensional_arrays>`__.)
+or atoms. (See sections :ref:`sec:coords_intro` and
+:ref:`sec:multidimensional_arrays`.)
 
 Here we show an easier way to create the short polymer shown in section
-`[sec:2beadPolymer] <#sec:2beadPolymer>`__. You can make 7 copies of the
+:ref:`sec:twobead_polymer`. You can make 7 copies of the
 *Monomer* molecule this way:
 
 ::
@@ -31,7 +33,7 @@ Unfortunately, by default, the coordinates of each molecule are
 identical. To prevent the atom coordinates from overlapping, you have
 several choices:
 
-.. _sec:arrays+xform:
+.. _sec:xform_arrays:
 
 Transformations following brackets [] in a new statement
 --------------------------------------------------------
@@ -39,7 +41,7 @@ Transformations following brackets [] in a new statement
 After every square-bracket [] in a new command, you can specify a list
 of transformations to apply. For example, we could have generated atomic
 coordinates for the the short polymer in section
-`[sec:2beadPolymer] <#sec:2beadPolymer>`__ using this command:
+:ref:`sec:twobead_polymer` using this command:
 
 ::
 
@@ -50,7 +52,7 @@ This will create 7 molecules. The coordinates of the first molecule
 will have its coordinates cumulatively modified by the commands
 “rot(180, 1,0,0)” followed by “move(3.2,0,0)”.
 
-.. _sec:xform+arrays+xform:
+.. _sec:xform_arrays_xform:
 
 optional: initial customizations (preceding [] brackets)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -174,7 +176,7 @@ example, below we define a random polymer composed of 50 *Monomer* and
    } #RandPoly50
 
 It is also possible to fill a 2 or 3-dimensional volume with molecules
-randomly. This is discussed in section `7.8 <#sec:random_advanced>`__.
+randomly. This is discussed in section :ref:`sec:random_advanced`.
 
 The function takes 2 or 3 arguments: a list of molecule types ( and in
 this example), and a list of probabilities (*0.6* and *0.4*) both
@@ -204,7 +206,7 @@ of molecule types precisely, you can replace the list of probabilities
 
 This will create exactly 30 “Monomer” and 20 “Monomer3” monomers. (You
 can do this with multidimensional arrays as well. See section
-`7.9.1 <#sec:random_multidim_exact>`__.)
+:ref:`sec:random_multidim_exact`.)
 
 Details regarding the *new random* command:
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -376,7 +378,7 @@ Creating random mixtures using multidimensional arrays
 
 You can use to fill space with a random mixture of molecules. The
 following 2-dimensional example creates a lipid bilayer (shown in figure
-`[fig:random_bilayer] <#fig:random_bilayer>`__) composed of an equal
+:numref:`fig_bilayer_mixture`) composed of an equal
 mixture of DPPC and DLPC lipids. (...Whose definition we omit here. See
 the online examples for details.)
 
@@ -392,16 +394,29 @@ the online examples for details.)
 
    \centering
 
-**a)** |[fig:random_bilayer] A lipid bilayer membrane composed of a
-random equal mixture of two different lipid types in a 1:1 ratio. (See
-section|\ `7.8 <#sec:random_advanced>`__\ |.) In b) one of the molecule
-types was left blank leaving vacancies behind. (See
-section|\ `7.9 <#sec:random_vacancies>`__\ |.)| **b)**
-|[fig:random_bilayer] A lipid bilayer membrane composed of a random
-equal mixture of two different lipid types in a 1:1 ratio. (See
-section|\ `7.8 <#sec:random_advanced>`__\ |.) In b) one of the molecule
-types was left blank leaving vacancies behind. (See
-section|\ `7.9 <#sec:random_vacancies>`__\ |.)|
+.. _fig_bilayer_mixture:
+.. figure:: /_static/lipid_bilayer_mixture.jpg
+   :alt: lipid bilayer mixture
+   :align: center
+   :width: 5cm
+
+   A lipid bilayer membrane composed of a
+   random equal mixture of two different lipid types in a 1:1 ratio.
+   See section :ref:`sec:random_advanced`.
+
+
+.. _fig_bilayer_vacancies:
+.. figure:: /_static/lipid_bilayer_vacancies.jpg
+   :alt: lipid bilayer mixture with vacancies
+   :align: center
+   :width: 5cm
+
+   A lipid bilayer membrane composed of a random
+   equal mixture of two different lipid types in a 1:1 ratio
+   with one of the molecule types left blank leaving vacancies behind.
+   See section :ref:`sec:random_vacancies`.
+
+
 
 .. _sec:random_vacancies:
 
@@ -459,7 +474,7 @@ The delete command can be used to cut large holes in 1, 2, and
 3-dimensional objects. For example, consider a simple 3-dimensional
 12x12x12 cube of molecules. (For simplicity, each “molecule” in this
 example contains only one atom. These atoms appear as blue spheres in
-figure `[fig:delete_holes] <#fig:delete_holes>`__.)
+figure :numref:`fig_delete_holes`.)
 
 ::
 
@@ -475,20 +490,17 @@ Then, we cut out some rectangular vacancies:
    delete molecules[*][*][8]      
    delete molecules[6-7][0-8][5-6]
 
-The result of these operations is shown in figure
-`[fig:delete_holes] <#fig:delete_holes>`__. *(Note: You may move or
-delete previously deleted array elements more than once, and/or deleting
+The result of these operations is shown in figure :numref:`fig_delete_holes`.
+*(Note: You may move or delete previously deleted array elements more than once, and/or deleting
 overlapping rectangular regions without error.)*
 
-.. raw:: latex
-
-   \centering
-
-.. figure:: _static/delete_holes1.jpg
-   :alt:  [fig:delete_holes] Rectangular holes can be carved out of an array of molecules (represented here by blue spheres) using the “delete” command. Three delete commands were used to remove the two planar regions and the rectangular hole in the center.
+.. _fig_delete_holes:
+.. figure:: /_static/delete_holes1.jpg
+   :alt: rectangular holes
+   :align: center
    :width: 4.0cm
 
-    [fig:delete_holes] Rectangular holes can be carved out of an array
+   Rectangular holes can be carved out of an array
    of molecules (represented here by blue spheres) using the “delete”
    command. Three delete commands were used to remove the two planar
    regions and the rectangular hole in the center. 

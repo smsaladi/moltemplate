@@ -1,3 +1,11 @@
+.. |[fig:mol_complex] a) The “MolecularComplex” molecule. This is a contrived example consisting of two “Polymers”. See section| image:: /_static/mol_complex_LR.jpg
+   :height: 3cm
+
+.. |[fig:mol_complex] a) The “MolecularComplex” molecule. This is a contrived example consisting of two “Polymers”. See section| image:: /_static/mol_complex+mol_complex0_transparent_LR.jpg
+   :height: 3cm
+
+.. _sec:custom_xform:
+
 Customizing molecule position and topology
 ==========================================
 
@@ -41,7 +49,7 @@ define “MolecularComplex” this way:*
    }
 
 *For this to work, you must also delete the line from the definition of
-the Polymer molecule. See section*\ `6.1 <#sec:2bead>`__\ *.*
+the Polymer molecule. See section*\ :ref:`sec:2bead`\ *.*
 
 We can subsquently customize the position of the 3rd monomer
 (“monomers[2]”) of the second polymer (“polymers[1]”), this way:
@@ -122,7 +130,7 @@ full-path for every variable (for example “mol_complex/polymers[0]”, and
 
 Alternatively, if you prefer, you can *delete* the bond and define a new
 bond connecting the same pair of atoms (see section
-`8.3 <#sec:delete>`__).
+:ref:`sec:delete`).
 
 Of course, at some point you must also create a new “bond_coeff” command
 defining the properties of this new type of bond (for example to
@@ -148,10 +156,10 @@ Adding bonds and angles to individual molecules
 Adding additional bonds within a molecule can be accomplished by writing
 additional lines of text to the “Data Bonds” section. (This is what we
 did when we added bonds between monomers to create a polymer in section
-`[sec:2beadPolymer] <#sec:2beadPolymer>`__.) Again, bonds and atom names
+:ref:`sec:twobead_polymer`.) Again, bonds and atom names
 must be referred to by their *full* names. Bonds and bonded interactions
 can be deleted using the “delete” command. (See section
-`8.3 <#sec:delete>`__.)
+:ref:`sec:delete`.)
 
 .. _sec:delete:
 
@@ -216,7 +224,7 @@ fixed. Please report any problems you find. As always, be sure to
 visualize your structures to make sure they look reasonable. (...by
 running moltemplate.sh using the “-vmd” command line option, for
 example. See
-sections*\ `4.3 <#sec:vmd_topotools>`__\ *,*\ `13 <#sec:vmd_advanced>`__\ *for
+sections*\ :ref:`sec:vmd_topotools`\ *,*\ :ref:`sec:vmd_advanced`\ *for
 details.)*
 
 .. _sec:molecule_customization:
@@ -280,12 +288,12 @@ The result of these modifications is shown in figure
 
 **a)** |[fig:mol_complex] a) The “MolecularComplex” molecule. This is a
 contrived example consisting of two “Polymers”. See
-section|\ `[sec:2beadPolymer] <#sec:2beadPolymer>`__\ |b) A customized
+section|\ :ref:`sec:twobead_polymer`\ |b) A customized
 version of the “MolecularComplex” molecule. (The original
 “MolecularComplex” is shown faded in the background for comparison.)|
 **b)** |[fig:mol_complex] a) The “MolecularComplex” molecule. This is a
 contrived example consisting of two “Polymers”. See
-section|\ `[sec:2beadPolymer] <#sec:2beadPolymer>`__\ |b) A customized
+section|\ :ref:`sec:twobead_polymer`\ |b) A customized
 version of the “MolecularComplex” molecule. (The original
 “MolecularComplex” is shown faded in the background for comparison.)|
 
@@ -307,7 +315,7 @@ molecule. For those who are familiar with programming, relationships
 like this are analogous to the relationship between parent and child
 objects in an object-oriented programming language. More general kinds
 of inheritance are supported by moltemplate and are discussed in section
-`9.8 <#sec:inheritance>`__.
+:ref:`sec:inheritance`.
 
 *(Advanced)* Multiple Inheritance
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -315,6 +323,6 @@ of inheritance are supported by moltemplate and are discussed in section
 If we wanted, we could have created a new molecule type (like
 *“MolecularComplex0”*) which includes atom types and features from
 *multiple* different types of molecules. Section
-`9.8 <#sec:inheritance>`__ mentions one way to do this and section
+:ref:`sec:inheritance` mentions one way to do this and section
 `9.8.3 <#sec:inheritance_vs_object_composition>`__ discusses alternate
 approaches.

@@ -1,3 +1,5 @@
+.. _sec:nbody_by_type_utility:
+
 Using the *nbody_by_type.py* utility
 ====================================
 

@@ -1,3 +1,5 @@
+.. _sec:spce_example_robust:
+
 Portability: Using *LT files* for force-field storage
 =====================================================
 
@@ -11,7 +13,7 @@ Mixing molecule types
 
 LAMMPS has the ability to combine molecules using multiple different
 force-field styles together using. In section
-`4.1 <#sec:spce_example>`__, we provided an example of an SPCE water
+:ref:`sec:spce_example`, we provided an example of an SPCE water
 molecule model. This example was simple to understand. However, as
 written, it would be impossible to combine this definition of water with
 other molecules which don’t share the same simple bond or angle styles.
@@ -97,7 +99,7 @@ is included below.
    } # SPCE
 
 There are two differences between this molecule definition and the
-“spce_simple.lt” example from section `4.1 <#sec:spce_example>`__:
+“spce_simple.lt” example from section :ref:`sec:spce_example`:
 
 Hybrid force field styles
 ~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -187,7 +189,7 @@ clashing molecule names.
 To alleviate the problem, you can “nest” your molecules inside the
 definition of other molecules or namespace objects. This reduces the
 scope in which your molecule is defined. See section
-`9.5 <#sec:butane>`__ for an example.
+:ref:`sec:butane` for an example.
 
 .. _sec:force_field_example_trappe:
 
@@ -247,7 +249,7 @@ uses the TraPPE force field. (The same is true for other atom types, and
 interaction-types which are specific to “TraPPE”, such as
 “@atom:TraPPE/CH3”, “@bond:TraPPE/CC”, etc... Another molecule which
 uses the TraPPE force field is discussed later in section
-`9.5 <#sec:butane>`__.) The important parts of the “trappe1998.lt” file
+:ref:`sec:butane`.) The important parts of the “trappe1998.lt” file
 are shown below:
 
 .. _sec:trappe:
@@ -307,14 +309,14 @@ bonds which have the same name, but mean something else. Elsewhere we
 can refer to these atom/bond types as “@atom:TraPPE/CH2” and
 “@bond:TraPPE/CC”. (You can also avoid repeating the cumbersome
 “TraPPE/” prefix for molecules defined within the TraPPE namespace. For
-example, see section `9.5 <#sec:butane>`__.)
+example, see section :ref:`sec:butane`.)
 
 .. _sec:butane:
 
 Nested molecules
 ----------------
 
-Earlier in section `9.4.1 <#sec:trappe>`__, we created an object named
+Earlier in section :ref:`sec:trappe`, we created an object named
 “TraPPE” and used it to create a molecule named “Cyclopentane”. Here we
 use it to demonstrate nesting. Suppose we define a new molecule “Butane”
 consisting of 4 coarse-grained (united-atom) carbon-like beads, whose
@@ -392,7 +394,7 @@ within TraPPE.
 
 *Note: An alternative procedure using*\ **inheritance**\ *exists which
 may be a cleaner way to handle these kinds of relationships. See
-sections*\ `9.8 <#sec:inheritance>`__\ *and*\ `9.8.1 <#sec:multiple_inheritance>`__\ *.*
+sections*\ :ref:`sec:inheritance`\ *and*\ :ref:`sec:multiple_inheritance`\ *.*
 
 .. _sec:paths:
 
@@ -427,7 +429,7 @@ nested molecules to find the target (the text following the “/” slash).
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Recall that LAMMPS allows users the option to assign *molecule-IDs* to
-each atom. (In the water example (section `4.1 <#sec:spce_example>`__),
+each atom. (In the water example (section :ref:`sec:spce_example`),
 atoms in each water molecule is assigned to a molecule-ID, denoted
 “$mol:.”. In that example, the “.” was the name of that molecule’s ID.)
 
@@ -495,7 +497,7 @@ want.)
 If, for example, you want to leave out the “TraPPE/” prefix when
 accessing the atom, bond, and angle types defined in TraPPE, then
 instead you can define a new molecule which *inherits* from TraPPE. (See
-section `9.8 <#sec:inheritance>`__.)
+section :ref:`sec:inheritance`.)
 
 .. _sec:inheritance:
 

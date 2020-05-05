@@ -1,7 +1,13 @@
+.. |fig_email| image:: /_static/author_email.png
+   :height: 0.3cm
+   :alt: Author email address
+
+.. _sec:limitations:
+
 Known bugs and limitations
 ==========================
 
-Please report any bugs you find by email to |image|, or to the
+Please report any bugs you find by email to |fig_email|, or to the
 lammps-users mailing list.
 
 **1)** LAMMPS-style molecule-templates are *not* supported. The DATA
@@ -13,7 +19,7 @@ to the other format. (Using a text-editor and awk, or a spreadsheet
 program. For more information on these file formats,
 http://lammps.sandia.gov/doc/read_data.html
 http://lammps.sandia.gov/doc/molecule.html.) Again, feel free to contact
-|image| to request support for LAMMPS-style molecule templates.
+|fig_email| to request support for LAMMPS-style molecule templates.
 
 **2)** **Moltemplate consumes a large amount of memory (RAM)**
 
@@ -49,7 +55,7 @@ moltemplate. However these objects are *not rotated correctly* by the
 exotic exotic atom styles, such as “wavepacket”, “electron”, “sphere”
 and “peri” have not been tested. In addition, atom_style **body** and
 atom_style **template** are *not* supported. Feel free to contact
-|image| to request support for exotic atom styles.
+|fig_email| to request support for exotic atom styles.
 
 **4)** When placed at the end of a line, LAMMPS interprets **the “&”
 character** as a request to merge two lines together. *It is usually
